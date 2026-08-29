@@ -1,45 +1,30 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import React, { useEffect, useRef } from 'react';
+import { Linking } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
+import RootNavigator, { RootStackParamList } from './src/navigation/RootNavigator';
 
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+export default function App() {
+  const navRef = useRef<NavigationContainerRef<RootStackParamList>>(null);
 
-function App() {
-  const isDarkMode = useColorScheme() === 'dark';
+  const handleUrl = (url: string | null | undefined) => {
+    if (!url || !url.includes('employee-invite')) return;
+    setTimeout(() => {
+      navRef.current?.navigate('SetPassword' as never);
+    }, 500);
+  };
 
-  return (
-    <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
-    </SafeAreaProvider>
-  );
-}
-
-function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
+  useEffect(() => {
+    Linking.getInitialURL().then(handleUrl);
+    const sub = Linking.addEventListener('url', ({ url }) => handleUrl(url));
+    return () => sub.remove();
+  }, []);
 
   return (
-    <View style={styles.container}>
-      <NewAppScreen
-        templateFileName="App.tsx"
-        safeAreaInsets={safeAreaInsets}
-      />
-    </View>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <NavigationContainer ref={navRef}>
+        <RootNavigator />
+      </NavigationContainer>
+    </GestureHandlerRootView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
-
-export default App;
