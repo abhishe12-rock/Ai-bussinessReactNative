@@ -16,6 +16,23 @@ import InvoiceDetailsScreen from '../screens/Customer/InvoiceDetailsScreen';
 import RepairDetailsScreen from '../screens/Customer/RepairDetailsScreen';
 import EmiPaymentHistoryScreen from '../screens/Customer/EmiPaymentHistoryScreen';
 
+
+import InventoryHomeScreen from '../screens/Inventory/InventoryScreen';
+import ProductsScreen from '../screens/Inventory/ProductsScreen';
+import AddProductScreen from '../screens/Inventory/AddProductScreen';
+import EditProductScreen from '../screens/Inventory/EditProductScreen';
+import ProductDetailsScreen from '../screens/Inventory/ProductDetailsScreen';
+import CategoriesScreen from '../screens/Inventory/CategoriesScreen';
+import BrandsScreen from '../screens/Inventory/BrandsScreen';
+import SuppliersScreen from '../screens/Inventory/SuppliersScreen';
+import AddSupplierScreen from '../screens/Inventory/AddSupplierScreen';
+import EditSupplierScreen from '../screens/Inventory/EditSupplierScreen';
+import SupplierPurchaseHistoryScreen from '../screens/Inventory/SupplierPurchaseHistoryScreen';
+import LowStockAlertScreen from '../screens/Inventory/LowStockAlertScreen';
+import StockQuantityScreen from '../screens/Inventory/StockQuantityScreen';
+import BarcodeScannerScreen from '../screens/Inventory/BarcodeScannerScreen';
+import QrCodeScannerScreen from '../screens/Inventory/QrCodeScannerScreen';
+
 function Stub({ name }: { name: string }) {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: AppColors.background }}>
@@ -41,11 +58,35 @@ function CustomerStackNavigator() {
   );
 }
 
+const InventoryStack = createNativeStackNavigator();
+
+function InventoryStackNavigator() {
+  return (
+    <InventoryStack.Navigator screenOptions={{ headerShown: false }}>
+      <InventoryStack.Screen name="InventoryHome" component={InventoryHomeScreen} />
+      <InventoryStack.Screen name="Products" component={ProductsScreen} />
+      <InventoryStack.Screen name="AddProduct" component={AddProductScreen} />
+      <InventoryStack.Screen name="EditProduct" component={EditProductScreen} />
+      <InventoryStack.Screen name="ProductDetails" component={ProductDetailsScreen} />
+      <InventoryStack.Screen name="Categories" component={CategoriesScreen} />
+      <InventoryStack.Screen name="Brands" component={BrandsScreen} />
+      <InventoryStack.Screen name="Suppliers" component={SuppliersScreen} />
+      <InventoryStack.Screen name="AddSupplier" component={AddSupplierScreen} />
+      <InventoryStack.Screen name="EditSupplier" component={EditSupplierScreen} />
+      <InventoryStack.Screen name="SupplierPurchaseHistory" component={SupplierPurchaseHistoryScreen} />
+      <InventoryStack.Screen name="LowStockAlert" component={LowStockAlertScreen} />
+      <InventoryStack.Screen name="StockQuantity" component={StockQuantityScreen} />
+      <InventoryStack.Screen name="BarcodeScanner" component={BarcodeScannerScreen} />
+      <InventoryStack.Screen name="QrCodeScanner" component={QrCodeScannerScreen} />
+    </InventoryStack.Navigator>
+  );
+}
+
 const SCREEN_COMPONENTS: Record<string, React.ComponentType> = {
   Dashboard: DashboardScreen,
   AiAssistant: () => <Stub name="AI Assistant" />,
   CustomerList: CustomerStackNavigator,
-  Inventory: () => <Stub name="Inventory" />,
+  Inventory: InventoryStackNavigator,   // ← changed from the Stub
   Sales: () => <Stub name="Sales" />,
   Purchase: () => <Stub name="Purchase" />,
   Orders: () => <Stub name="Orders" />,
