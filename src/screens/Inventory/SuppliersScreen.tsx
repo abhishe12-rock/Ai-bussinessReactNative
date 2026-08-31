@@ -31,12 +31,15 @@ export default function SuppliersScreen() {
   return (
     <View style={styles.flex}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon name="arrow-back" color={AppColors.textPrimary} size={22} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Suppliers</Text>
-        <View style={{ width: 22 }} />
-      </View>
+  <TouchableOpacity 
+    onPress={() => navigation.goBack()}
+    style={{ marginTop: 29 }}
+  >
+    <Icon name="arrow-back" color={AppColors.textPrimary} size={22} />
+  </TouchableOpacity>
+  <Text style={[styles.headerTitle, { marginTop: 29 }]}>Suppliers</Text>
+  <View style={{ width: 22 }} />
+</View>
 
       {loading ? (
         <View style={styles.centerFill}><ActivityIndicator color={AppColors.primary} /></View>

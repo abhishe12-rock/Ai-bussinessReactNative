@@ -44,15 +44,20 @@ export default function QrCodeScannerScreen() {
   return (
     <View style={styles.flex}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon name="arrow-back" color={AppColors.textPrimary} size={22} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Scan QR code</Text>
-        <TouchableOpacity onPress={() => setTorchOn((v) => !v)}>
-          <Icon name={torchOn ? 'flash-on' : 'flash-off'} color={torchOn ? AppColors.primary : AppColors.textMuted} size={22} />
-        </TouchableOpacity>
-      </View>
-
+  <TouchableOpacity 
+    onPress={() => navigation.goBack()}
+    style={{ marginTop: 29 }}
+  >
+    <Icon name="arrow-back" color={AppColors.textPrimary} size={22} />
+  </TouchableOpacity>
+  <Text style={[styles.headerTitle, { marginTop: 35 }]}>Scan QR code</Text>
+  <TouchableOpacity 
+    onPress={() => setTorchOn((v) => !v)}
+    style={{ marginTop: 29 }}
+  >
+    <Icon name={torchOn ? 'flash-on' : 'flash-off'} color={torchOn ? AppColors.primary : AppColors.textMuted} size={22} />
+  </TouchableOpacity>
+</View>
       <View style={styles.content}>
         <View style={styles.cameraWrap}>
           <Camera

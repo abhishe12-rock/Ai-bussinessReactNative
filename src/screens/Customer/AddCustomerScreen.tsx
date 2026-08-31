@@ -76,13 +76,16 @@ export default function AddCustomerScreen() {
 
   return (
     <View style={styles.flex}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon name="arrow-back" color={AppColors.textPrimary} size={22} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Add customer</Text>
-        <View style={{ width: 22 }} />
-      </View>
+  <View style={styles.header}>
+    <TouchableOpacity 
+      onPress={() => navigation.goBack()}
+      style={{ marginTop: 30 }}  // ← ADD THIS
+    >
+      <Icon name="arrow-back" color={AppColors.textPrimary} size={22} />
+    </TouchableOpacity>
+    <Text style={[styles.headerTitle, { marginTop: 35 }]}>Add customer</Text>  // ← ADD marginTop: 35
+    <View style={{ width: 22 }} />
+  </View>
 
       <ScrollView contentContainerStyle={styles.content}>
         <TouchableOpacity style={styles.photoWrap} onPress={() => setSheetOpen(true)}>
