@@ -210,30 +210,31 @@ export default function EmployeeListScreen() {
   return (
     <View style={styles.flex}>
       <View style={styles.header}>
-  <View style={[styles.headerLeft, { marginTop: 29 }]}>
-    <TouchableOpacity 
-      onPress={() => navigation.goBack()}
-      style={styles.backBtn}
-    >
-      <Icon name="arrow-back" color={AppColors.textPrimary} size={22} />
-    </TouchableOpacity>
-    <View>
-      <Text style={styles.headerTitle}>Employees</Text>
-      <Text style={styles.headerSubtitle}>Manage workforce, roles and access</Text>
-    </View>
-  </View>
-  <View style={[styles.headerActions, { marginTop: 29 }]}>
-    <TouchableOpacity style={styles.headerIcon} onPress={() => navigation.navigate('Attendance')}>
-      <Icon name="fingerprint" color={AppColors.textSecondary} size={20} />
-    </TouchableOpacity>
-    <TouchableOpacity style={styles.headerIcon} onPress={() => navigation.navigate('Leave')}>
-      <Icon name="event-available" color={AppColors.textSecondary} size={20} />
-    </TouchableOpacity>
-    <TouchableOpacity style={styles.headerIcon} onPress={() => navigation.navigate('ActivityLog')}>
-      <Icon name="history" color={AppColors.textSecondary} size={20} />
-    </TouchableOpacity>
-  </View>
-</View>
+        <View style={[styles.headerLeft, { marginTop: 29 }]}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backBtn}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Icon name="chevron-left" color={AppColors.primary} size={30} />
+          </TouchableOpacity>
+          <View>
+            <Text style={styles.headerTitle}>Employees</Text>
+            <Text style={styles.headerSubtitle}>Manage workforce, roles and access</Text>
+          </View>
+        </View>
+        <View style={[styles.headerActions, { marginTop: 29 }]}>
+          <TouchableOpacity style={styles.headerIcon} onPress={() => navigation.navigate('Attendance')}>
+            <Icon name="fingerprint" color={AppColors.textSecondary} size={20} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.headerIcon} onPress={() => navigation.navigate('Leave')}>
+            <Icon name="event-available" color={AppColors.textSecondary} size={20} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.headerIcon} onPress={() => navigation.navigate('ActivityLog')}>
+            <Icon name="history" color={AppColors.textSecondary} size={20} />
+          </TouchableOpacity>
+        </View>
+      </View>
 
       <View style={styles.searchWrap}>
         <View style={styles.searchBox}>
@@ -291,14 +292,14 @@ export default function EmployeeListScreen() {
 
 const styles = StyleSheet.create({
   flex: { flex: 1, backgroundColor: AppColors.background },
-  header: { 
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
-    alignItems: 'center', 
-    padding: 16, 
-    backgroundColor: AppColors.surface, 
-    borderBottomWidth: 1, 
-    borderColor: AppColors.border 
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    backgroundColor: AppColors.surface,
+    borderBottomWidth: 1,
+    borderColor: AppColors.border
   },
   headerLeft: {
     flexDirection: 'row',
@@ -308,15 +309,15 @@ const styles = StyleSheet.create({
   backBtn: {
     padding: 4,
   },
-  headerTitle: { 
-    fontSize: 18, 
-    fontWeight: '700', 
-    color: AppColors.textPrimary 
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: AppColors.textPrimary
   },
-  headerSubtitle: { 
-    fontSize: 12.5, 
-    color: AppColors.textSecondary, 
-    marginTop: 2 
+  headerSubtitle: {
+    fontSize: 12.5,
+    color: AppColors.textSecondary,
+    marginTop: 2
   },
   headerActions: { flexDirection: 'row', gap: 14 },
   headerIcon: {},

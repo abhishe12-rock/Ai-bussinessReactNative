@@ -46,15 +46,16 @@ export default function ReturnsScreen() {
   return (
     <View style={styles.flex}>
       <View style={styles.header}>
-  <TouchableOpacity 
-    onPress={() => navigation.goBack()}
-    style={{ marginTop: 29 }}
-  >
-    <Icon name="arrow-back" color={AppColors.textPrimary} size={22} />
-  </TouchableOpacity>
-  <Text style={[styles.headerTitle, { marginTop: 29 }]}>Returns</Text>
-  <View style={{ width: 22 }} />
-</View>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={{ marginTop: 29 }}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
+          <Icon name="chevron-left" color={AppColors.primary} size={30} />
+        </TouchableOpacity>
+        <Text style={[styles.headerTitle, { marginTop: 29 }]}>Returns</Text>
+        <View style={{ width: 22 }} />
+      </View>
 
       <View style={styles.searchWrap}>
         <View style={styles.searchBox}>
@@ -147,7 +148,7 @@ function ReturnSheet({ sale, items, onClose, onDone }: {
   return (
     <Modal visible transparent animationType="slide" onRequestClose={onClose}>
       <Pressable style={styles.sheetBackdrop} onPress={onClose}>
-        <Pressable style={styles.sheet} onPress={() => {}}>
+        <Pressable style={styles.sheet} onPress={() => { }}>
           <View style={styles.sheetHandle} />
           <Text style={styles.sheetTitle}>Return from {sale.invoiceNumber}</Text>
 

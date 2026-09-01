@@ -60,19 +60,20 @@ export default function OrdersScreen() {
   return (
     <View style={styles.flex}>
       <View style={styles.header}>
-  <View style={styles.headerLeft}>
-    <TouchableOpacity 
-      onPress={() => navigation.goBack()}
-      style={styles.backBtn}
-    >
-      <Icon name="arrow-back" color={AppColors.textPrimary} size={22} />
-    </TouchableOpacity>
-    <View>
-      <Text style={styles.headerTitle}>Orders</Text>
-      <Text style={styles.headerSubtitle}>Track orders by status</Text>
-    </View>
-  </View>
-</View>
+        <View style={styles.headerLeft}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backBtn}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Icon name="chevron-left" color={AppColors.primary} size={30} />
+          </TouchableOpacity>
+          <View>
+            <Text style={styles.headerTitle}>Orders</Text>
+            <Text style={styles.headerSubtitle}>Track orders by status</Text>
+          </View>
+        </View>
+      </View>
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.tabBar}>
         {TABS.map((tab) => (
@@ -154,11 +155,11 @@ const styles = StyleSheet.create({
   cardDate: { color: AppColors.textMuted, fontSize: 11 },
   cardTotal: { color: AppColors.textPrimary, fontSize: 13.5, fontWeight: '700' },
   headerLeft: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  gap: 12,
-},
-backBtn: {
-  padding: 4,
-},
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  backBtn: {
+    padding: 4,
+  },
 });

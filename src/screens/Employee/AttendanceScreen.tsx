@@ -55,15 +55,16 @@ export default function AttendanceScreen() {
   return (
     <View style={styles.flex}>
       <View style={styles.header}>
-  <TouchableOpacity 
-    onPress={() => navigation.goBack()}
-    style={{ marginTop: 29 }}
-  >
-    <Icon name="arrow-back" color={AppColors.textPrimary} size={22} />
-  </TouchableOpacity>
-  <Text style={[styles.headerTitle, { marginTop: 29 }]}>Attendance</Text>
-  <View style={{ width: 22 }} />
-</View>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={{ marginTop: 29 }}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
+          <Icon name="chevron-left" color={AppColors.primary} size={30} />
+        </TouchableOpacity>
+        <Text style={[styles.headerTitle, { marginTop: 29 }]}>Attendance</Text>
+        <View style={{ width: 22 }} />
+      </View>
 
       {loading ? (
         <View style={styles.centerFill}><ActivityIndicator color={AppColors.primary} /></View>

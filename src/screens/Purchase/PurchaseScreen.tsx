@@ -46,19 +46,20 @@ export default function PurchaseHomeScreen() {
   return (
     <View style={styles.flex}>
       <View style={styles.header}>
-  <View style={styles.headerLeft}>
-    <TouchableOpacity 
-      onPress={() => navigation.goBack()}
-      style={styles.backBtn}
-    >
-      <Icon name="arrow-back" color={AppColors.textPrimary} size={22} />
-    </TouchableOpacity>
-    <View>
-      <Text style={styles.headerTitle}>Purchase</Text>
-      <Text style={styles.headerSubtitle}>Orders, suppliers and receiving</Text>
-    </View>
-  </View>
-</View>
+        <View style={styles.headerLeft}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backBtn}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Icon name="chevron-left" color={AppColors.primary} size={30} />
+          </TouchableOpacity>
+          <View>
+            <Text style={styles.headerTitle}>Purchase</Text>
+            <Text style={styles.headerSubtitle}>Orders, suppliers and receiving</Text>
+          </View>
+        </View>
+      </View>
 
       <ScrollView contentContainerStyle={styles.content} refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}>
         <View style={styles.statsRow}>
@@ -162,11 +163,11 @@ const styles = StyleSheet.create({
   fab: { position: 'absolute', right: 20, bottom: 100, flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.primary, borderRadius: 28, paddingVertical: 14, paddingHorizontal: 18, gap: 8, elevation: 4 },
   fabText: { color: '#fff', fontWeight: '600', fontSize: 14 },
   headerLeft: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  gap: 12,
-},
-backBtn: {
-  padding: 4,
-},
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  backBtn: {
+    padding: 4,
+  },
 });

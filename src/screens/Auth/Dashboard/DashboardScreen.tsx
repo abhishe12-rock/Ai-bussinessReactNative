@@ -334,24 +334,7 @@ export const DRAWER_ITEMS: DrawerItemDef[] = [
     screen: 'PayrollView',
     adminOnly: true,
   },
-  {
-    icon: 'fingerprint',
-    title: 'My Attendance',
-    screen: 'MyAttendance',
-    alwaysShow: true,
-  },
-  {
-    icon: 'event-available',
-    title: 'My Leave',
-    screen: 'RequestLeave',
-    alwaysShow: true,
-  },
-  {
-    icon: 'history',
-    title: 'My Activity',
-    screen: 'MyActivity',
-    alwaysShow: true,
-  },
+  
 ];
 
 /* ============================================================
