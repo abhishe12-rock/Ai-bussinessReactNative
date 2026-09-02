@@ -73,6 +73,17 @@ import OrderDetailsScreen from '../screens/Orders/OrderDetailsScreen';
 import RepairsScreen from '../screens/Repairs/RepairsScreen';
 import CreateRepairScreen from '../screens/Repairs/CreateRepairScreen';
 
+
+import FinanceHomeScreen from '../screens/Finance/FinanceScreen';
+import IncomeScreen from '../screens/Finance/IncomeScreen ';
+import ExpensesScreen from '../screens/Finance/ExpensesScreen';
+import LoansScreen from '../screens/Finance/LoansScreen';
+import EmiScreen from '../screens/Finance/EmiScreen';
+import LedgerScreen from '../screens/Finance/LedgerScreen';
+
+
+import TransactionsScreen from '../screens/Finance/TransactionsScreen';
+
 function Stub({ name }: { name: string }) {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: AppColors.background }}>
@@ -188,6 +199,23 @@ function RepairsStackNavigator() {
   );
 }
 
+const FinanceStack = createNativeStackNavigator();
+function FinanceStackNavigator() {
+  return (
+    <FinanceStack.Navigator screenOptions={{ headerShown: false }}>
+      <FinanceStack.Screen name="FinanceHome" component={FinanceHomeScreen} />
+      <FinanceStack.Screen name="Income" component={IncomeScreen} />
+      <FinanceStack.Screen name="Expenses" component={ExpensesScreen} />
+      <FinanceStack.Screen name="Loans" component={LoansScreen} />
+      <FinanceStack.Screen name="Emi" component={EmiScreen} />
+      <FinanceStack.Screen name="Ledger" component={LedgerScreen} />
+      
+      <FinanceStack.Screen name="Transactions" component={TransactionsScreen} />
+    </FinanceStack.Navigator>
+  );
+}
+
+
 const SCREEN_COMPONENTS: Record<string, React.ComponentType> = {
   Dashboard: DashboardScreen,
   AiAssistant: () => <Stub name="AI Assistant" />,
@@ -198,7 +226,7 @@ const SCREEN_COMPONENTS: Record<string, React.ComponentType> = {
   Orders: OrdersStackNavigator,
   EmployeeList: EmployeeStackNavigator,
   Repairs: RepairsStackNavigator,   // ← changed from () => <Stub name="Repairs" />
-  Finance: () => <Stub name="Finance" />,
+  Finance: FinanceStackNavigator,   // ← changed from () => <Stub name="Finance" />
   Reports: () => <Stub name="Reports" />,
   Documents: () => <Stub name="Document Center" />,
   AiAgents: () => <Stub name="AI Agents" />,
