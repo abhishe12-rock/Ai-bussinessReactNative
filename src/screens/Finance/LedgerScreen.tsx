@@ -1,11 +1,12 @@
 import React, { useCallback, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { AppColors } from '../theme/AppColors';
 import { CustomerService, CustomerRecord } from '../../services/CustomerService.ts';
 import { SupplierService, SupplierRecord } from '../../services/SupplierService.ts';
 import { ExpenseRecord, FinanceService, IncomeRecord } from '../../services/FinanceService.ts';
+import Icon from '@react-native-vector-icons/material-icons';
 
 function formatDMY(d: Date): string {
   return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
@@ -16,6 +17,7 @@ function formatRupee(n: number): string {
 }
 
 export default function LedgerScreen() {
+  const navigation = useNavigation<any>();
   const [tab, setTab] = useState<0 | 1>(0); // 0 = customers, 1 = suppliers
   const [selectedCustomer, setSelectedCustomer] = useState<CustomerRecord | null>(null);
   const [selectedSupplier, setSelectedSupplier] = useState<SupplierRecord | null>(null);
@@ -34,7 +36,16 @@ export default function LedgerScreen() {
   return (
     <View style={styles.screen}>
       <View style={styles.appBar}>
-        <Text style={styles.appBarTitle}>Ledger</Text>
+        <View style={styles.headerLeft}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backBtn}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Icon name="chevron-left" color={AppColors.primary} size={30} />
+          </TouchableOpacity>
+          <Text style={styles.appBarTitle}>Ledger</Text>
+        </View>
         <View style={styles.tabRow}>
           <TabButton label="Customers" selected={tab === 0} onPress={() => setTab(0)} />
           <View style={{ width: 10 }} />
@@ -191,7 +202,7 @@ function CustomerLedgerDetail({ customer, onBack }: { customer: CustomerRecord; 
     <View style={styles.screen}>
       <View style={styles.detailAppBar}>
         <TouchableOpacity onPress={onBack} style={styles.backBtn}>
-          <MaterialCommunityIcons name="chevron-left" color={AppColors.textPrimary} size={26} />
+          <MaterialCommunityIcons name="chevron-left" color={AppColors.primary} size={30} />
         </TouchableOpacity>
         <Text style={styles.detailAppBarTitle}>{customer.name}</Text>
       </View>
@@ -252,7 +263,7 @@ function SupplierLedgerDetail({ supplier, onBack }: { supplier: SupplierRecord; 
     <View style={styles.screen}>
       <View style={styles.detailAppBar}>
         <TouchableOpacity onPress={onBack} style={styles.backBtn}>
-          <MaterialCommunityIcons name="chevron-left" color={AppColors.textPrimary} size={26} />
+          <MaterialCommunityIcons name="chevron-left" color={AppColors.primary} size={30} />
         </TouchableOpacity>
         <Text style={styles.detailAppBarTitle}>{supplier.name}</Text>
       </View>
@@ -291,18 +302,31 @@ const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: AppColors.background },
   appBar: {
     paddingHorizontal: 16,
-    paddingTop: 14,
-    paddingBottom: 8,
+    paddingTop: 50,
+    paddingBottom: 14,
     backgroundColor: AppColors.surface,
     borderBottomWidth: 1,
     borderBottomColor: AppColors.border,
   },
-  appBarTitle: { color: AppColors.textPrimary, fontSize: 18, fontWeight: '700', marginBottom: 12 },
-  tabRow: { flexDirection: 'row', marginBottom: 8 },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  backBtn: {
+    marginLeft: -6,
+  },
+  appBarTitle: {
+    color: AppColors.textPrimary,
+    fontSize: 17,
+    fontWeight: '700',
+    letterSpacing: -0.3,
+  },
+  tabRow: { flexDirection: 'row', marginTop: 10, marginBottom: 8 },
   tabButton: {
     flex: 1,
     paddingVertical: 9,
-    borderRadius: 10,
+    borderRadius: 8,
     borderWidth: 1,
     borderColor: AppColors.border,
     backgroundColor: AppColors.surface,
@@ -318,34 +342,49 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: AppColors.border,
   },
-  backBtn: { padding: 8 },
-  detailAppBarTitle: { color: AppColors.textPrimary, fontSize: 17, fontWeight: '700' },
+  detailAppBarTitle: { color: AppColors.textPrimary, fontSize: 17, fontWeight: '700', letterSpacing: -0.3 },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   emptyText: { color: AppColors.textSecondary, fontSize: 13, marginTop: 10 },
   listContent: { padding: 16 },
   listRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 14,
-    borderRadius: 14,
+    padding: 13,
+    borderRadius: 12,
     borderWidth: 1,
     borderColor: AppColors.border,
     backgroundColor: AppColors.surface,
+    shadowColor: AppColors.textPrimary,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.02,
+    shadowRadius: 4,
+    elevation: 1,
   },
-  listRowText: { flex: 1, color: AppColors.textPrimary, fontSize: 14, fontWeight: '600' },
-  content: { padding: 16, paddingTop: 18, paddingBottom: 24 },
-  totalCard: { padding: 14, borderRadius: 14, marginBottom: 16 },
-  totalLabel: { fontSize: 12 },
-  totalValue: { fontSize: 20, fontWeight: '800', marginTop: 4 },
+  listRowText: { flex: 1, color: AppColors.textPrimary, fontSize: 13.5, fontWeight: '600' },
+  content: { padding: 16, paddingTop: 18, paddingBottom: 32 },
+  totalCard: {
+    padding: 14,
+    borderRadius: 12,
+    marginBottom: 14,
+    borderWidth: 1,
+    borderColor: `${AppColors.border}80`,
+  },
+  totalLabel: { fontSize: 11, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.4 },
+  totalValue: { fontSize: 22, fontWeight: '800', marginTop: 5, letterSpacing: -0.5 },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 13,
-    borderRadius: 14,
+    padding: 12,
+    borderRadius: 12,
     borderWidth: 1,
     borderColor: AppColors.border,
     backgroundColor: AppColors.surface,
-    marginBottom: 10,
+    marginBottom: 8,
+    shadowColor: AppColors.textPrimary,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.02,
+    shadowRadius: 4,
+    elevation: 1,
   },
   rowTitle: { color: AppColors.textPrimary, fontSize: 13.5, fontWeight: '600' },
   rowDate: { color: AppColors.textMuted, fontSize: 11, marginTop: 2 },

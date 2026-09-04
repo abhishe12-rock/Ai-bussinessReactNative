@@ -67,11 +67,16 @@ export default function StockReceivingScreen() {
   return (
     <View style={styles.flex}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon name="arrow-back" color={AppColors.textPrimary} size={22} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Receive stock</Text>
-        <View style={{ width: 22 }} />
+        <View style={styles.headerLeft}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backBtn}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Icon name="chevron-left" color={AppColors.primary} size={30} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Receive Stock</Text>
+        </View>
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
@@ -150,14 +155,27 @@ function MiniStat({ label, value, color }: { label: string; value: string; color
 const styles = StyleSheet.create({
   flex: { flex: 1, backgroundColor: AppColors.background },
   centerFill: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: AppColors.background },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, backgroundColor: AppColors.surface, borderBottomWidth: 1, borderColor: AppColors.border },
-  headerTitle: { fontSize: 17, fontWeight: '700', color: AppColors.textPrimary },
+  header: {
+    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
+    paddingHorizontal: 16, paddingTop: 50, paddingBottom: 14,
+    backgroundColor: AppColors.surface, borderBottomWidth: 1, borderColor: AppColors.border,
+  },
+  headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  backBtn: { marginLeft: -6 },
+  headerTitle: { fontSize: 17, fontWeight: '700', color: AppColors.textPrimary, letterSpacing: -0.3 },
   content: { padding: 16, paddingBottom: 24 },
-  poCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.surface, borderRadius: 14, borderWidth: 1, borderColor: AppColors.border, padding: 14, gap: 8 },
+  poCard: {
+    flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.surface,
+    borderRadius: 18, borderWidth: 1, borderColor: AppColors.border, padding: 16, gap: 10,
+    shadowColor: '#000000', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.35, shadowRadius: 8, elevation: 3,
+  },
   poNumber: { color: AppColors.textPrimary, fontSize: 14, fontWeight: '700' },
   poSupplier: { flex: 1, color: AppColors.textSecondary, fontSize: 12.5 },
   emptyText: { color: AppColors.textSecondary, fontSize: 13, textAlign: 'center', marginTop: 30 },
-  itemCard: { backgroundColor: AppColors.surface, borderRadius: 16, borderWidth: 1, borderColor: AppColors.border, padding: 14, marginTop: 14 },
+  itemCard: {
+    backgroundColor: AppColors.surface, borderRadius: 18, borderWidth: 1, borderColor: AppColors.border, padding: 16, marginTop: 14,
+    shadowColor: '#000000', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.35, shadowRadius: 8, elevation: 3,
+  },
   itemName: { color: AppColors.textPrimary, fontSize: 14.5, fontWeight: '700' },
   miniStatsRow: { flexDirection: 'row', gap: 10, marginTop: 10 },
   miniStatLabel: { color: AppColors.textMuted, fontSize: 10.5 },
@@ -165,10 +183,11 @@ const styles = StyleSheet.create({
   receiveLabel: { color: AppColors.textSecondary, fontSize: 12, fontWeight: '600', marginTop: 12, marginBottom: 8 },
   receiveRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   receiveInput: {
-    flex: 1, textAlign: 'center', backgroundColor: AppColors.background, borderRadius: 10,
+    flex: 1, textAlign: 'center', backgroundColor: AppColors.surfaceInput, borderRadius: 12,
+    borderWidth: 1, borderColor: AppColors.border,
     color: AppColors.textPrimary, fontSize: 16, fontWeight: '700', paddingVertical: 10,
   },
-  footer: { padding: 16, backgroundColor: AppColors.surface, borderTopWidth: 1, borderColor: AppColors.border },
-  confirmButton: { backgroundColor: AppColors.primary, borderRadius: 14, height: 52, alignItems: 'center', justifyContent: 'center' },
-  confirmButtonText: { color: '#fff', fontSize: 15, fontWeight: '700' },
+  footer: { paddingHorizontal: 16, paddingTop: 14, paddingBottom: 48, backgroundColor: AppColors.surface, borderTopWidth: 1, borderColor: AppColors.border },
+  confirmButton: { backgroundColor: AppColors.primary, borderRadius: 14, height: 48, alignItems: 'center', justifyContent: 'center', shadowColor: AppColors.primary, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.45, shadowRadius: 12, elevation: 5 },
+  confirmButtonText: { color: '#fff', fontSize: 14.5, fontWeight: '700' },
 });

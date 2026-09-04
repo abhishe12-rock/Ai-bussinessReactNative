@@ -19,6 +19,8 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { AppColors } from '../theme/AppColors';
 import { FinanceService, LoanRecord } from '../../services/FinanceService.ts';
+import Icon from '@react-native-vector-icons/material-icons';
+
 function formatDMY(d: Date): string {
   return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
 }
@@ -66,7 +68,16 @@ export default function LoansScreen() {
   return (
     <View style={styles.screen}>
       <View style={styles.appBar}>
-        <Text style={styles.appBarTitle}>Loans</Text>
+        <View style={styles.headerLeft}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backBtn}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Icon name="chevron-left" color={AppColors.primary} size={30} />
+          </TouchableOpacity>
+          <Text style={styles.appBarTitle}>Loans</Text>
+        </View>
       </View>
 
       {loading ? (
@@ -277,59 +288,89 @@ function AddLoanSheet({
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: AppColors.background },
   appBar: {
-    height: 56,
-    justifyContent: 'center',
     paddingHorizontal: 16,
+    paddingTop: 50,
+    paddingBottom: 14,
     backgroundColor: AppColors.surface,
     borderBottomWidth: 1,
     borderBottomColor: AppColors.border,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  appBarTitle: { color: AppColors.textPrimary, fontSize: 18, fontWeight: '700' },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  backBtn: {
+    marginLeft: -6,
+  },
+  appBarTitle: {
+    color: AppColors.textPrimary,
+    fontSize: 17,
+    fontWeight: '700',
+    letterSpacing: -0.3,
+  },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  errorText: { color: AppColors.danger, fontSize: 12.5 },
+  errorText: { color: AppColors.danger, fontSize: 12.5, fontWeight: '500' },
   emptyText: { color: AppColors.textSecondary, fontSize: 13 },
-  listContent: { padding: 16, paddingTop: 18, paddingBottom: 100 },
+  listContent: { padding: 16, paddingTop: 18, paddingBottom: 150 },
   card: {
     padding: 16,
-    borderRadius: 16,
+    borderRadius: 12,
     borderWidth: 1,
     borderColor: AppColors.border,
     backgroundColor: AppColors.surface,
+    shadowColor: AppColors.textPrimary,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.03,
+    shadowRadius: 6,
+    elevation: 1,
   },
   cardHeader: { flexDirection: 'row', alignItems: 'center' },
   cardIconBox: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
+    width: 38,
+    height: 38,
+    borderRadius: 10,
     backgroundColor: AppColors.primarySoft,
+    borderWidth: 1,
+    borderColor: `${AppColors.primary}20`,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
   },
-  cardTitle: { color: AppColors.textPrimary, fontSize: 15, fontWeight: '700', flex: 1 },
+  cardTitle: { color: AppColors.textPrimary, fontSize: 14.5, fontWeight: '700', flex: 1 },
   statRow: { flexDirection: 'row', marginTop: 12 },
-  statLabel: { color: AppColors.textMuted, fontSize: 11 },
+  statLabel: { color: AppColors.textMuted, fontSize: 11, fontWeight: '500', textTransform: 'uppercase', letterSpacing: 0.4 },
   statValue: { color: AppColors.textPrimary, fontSize: 13, fontWeight: '700', marginTop: 2 },
   fab: {
     position: 'absolute',
     right: 16,
-    bottom: 20,
-    height: 48,
+    bottom: 84,
+    height: 46,
     paddingHorizontal: 18,
-    borderRadius: 24,
+    borderRadius: 12,
     backgroundColor: AppColors.primary,
     flexDirection: 'row',
     alignItems: 'center',
-    elevation: 3,
+    shadowColor: AppColors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 4,
   },
-  fabText: { color: '#fff', fontSize: 14, fontWeight: '700', marginLeft: 6 },
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
+  fabText: { color: '#fff', fontSize: 13.5, fontWeight: '700', marginLeft: 6 },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(15, 23, 42, 0.4)', justifyContent: 'flex-end' },
   sheet: {
     backgroundColor: AppColors.surface,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    borderTopLeftRadius: 18,
+    borderTopRightRadius: 18,
     padding: 16,
+    paddingBottom: 40,
     maxHeight: '85%',
+    borderWidth: 1,
+    borderColor: AppColors.border,
+    borderBottomWidth: 0,
   },
   sheetHandle: {
     width: 36,
@@ -339,33 +380,33 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginBottom: 16,
   },
-  sheetTitle: { color: AppColors.textPrimary, fontSize: 16, fontWeight: '700', marginBottom: 16 },
+  sheetTitle: { color: AppColors.textPrimary, fontSize: 15, fontWeight: '700', marginBottom: 16 },
   input: {
     borderWidth: 1,
     borderColor: AppColors.border,
-    borderRadius: 12,
+    borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 12,
     color: AppColors.textPrimary,
-    fontSize: 14,
-    marginBottom: 12,
+    fontSize: 13.5,
+    marginBottom: 10,
   },
   dateRow: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
     borderColor: AppColors.border,
-    borderRadius: 12,
-    padding: 14,
+    borderRadius: 10,
+    padding: 13,
   },
-  dateRowText: { color: AppColors.textPrimary, fontSize: 14, marginLeft: 10 },
+  dateRowText: { color: AppColors.textPrimary, fontSize: 13.5, marginLeft: 10 },
   saveBtn: {
-    height: 48,
-    borderRadius: 12,
+    height: 46,
+    borderRadius: 10,
     backgroundColor: AppColors.primary,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 20,
+    marginTop: 16,
   },
-  saveBtnText: { color: '#fff', fontSize: 14, fontWeight: '600' },
+  saveBtnText: { color: '#fff', fontSize: 13.5, fontWeight: '600' },
 });

@@ -1,12 +1,31 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, FlatList, ActivityIndicator, RefreshControl } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  FlatList,
+  ActivityIndicator,
+  RefreshControl,
+  Dimensions,
+} from 'react-native';
 import Icon from '@react-native-vector-icons/material-icons';
 import { useNavigation } from '@react-navigation/native';
 
-import { OrderService, OrderRecord, OrderStatus, orderStatusToString } from '../../services/OrderService';
-import { AppColors } from '../theme/AppColors';
+import {
+  OrderService,
+  OrderRecord,
+  OrderStatus,
+  orderStatusToString,
+} from '../../services/OrderService';
+import { AppColors, AppShadows, AppRadius } from '../theme/AppColors';
+import { FadeInUp, SpringTouch } from '../theme/Animations';
 
 const service = new OrderService();
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+
 const TABS: { key: OrderStatus; label: string }[] = [
   { key: 'pending', label: 'Pending' },
   { key: 'processing', label: 'Processing' },
@@ -16,26 +35,40 @@ const TABS: { key: OrderStatus; label: string }[] = [
 
 function statusColor(status: OrderStatus) {
   switch (status) {
-    case 'pending': return AppColors.warning;
-    case 'processing': return AppColors.info;
-    case 'delivered': return AppColors.success;
-    case 'cancelled': return AppColors.danger;
+    case 'pending':
+      return '#F59E0B';
+    case 'processing':
+      return '#3B82F6';
+    case 'delivered':
+      return '#10B981';
+    case 'cancelled':
+      return '#EF4444';
   }
 }
+
 function statusBg(status: OrderStatus) {
   switch (status) {
-    case 'pending': return AppColors.warningSoft;
-    case 'processing': return AppColors.infoSoft;
-    case 'delivered': return AppColors.successSoft;
-    case 'cancelled': return AppColors.dangerSoft;
+    case 'pending':
+      return '#FFFBEB';
+    case 'processing':
+      return '#EFF6FF';
+    case 'delivered':
+      return '#ECFDF5';
+    case 'cancelled':
+      return '#FEF2F2';
   }
 }
+
 function statusIcon(status: OrderStatus) {
   switch (status) {
-    case 'pending': return 'schedule';
-    case 'processing': return 'sync';
-    case 'delivered': return 'check-circle-outline';
-    case 'cancelled': return 'cancel';
+    case 'pending':
+      return 'schedule';
+    case 'processing':
+      return 'sync';
+    case 'delivered':
+      return 'check-circle-outline';
+    case 'cancelled':
+      return 'cancel';
   }
 }
 
@@ -45,20 +78,38 @@ export default function OrdersScreen() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<OrderStatus>('pending');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const load = useCallback(async () => {
-    setLoading(true); setError(null);
-    try { setOrders(await service.getAllOrders()); }
-    catch (e: any) { setError(`Failed to load orders: ${e.message ?? e}`); }
-    finally { setLoading(false); }
+    setLoading(true);
+    setError(null);
+    try {
+      setOrders(await service.getAllOrders());
+    } catch (e: any) {
+      setError(`Failed to load orders: ${e.message ?? e}`);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    load();
+  }, [load]);
 
-  const filtered = useMemo(() => orders.filter((o) => o.status === activeTab), [orders, activeTab]);
+  const filtered = useMemo(() => {
+    return orders.filter((o) => {
+      const matchesTab = o.status === activeTab;
+      const matchesQuery =
+        !searchQuery.trim() ||
+        o.orderNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (o.customerName ?? '').toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesTab && matchesQuery;
+    });
+  }, [orders, activeTab, searchQuery]);
 
   return (
     <View style={styles.flex}>
+      {/* HEADER */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <TouchableOpacity
@@ -66,64 +117,171 @@ export default function OrdersScreen() {
             style={styles.backBtn}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
-            <Icon name="chevron-left" color={AppColors.primary} size={30} />
+            <Icon name="arrow-back-ios" color={AppColors.textPrimary} size={20} />
           </TouchableOpacity>
-          <View>
-            <Text style={styles.headerTitle}>Orders</Text>
-            <Text style={styles.headerSubtitle}>Track orders by status</Text>
-          </View>
+          <Text style={styles.headerTitle}>Orders</Text>
+        </View>
+
+        <View style={styles.headerRight}>
+          <TouchableOpacity
+            style={styles.refreshBtn}
+            onPress={load}
+            activeOpacity={0.7}
+          >
+            <Icon name="refresh" size={22} color={AppColors.textPrimary} />
+          </TouchableOpacity>
         </View>
       </View>
 
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.tabBar}>
-        {TABS.map((tab) => (
-          <TouchableOpacity key={tab.key} style={styles.tabItem} onPress={() => setActiveTab(tab.key)}>
-            <Text style={[styles.tabText, activeTab === tab.key && styles.tabTextActive]}>{tab.label}</Text>
-            {activeTab === tab.key && <View style={styles.tabIndicator} />}
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+      {/* SEARCH BAR */}
+      <View style={styles.searchContainer}>
+        <View style={styles.searchBar}>
+          <Icon name="search" size={20} color={AppColors.textMuted} />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search orders or customers..."
+            placeholderTextColor={AppColors.textMuted}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+          {searchQuery.length > 0 ? (
+            <TouchableOpacity onPress={() => setSearchQuery('')}>
+              <Icon name="close" size={18} color={AppColors.textMuted} />
+            </TouchableOpacity>
+          ) : null}
+        </View>
+      </View>
 
+      {/* SEGMENTED FILTER TABS */}
+      <View style={styles.tabsContainer}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.tabsScroll}
+        >
+          {TABS.map((tab) => {
+            const isActive = activeTab === tab.key;
+            return (
+              <SpringTouch
+                key={tab.key}
+                activeScale={0.95}
+                onPress={() => setActiveTab(tab.key)}
+              >
+                <View style={[styles.tabBtn, isActive && styles.tabBtnActive]}>
+                  <Text
+                    style={[
+                      styles.tabBtnText,
+                      isActive && styles.tabBtnTextActive,
+                    ]}
+                  >
+                    {tab.label}
+                  </Text>
+                </View>
+              </SpringTouch>
+            );
+          })}
+        </ScrollView>
+      </View>
+
+      {/* CONTENT LIST */}
       {loading ? (
-        <View style={styles.centerFill}><ActivityIndicator color={AppColors.primary} /></View>
+        <View style={styles.centerFill}>
+          <ActivityIndicator color={AppColors.primary} />
+          <Text style={styles.emptySubtitle}>Loading orders...</Text>
+        </View>
       ) : error ? (
         <View style={styles.centerFill}>
-          <Icon name="error-outline" color={AppColors.danger} size={32} />
+          <Icon name="error-outline" color={AppColors.danger} size={36} />
           <Text style={styles.errorText}>{error}</Text>
-          <TouchableOpacity onPress={load}><Text style={styles.retryText}>Retry</Text></TouchableOpacity>
+          <TouchableOpacity onPress={load} style={styles.retryBtn}>
+            <Text style={styles.retryText}>Retry</Text>
+          </TouchableOpacity>
         </View>
       ) : filtered.length === 0 ? (
-        <View style={styles.centerFill}><Text style={styles.emptyText}>No orders here</Text></View>
+        <View style={styles.centerFill}>
+          <View style={styles.emptyIconCircle}>
+            <Icon name="shopping-bag" size={32} color={AppColors.textMuted} />
+          </View>
+          <Text style={styles.emptyTitle}>No orders in this status</Text>
+          <Text style={styles.emptySubtitle}>
+            Orders will appear here as they are placed and updated.
+          </Text>
+        </View>
       ) : (
         <FlatList
           data={filtered}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={{ padding: 16, paddingBottom: 24 }}
-          ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
-          refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={styles.card}
-              onPress={async () => { navigation.navigate('OrderDetails', { order: item, onChanged: load }); }}
-            >
-              <View style={[styles.cardIcon, { backgroundColor: statusBg(item.status) }]}>
-                <Icon name={statusIcon(item.status)} color={statusColor(item.status)} size={20} />
-              </View>
-              <View style={{ flex: 1 }}>
-                <View style={styles.cardTopRow}>
-                  <Text style={styles.cardNumber}>{item.orderNumber}</Text>
-                  <View style={[styles.statusPill, { backgroundColor: statusBg(item.status) }]}>
-                    <Text style={[styles.statusText, { color: statusColor(item.status) }]}>{orderStatusToString(item.status)}</Text>
+          contentContainerStyle={styles.listContent}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={loading}
+              onRefresh={load}
+              tintColor={AppColors.primary}
+            />
+          }
+          renderItem={({ item, index }) => (
+            <FadeInUp delay={Math.min(index * 35, 300)} distance={12}>
+              <SpringTouch
+                style={{ width: '100%' }}
+                activeScale={0.98}
+                onPress={() => {
+                  navigation.navigate('OrderDetails', {
+                    order: item,
+                    onChanged: load,
+                  });
+                }}
+              >
+                <View style={styles.orderCard}>
+                  <View style={styles.cardTopRow}>
+                    <View style={styles.orderIdWrap}>
+                      <Icon name="shopping-bag" size={16} color={AppColors.primary} />
+                      <Text style={styles.orderNumber}>#{item.orderNumber}</Text>
+                    </View>
+
+                    <View
+                      style={[
+                        styles.statusPill,
+                        { backgroundColor: statusBg(item.status) },
+                      ]}
+                    >
+                      <Icon
+                        name={statusIcon(item.status)}
+                        size={12}
+                        color={statusColor(item.status)}
+                      />
+                      <Text
+                        style={[
+                          styles.statusText,
+                          { color: statusColor(item.status) },
+                        ]}
+                      >
+                        {orderStatusToString(item.status)}
+                      </Text>
+                    </View>
+                  </View>
+
+                  <Text style={styles.customerName} numberOfLines={1}>
+                    {item.customerName ?? 'Walk-in Customer'}
+                  </Text>
+
+                  <View style={styles.cardBottomRow}>
+                    <Text style={styles.orderDate}>
+                      {new Date(item.createdAt).toLocaleDateString('en-IN', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric',
+                      })}
+                    </Text>
+                    <Text style={styles.orderTotal}>
+                      ₹{Number(item.total).toLocaleString('en-IN')}
+                    </Text>
                   </View>
                 </View>
-                <Text style={styles.cardCustomer}>{item.customerName ?? 'Unknown customer'}</Text>
-                <View style={styles.cardBottomRow}>
-                  <Text style={styles.cardDate}>{item.createdAt.toLocaleDateString()}</Text>
-                  <Text style={styles.cardTotal}>₹{item.total.toFixed(0)}</Text>
-                </View>
-              </View>
-            </TouchableOpacity>
+              </SpringTouch>
+            </FadeInUp>
           )}
+          ListFooterComponent={<View style={{ height: 24 }} />}
         />
       )}
     </View>
@@ -131,35 +289,224 @@ export default function OrdersScreen() {
 }
 
 const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: AppColors.background },
-  header: { padding: 16, paddingTop: 50, backgroundColor: AppColors.surface },
-  headerTitle: { fontSize: 18, fontWeight: '700', color: AppColors.textPrimary },
-  headerSubtitle: { fontSize: 12.5, color: AppColors.textSecondary, marginTop: 2 },
-  tabBar: { backgroundColor: AppColors.surface, borderBottomWidth: 1, borderColor: AppColors.border, flexGrow: 0 },
-  tabItem: { paddingHorizontal: 16, paddingVertical: 12 },
-  tabText: { color: AppColors.textSecondary, fontSize: 13, fontWeight: '500' },
-  tabTextActive: { color: AppColors.primary, fontWeight: '700' },
-  tabIndicator: { height: 2, backgroundColor: AppColors.primary, marginTop: 8, borderRadius: 1 },
-  centerFill: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24 },
-  errorText: { color: AppColors.textSecondary, fontSize: 12.5, textAlign: 'center', marginTop: 10 },
-  retryText: { color: AppColors.primary, marginTop: 10 },
-  emptyText: { color: AppColors.textSecondary, fontSize: 13 },
-  card: { flexDirection: 'row', alignItems: 'flex-start', backgroundColor: AppColors.surface, borderRadius: 15, borderWidth: 1, borderColor: AppColors.border, padding: 14, gap: 12 },
-  cardIcon: { width: 40, height: 40, borderRadius: 11, alignItems: 'center', justifyContent: 'center' },
-  cardTopRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  cardNumber: { flex: 1, color: AppColors.textPrimary, fontSize: 13.5, fontWeight: '700' },
-  statusPill: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 20 },
-  statusText: { fontSize: 10, fontWeight: '700' },
-  cardCustomer: { color: AppColors.textPrimary, fontSize: 13, fontWeight: '500', marginTop: 4 },
-  cardBottomRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 6 },
-  cardDate: { color: AppColors.textMuted, fontSize: 11 },
-  cardTotal: { color: AppColors.textPrimary, fontSize: 13.5, fontWeight: '700' },
+  flex: {
+    flex: 1,
+    backgroundColor: AppColors.background,
+  },
+
+  /* HEADER */
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingTop: 52,
+    paddingBottom: 14,
+    backgroundColor: AppColors.background,
+  },
   headerLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 8,
   },
   backBtn: {
-    padding: 4,
+    width: 36,
+    height: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerTitle: {
+    fontSize: 22,
+    fontWeight: '800',
+    color: AppColors.textPrimary,
+    letterSpacing: -0.5,
+  },
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  refreshBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: AppColors.surface,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: AppColors.border,
+    ...AppShadows.subtle,
+  },
+
+  /* SEARCH BAR */
+  searchContainer: {
+    paddingHorizontal: 16,
+    marginBottom: 10,
+  },
+  searchBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: AppColors.surface,
+    borderRadius: 24,
+    paddingHorizontal: 16,
+    height: 46,
+    borderWidth: 1,
+    borderColor: AppColors.border,
+    ...AppShadows.subtle,
+  },
+  searchInput: {
+    flex: 1,
+    marginLeft: 10,
+    fontSize: 14,
+    color: AppColors.textPrimary,
+    fontWeight: '500',
+  },
+
+  /* SEGMENTED TABS */
+  tabsContainer: {
+    marginBottom: 12,
+  },
+  tabsScroll: {
+    paddingHorizontal: 16,
+    gap: 8,
+  },
+  tabBtn: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: AppColors.surface,
+    borderWidth: 1,
+    borderColor: AppColors.border,
+    ...AppShadows.subtle,
+  },
+  tabBtnActive: {
+    backgroundColor: AppColors.primary,
+    borderColor: AppColors.primary,
+    ...AppShadows.glow,
+  },
+  tabBtnText: {
+    fontSize: 12.5,
+    fontWeight: '600',
+    color: AppColors.textSecondary,
+  },
+  tabBtnTextActive: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+  },
+
+  /* LIST CONTENT */
+  listContent: {
+    paddingHorizontal: 16,
+    paddingTop: 4,
+  },
+  orderCard: {
+    backgroundColor: AppColors.surface,
+    borderRadius: 18,
+    padding: 16,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: AppColors.border,
+    ...AppShadows.card,
+  },
+  cardTopRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 6,
+  },
+  orderIdWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  orderNumber: {
+    fontSize: 13.5,
+    fontWeight: '700',
+    color: AppColors.primary,
+  },
+  statusPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 9,
+    paddingVertical: 3.5,
+    borderRadius: 10,
+  },
+  statusText: {
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  customerName: {
+    fontSize: 15.5,
+    fontWeight: '700',
+    color: AppColors.textPrimary,
+    letterSpacing: -0.2,
+    marginBottom: 10,
+  },
+  cardBottomRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: 10,
+    borderTopWidth: 1,
+    borderTopColor: AppColors.borderSubtle,
+  },
+  orderDate: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: AppColors.textMuted,
+  },
+  orderTotal: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: AppColors.textPrimary,
+    letterSpacing: -0.3,
+  },
+
+  /* EMPTY & CENTER STATES */
+  centerFill: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+    paddingTop: 60,
+  },
+  emptyIconCircle: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: AppColors.surfaceSoft,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+  },
+  emptyTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: AppColors.textPrimary,
+    marginBottom: 4,
+  },
+  emptySubtitle: {
+    fontSize: 13,
+    color: AppColors.textSecondary,
+    textAlign: 'center',
+    marginTop: 4,
+  },
+  errorText: {
+    color: AppColors.danger,
+    fontSize: 13,
+    textAlign: 'center',
+    marginTop: 10,
+  },
+  retryBtn: {
+    backgroundColor: AppColors.primary,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 12,
+    marginTop: 14,
+  },
+  retryText: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+    fontSize: 13,
   },
 });

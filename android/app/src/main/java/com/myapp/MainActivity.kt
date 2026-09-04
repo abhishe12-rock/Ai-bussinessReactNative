@@ -1,11 +1,24 @@
 package com.myapp
 
+import android.os.Build
+import android.os.Bundle
+import androidx.core.view.WindowInsetsControllerCompat
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
 import com.facebook.react.defaults.DefaultReactActivityDelegate
 
 class MainActivity : ReactActivity() {
+
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    val controller = WindowInsetsControllerCompat(window, window.decorView)
+    controller.isAppearanceLightStatusBars = true
+    controller.isAppearanceLightNavigationBars = true
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      window.navigationBarColor = android.graphics.Color.WHITE
+    }
+  }
 
   /**
    * Returns the name of the main component registered from JavaScript. This is used to schedule

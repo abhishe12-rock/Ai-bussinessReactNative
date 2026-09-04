@@ -30,15 +30,16 @@ export default function PaymentsScreen() {
   return (
     <View style={styles.flex}>
       <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={{ marginTop: 29 }}
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-        >
-          <Icon name="chevron-left" color={AppColors.primary} size={30} />
-        </TouchableOpacity>
-        <Text style={[styles.headerTitle, { marginTop: 29 }]}>Payments</Text>
-        <View style={{ width: 22 }} />
+        <View style={styles.headerLeft}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backBtn}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Icon name="chevron-left" color={AppColors.primary} size={30} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Payments</Text>
+        </View>
       </View>
       <ScrollView contentContainerStyle={styles.content} refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}>
         <View style={styles.gradientCard}>
@@ -97,27 +98,42 @@ export default function PaymentsScreen() {
 
 const styles = StyleSheet.create({
   flex: { flex: 1, backgroundColor: AppColors.background },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, backgroundColor: AppColors.surface, borderBottomWidth: 1, borderColor: AppColors.border },
-  headerTitle: { fontSize: 18, fontWeight: '700', color: AppColors.textPrimary },
-  content: { padding: 16, paddingBottom: 24 },
-  gradientCard: { backgroundColor: AppColors.primary, borderRadius: 18, padding: 16 },
-  gradientLabel: { color: '#ffffffd9', fontSize: 12 },
-  gradientValue: { color: '#fff', fontSize: 24, fontWeight: '800', marginTop: 4 },
-  chipRow: { flexDirection: 'row', gap: 8, marginTop: 16 },
-  chip: { paddingHorizontal: 14, paddingVertical: 9, borderRadius: 20, backgroundColor: AppColors.surface, borderWidth: 1, borderColor: AppColors.border },
+  header: {
+    paddingHorizontal: 16, paddingTop: 50, paddingBottom: 14,
+    backgroundColor: AppColors.surface, borderBottomWidth: 1, borderColor: AppColors.border,
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  backBtn: {
+    marginLeft: -6,
+  },
+  headerTitle: { fontSize: 17, fontWeight: '700', color: AppColors.textPrimary, letterSpacing: -0.3 },
+  content: { padding: 16, paddingBottom: 32 },
+  gradientCard: { backgroundColor: AppColors.primary, borderRadius: 14, padding: 16 },
+  gradientLabel: { color: 'rgba(255,255,255,0.8)', fontSize: 11.5, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.5 },
+  gradientValue: { color: '#fff', fontSize: 24, fontWeight: '800', marginTop: 4, letterSpacing: -0.5 },
+  chipRow: { flexDirection: 'row', gap: 8, marginTop: 14 },
+  chip: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 8, backgroundColor: AppColors.surface, borderWidth: 1, borderColor: AppColors.border },
   chipSelected: { backgroundColor: AppColors.primary, borderColor: AppColors.primary },
-  chipText: { color: AppColors.textSecondary, fontSize: 12.5, fontWeight: '600' },
+  chipText: { color: AppColors.textSecondary, fontSize: 12, fontWeight: '600' },
   chipTextSelected: { color: '#fff' },
   errorText: { color: AppColors.danger, fontSize: 12.5, textAlign: 'center' },
-  retryText: { color: AppColors.primary, marginTop: 10, textAlign: 'center' },
+  retryText: { color: AppColors.primary, marginTop: 10, textAlign: 'center', fontWeight: '600' },
   emptyText: { color: AppColors.textSecondary, fontSize: 13, textAlign: 'center', marginTop: 40 },
-  card: { flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.surface, borderRadius: 14, borderWidth: 1, borderColor: AppColors.border, padding: 13, marginTop: 16 },
+  card: {
+    flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.surface,
+    borderRadius: 12, borderWidth: 1, borderColor: AppColors.border, padding: 13, marginTop: 10,
+    shadowColor: AppColors.textPrimary, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.02, shadowRadius: 4, elevation: 1,
+  },
   customerName: { color: AppColors.textPrimary, fontSize: 13.5, fontWeight: '700' },
   invoiceText: { color: AppColors.textSecondary, fontSize: 12, marginTop: 2 },
   amountsRow: { flexDirection: 'row', gap: 10, marginTop: 4 },
   amountMuted: { color: AppColors.textMuted, fontSize: 11 },
-  amountPaid: { color: AppColors.success, fontSize: 11 },
+  amountPaid: { color: AppColors.success, fontSize: 11, fontWeight: '600' },
   remaining: { fontSize: 14, fontWeight: '800' },
-  recordChip: { backgroundColor: AppColors.primarySoft, borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4, marginTop: 4 },
+  recordChip: { backgroundColor: AppColors.primarySoft, borderRadius: 6, paddingHorizontal: 10, paddingVertical: 4, marginTop: 4 },
   recordChipText: { color: AppColors.primary, fontSize: 11, fontWeight: '700' },
 });

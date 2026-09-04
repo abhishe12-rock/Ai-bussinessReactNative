@@ -1,16 +1,20 @@
 
 import React from 'react';
-import { View, Text, Dimensions, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Dimensions, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import {
   createDrawerNavigator,
   DrawerContentComponentProps,
   DrawerContentScrollView,
 } from '@react-navigation/drawer';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useRoute } from '@react-navigation/native';
+import { useRoute, useNavigation } from '@react-navigation/native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Svg, { Defs, LinearGradient as SvgLinearGradient, Stop, Rect } from 'react-native-svg';
+import { supabase } from '../lib/supabase';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import DashboardScreen, { getVisibleDrawerItems, DrawerItemDef } from '../screens/Auth/Dashboard/DashboardScreen';
 import { AppColors } from '../screens/theme/AppColors';
+import { FloatingGeometricOrb, SpringTouch } from '../screens/theme/Animations';
 
 // Import all customer screens
 import CustomerListScreen from '../screens/Customer/CustomerListScreen';
@@ -83,11 +87,28 @@ import LedgerScreen from '../screens/Finance/LedgerScreen';
 
 
 import TransactionsScreen from '../screens/Finance/TransactionsScreen';
+import ReportsScreen from '../screens/Reports/ReportsScreen';
 
 function Stub({ name }: { name: string }) {
+  const navigation = useNavigation<any>();
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: AppColors.background }}>
-      <Text style={{ color: AppColors.textSecondary }}>{name} — not converted yet</Text>
+    <View style={stubStyles.container}>
+      <View style={stubStyles.card}>
+        <View style={stubStyles.iconBox}>
+          <MaterialCommunityIcons name="auto-fix" size={32} color={AppColors.primary} />
+        </View>
+        <Text style={stubStyles.title}>{name}</Text>
+        <Text style={stubStyles.subtitle}>
+          This AI enterprise feature is currently scheduled for the next platform release.
+        </Text>
+        <TouchableOpacity
+          style={stubStyles.button}
+          onPress={() => navigation.navigate('Dashboard')}
+          activeOpacity={0.8}
+        >
+          <Text style={stubStyles.buttonText}>Back to Dashboard</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -209,7 +230,7 @@ function FinanceStackNavigator() {
       <FinanceStack.Screen name="Loans" component={LoansScreen} />
       <FinanceStack.Screen name="Emi" component={EmiScreen} />
       <FinanceStack.Screen name="Ledger" component={LedgerScreen} />
-      
+
       <FinanceStack.Screen name="Transactions" component={TransactionsScreen} />
     </FinanceStack.Navigator>
   );
@@ -227,7 +248,7 @@ const SCREEN_COMPONENTS: Record<string, React.ComponentType> = {
   EmployeeList: EmployeeStackNavigator,
   Repairs: RepairsStackNavigator,   // ← changed from () => <Stub name="Repairs" />
   Finance: FinanceStackNavigator,   // ← changed from () => <Stub name="Finance" />
-  Reports: () => <Stub name="Reports" />,
+  Reports: ReportsScreen,
   Documents: () => <Stub name="Document Center" />,
   AiAgents: () => <Stub name="AI Agents" />,
   Admin: () => <Stub name="Admin" />,
@@ -239,7 +260,7 @@ const SCREEN_COMPONENTS: Record<string, React.ComponentType> = {
 };
 
 // One icon per module — falls back to a generic icon if a screen key isn't listed here.
-const SCREEN_ICONS: Record<string, keyof typeof MaterialCommunityIcons.glyphMap> = {
+const SCREEN_ICONS: Record<string, string> = {
   Dashboard: 'view-dashboard-outline',
   AiAssistant: 'robot-outline',
   CustomerList: 'account-group-outline',
@@ -261,89 +282,262 @@ const SCREEN_ICONS: Record<string, keyof typeof MaterialCommunityIcons.glyphMap>
   MyActivity: 'history',
 };
 
-const DEFAULT_ICON: keyof typeof MaterialCommunityIcons.glyphMap = 'apps';
+const DEFAULT_ICON = 'apps';
 
 const Drawer = createDrawerNavigator();
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-function CustomDrawerContent(props: DrawerContentComponentProps) {
-  const route = useRoute();
-  const params = (route.params as any) ?? {};
-  const employeeName = params.employeeName as string | undefined;
+const MODULE_COLORS: Record<string, { bg: string; color: string }> = {
+  Dashboard: { bg: '#EEECFE', color: '#5B4DF8' },
+  CustomerList: { bg: '#EFF6FF', color: '#3B82F6' },
+  Sales: { bg: '#ECFDF5', color: '#10B981' },
+  Purchase: { bg: '#FFF7ED', color: '#F97316' },
+  Orders: { bg: '#F5F3FF', color: '#8B5CF6' },
+  Inventory: { bg: '#F0F9FF', color: '#0EA5E9' },
+  Repairs: { bg: '#FFFBEB', color: '#F59E0B' },
+  Finance: { bg: '#FEF3C7', color: '#D97706' },
+  Reports: { bg: '#FFF1F2', color: '#F43F5E' },
+  EmployeeList: { bg: '#EEF2FF', color: '#6366F1' },
+  PayrollCalculation: { bg: '#EEF2FF', color: '#6366F1' },
+  PayrollView: { bg: '#EEF2FF', color: '#6366F1' },
+  Admin: { bg: '#F1F5F9', color: '#64748B' },
+  Documents: { bg: '#F0FDF4', color: '#16A34A' },
+  AiAssistant: { bg: '#F5F3FF', color: '#8B5CF6' },
+  AiAgents: { bg: '#F5F3FF', color: '#8B5CF6' },
+};
+
+const MAIN_MODULE_KEYS = [
+  'CustomerList',
+  'Sales',
+  'Purchase',
+  'Orders',
+  'Inventory',
+  'Repairs',
+  'EmployeeList',
+  'PayrollCalculation',
+  'PayrollView',
+];
+
+function CustomDrawerContent(props: DrawerContentComponentProps & { parentRoute?: any }) {
+  const insets = useSafeAreaInsets();
+  const params = (props.parentRoute?.params as any) ?? {};
+  const [employeeName, setEmployeeName] = React.useState<string>(
+    params.employeeName && params.employeeName !== 'Employee' ? params.employeeName : 'Abhishek'
+  );
+
+  React.useEffect(() => {
+    if (params.employeeName && params.employeeName !== 'Employee') {
+      setEmployeeName(params.employeeName);
+    } else {
+      supabase.auth.getUser().then(({ data: { user } }) => {
+        if (user?.user_metadata?.full_name) {
+          setEmployeeName(user.user_metadata.full_name);
+        }
+      });
+    }
+  }, [params.employeeName]);
+
   const { state, navigation, descriptors } = props;
 
-  return (
-    <View style={{ flex: 1, backgroundColor: AppColors.background }}>
-      {/* Header — themed off AppColors.primary */}
-      <View style={styles.header}>
-        <View style={styles.avatar}>
-          <MaterialCommunityIcons
-            name={employeeName ? 'account' : 'domain'}
-            size={26}
-            color={AppColors.white ?? '#fff'}
-          />
+  const handleLogout = () => {
+    Alert.alert(
+      'Logout',
+      'Are you sure you want to logout?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Logout',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await supabase.auth.signOut();
+            } catch (e) {
+              console.warn('Logout signOut error:', e);
+            }
+            const rootNav = navigation.getParent() ?? navigation;
+            rootNav.reset({
+              index: 0,
+              routes: [{ name: 'Login' as never }],
+            });
+          },
+        },
+      ],
+    );
+  };
+
+  const dashboardRoute = state.routes.find((r) => r.name === 'Dashboard');
+  const mainRoutes = state.routes.filter((r) => MAIN_MODULE_KEYS.includes(r.name));
+  const otherRoutes = state.routes.filter(
+    (r) => r.name !== 'Dashboard' && !MAIN_MODULE_KEYS.includes(r.name),
+  );
+
+  const renderDrawerItem = (r: typeof state.routes[0]) => {
+    const routeIndex = state.routes.findIndex((item) => item.key === r.key);
+    const { options } = descriptors[r.key];
+    const label = (options.title ?? r.name) as string;
+    const isFocused = state.index === routeIndex;
+    const iconName = SCREEN_ICONS[r.name] ?? DEFAULT_ICON;
+    const itemTheme = MODULE_COLORS[r.name] ?? { bg: '#EEECFE', color: AppColors.primary };
+
+    return (
+      <SpringTouch
+        key={r.key}
+        style={{ width: '100%' }}
+        activeScale={0.97}
+        onPress={() => {
+          const event = navigation.emit({ type: 'drawerItemPress', target: r.key, canPreventDefault: true });
+          if (!isFocused && !event.defaultPrevented) {
+            navigation.navigate(r.name);
+          }
+        }}
+      >
+        <View
+          style={[
+            styles.item,
+            isFocused && styles.itemFocused,
+          ]}
+        >
+          <View
+            style={[
+              styles.iconBox,
+              { backgroundColor: isFocused ? AppColors.primary : itemTheme.bg },
+            ]}
+          >
+            <MaterialCommunityIcons
+              name={iconName}
+              size={20}
+              color={isFocused ? '#FFFFFF' : itemTheme.color}
+            />
+          </View>
+
+          <Text
+            numberOfLines={1}
+            style={[
+              styles.itemLabel,
+              isFocused && styles.itemLabelFocused,
+            ]}
+          >
+            {label}
+          </Text>
         </View>
-        <Text style={styles.headerTitle} numberOfLines={1}>
-          {employeeName ?? 'Enterprise AI'}
-        </Text>
-        <Text style={styles.headerSubtitle}>
-          {employeeName ? 'Employee access' : 'Business Assistant'}
-        </Text>
+      </SpringTouch>
+    );
+  };
+
+  return (
+    <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+      {/* HEADER: Royal Purple Gradient Banner */}
+      <View
+        style={[
+          styles.header,
+          { paddingTop: insets.top > 0 ? insets.top + 14 : 26 },
+        ]}
+      >
+        <Svg
+          style={StyleSheet.absoluteFill}
+          width="100%"
+          height="100%"
+          pointerEvents="none"
+        >
+          <Defs>
+            <SvgLinearGradient id="drawerHeaderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <Stop offset="0%" stopColor="#5B4DF8" />
+              <Stop offset="100%" stopColor="#7C3AED" />
+            </SvgLinearGradient>
+          </Defs>
+          <Rect width="100%" height="100%" fill="url(#drawerHeaderGrad)" />
+        </Svg>
+
+        {/* Ambient Continuous Floating Geometric Orbs */}
+        <FloatingGeometricOrb
+          size={110}
+          top={-25}
+          right={-20}
+          color="rgba(255, 255, 255, 0.12)"
+          duration={4200}
+          floatDistance={8}
+        />
+        <FloatingGeometricOrb
+          size={70}
+          bottom={-25}
+          right={55}
+          color="rgba(255, 255, 255, 0.08)"
+          duration={5200}
+          floatDistance={6}
+        />
+
+        <View style={styles.headerUserRow}>
+          <View style={styles.avatar}>
+            <Text style={styles.avatarLetter}>
+              {(employeeName || 'A').charAt(0).toUpperCase()}
+            </Text>
+          </View>
+          <View style={styles.headerUserInfo}>
+            <Text style={styles.headerTitle} numberOfLines={1}>
+              {employeeName || 'Abhishek'}
+            </Text>
+            <View style={styles.roleBadgeRow}>
+
+              <Text style={styles.headerSubText}>AI Business Hub</Text>
+            </View>
+          </View>
+        </View>
       </View>
 
-      {/* Module list — icon box + spacing + module name */}
-      <DrawerContentScrollView {...props} contentContainerStyle={styles.listContent}>
-        {state.routes.map((r, index) => {
-          const { options } = descriptors[r.key];
-          const label = (options.title ?? r.name) as string;
-          const isFocused = state.index === index;
-          const iconName = SCREEN_ICONS[r.name] ?? DEFAULT_ICON;
+      {/* MODULE LIST */}
+      <DrawerContentScrollView
+        {...props}
+        style={{ paddingTop: 0 }}
+        contentContainerStyle={[styles.listContent, { paddingTop: 8 }]}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* DASHBOARD ITEM */}
+        {dashboardRoute && renderDrawerItem(dashboardRoute)}
 
-          return (
-            <TouchableOpacity
-              key={r.key}
-              activeOpacity={0.7}
-              onPress={() => {
-                const event = navigation.emit({ type: 'drawerItemPress', target: r.key, canPreventDefault: true });
-                if (!isFocused && !event.defaultPrevented) {
-                  navigation.navigate(r.name);
-                }
-              }}
-              style={[
-                styles.item,
-                isFocused && { backgroundColor: `${AppColors.primary}1A` },
-              ]}
-            >
-              <View
-                style={[
-                  styles.iconBox,
-                  { backgroundColor: isFocused ? AppColors.primary : `${AppColors.primary}14` },
-                ]}
-              >
-                <MaterialCommunityIcons
-                  name={iconName}
-                  size={20}
-                  color={isFocused ? (AppColors.white ?? '#fff') : AppColors.primary}
-                />
-              </View>
-              <Text
-                numberOfLines={1}
-                style={[
-                  styles.itemLabel,
-                  { color: isFocused ? AppColors.primary : AppColors.textPrimary ?? AppColors.textSecondary },
-                  isFocused && { fontWeight: '700' },
-                ]}
-              >
-                {label}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
+        {/* MAIN MODULES SECTION */}
+        {mainRoutes.length > 0 && (
+          <>
+            <Text style={styles.sectionCaption}>MAIN MODULES</Text>
+            {mainRoutes.map(renderDrawerItem)}
+          </>
+        )}
+
+        {/* OTHERS SECTION */}
+        {otherRoutes.length > 0 && (
+          <>
+            <Text style={styles.sectionCaption}>OTHERS</Text>
+            {otherRoutes.map(renderDrawerItem)}
+          </>
+        )}
       </DrawerContentScrollView>
 
-      {/* Footer */}
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>v1.0.0</Text>
+      {/* FOOTER: Premium Logout & App Version */}
+      <View
+        style={[
+          styles.footer,
+          { paddingBottom: Math.max(insets.bottom, 12) + 8 },
+        ]}
+      >
+        <SpringTouch
+          style={{ width: '100%' }}
+          activeScale={0.98}
+          onPress={handleLogout}
+        >
+          <View style={styles.logoutBtn}>
+            <View style={styles.logoutLeft}>
+              <View style={styles.logoutIconWrap}>
+                <MaterialCommunityIcons name="logout" size={18} color="#EF4444" />
+              </View>
+              <View style={styles.logoutTextCol}>
+                <Text style={styles.logoutTitle}>Logout</Text>
+                <Text style={styles.logoutSubtitle}>Sign out of account</Text>
+              </View>
+            </View>
+            <MaterialCommunityIcons name="chevron-right" size={20} color="#F87171" />
+          </View>
+        </SpringTouch>
+
+        <Text style={styles.footerVersionText}>AI Business Hub • v1.0.0</Text>
       </View>
     </View>
   );
@@ -351,64 +545,199 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
 
 const styles = StyleSheet.create({
   header: {
-    paddingTop: 48,
+    backgroundColor: '#5B4DF8',
     paddingBottom: 20,
-    paddingHorizontal: 20,
-    backgroundColor: AppColors.primary,
+    paddingHorizontal: 18,
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  headerDecoCircle1: {
+    position: 'absolute',
+    right: -20,
+    top: -20,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  headerDecoCircle2: {
+    position: 'absolute',
+    right: 55,
+    bottom: -25,
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+  },
+  headerUserRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    position: 'relative',
+    zIndex: 2,
   },
   avatar: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    backgroundColor: `${AppColors.white ?? '#fff'}33`,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 12,
+    marginRight: 14,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  avatarLetter: {
+    fontSize: 22,
+    fontWeight: '800',
+    color: '#5B4DF8',
+  },
+  headerUserInfo: {
+    flex: 1,
   },
   headerTitle: {
-    color: AppColors.white ?? '#fff',
+    color: '#FFFFFF',
     fontSize: 18,
-    fontWeight: '700',
+    fontWeight: '800',
+    letterSpacing: -0.3,
   },
-  headerSubtitle: {
-    color: `${AppColors.white ?? '#fff'}aa`,
-    fontSize: 12,
-    marginTop: 2,
+  roleBadgeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 4,
+  },
+  roleBadge: {
+    alignSelf: 'flex-start',
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 8,
+  },
+  roleBadgeText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  headerSubText: {
+    fontSize: 11.5,
+    color: 'rgba(255, 255, 255, 0.85)',
+    fontWeight: '500',
   },
   listContent: {
-    paddingTop: 8,
-    paddingHorizontal: 10,
+    paddingTop: 12,
+    paddingHorizontal: 12,
+    paddingBottom: 20,
+  },
+  sectionCaption: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#94A3B8',
+    letterSpacing: 0.8,
+    marginTop: 18,
+    marginBottom: 8,
+    marginLeft: 8,
   },
   item: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 10,
-    paddingVertical: 10,
+    borderRadius: 14,
+    paddingVertical: 9,
     paddingHorizontal: 10,
     marginVertical: 2,
   },
+  itemFocused: {
+    backgroundColor: '#EEECFE',
+  },
   iconBox: {
-    width: 34,
-    height: 34,
-    borderRadius: 9,
+    width: 38,
+    height: 38,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
   },
   itemLabel: {
-    marginLeft: 14, // the "space" between icon and module name
+    marginLeft: 12,
     fontSize: 14,
+    fontWeight: '600',
+    color: AppColors.textPrimary,
     flexShrink: 1,
   },
+  itemLabelFocused: {
+    color: AppColors.primary,
+    fontWeight: '800',
+  },
   footer: {
-    padding: 16,
+    paddingTop: 12,
+    paddingHorizontal: 16,
     borderTopWidth: 1,
-    borderTopColor: `${AppColors.textSecondary ?? '#999'}22`,
+    borderTopColor: '#F1F5F9',
+    backgroundColor: '#FFFFFF',
   },
-  footerText: {
+  logoutBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#FEF2F2',
+    borderWidth: 1,
+    borderColor: '#FEE2E2',
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 14,
+  },
+  logoutLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  logoutIconWrap: {
+    width: 36,
+    height: 36,
+    borderRadius: 11,
+    backgroundColor: '#FEE2E2',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  logoutTextCol: {
+    justifyContent: 'center',
+  },
+  logoutTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#EF4444',
+    letterSpacing: -0.2,
+  },
+  logoutSubtitle: {
     fontSize: 11,
-    color: AppColors.textSecondary ?? '#999',
-    textAlign: 'center',
+    fontWeight: '500',
+    color: '#B91C1C',
+    opacity: 0.75,
+    marginTop: 1,
   },
+  footerVersionText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#94A3B8',
+    textAlign: 'center',
+    marginTop: 10,
+    letterSpacing: 0.3,
+  },
+});
+
+const stubStyles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: AppColors.background, alignItems: 'center', justifyContent: 'center', padding: 24 },
+  card: {
+    backgroundColor: AppColors.surface, borderRadius: 20, borderWidth: 1, borderColor: AppColors.border,
+    padding: 28, alignItems: 'center', width: '100%', maxWidth: 360,
+    shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.4, shadowRadius: 12, elevation: 4,
+  },
+  iconBox: { width: 64, height: 64, borderRadius: 18, backgroundColor: AppColors.primarySoft, alignItems: 'center', justifyContent: 'center', marginBottom: 16, borderWidth: 1, borderColor: `${AppColors.primary}30` },
+  title: { color: AppColors.textPrimary, fontSize: 18, fontWeight: '800', letterSpacing: -0.3, textAlign: 'center' },
+  subtitle: { color: AppColors.textSecondary, fontSize: 13, lineHeight: 18, textAlign: 'center', marginTop: 8, marginBottom: 20 },
+  button: { backgroundColor: AppColors.primary, borderRadius: 14, height: 46, paddingHorizontal: 20, alignItems: 'center', justifyContent: 'center', shadowColor: AppColors.primary, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.35, shadowRadius: 10, elevation: 4 },
+  buttonText: { color: '#fff', fontSize: 14, fontWeight: '700' },
 });
 
 export default function DrawerNavigator({ route }: any) {
@@ -418,7 +747,7 @@ export default function DrawerNavigator({ route }: any) {
   return (
     <Drawer.Navigator
       initialRouteName="Dashboard"
-      drawerContent={(props) => <CustomDrawerContent {...props} />}
+      drawerContent={(props) => <CustomDrawerContent {...props} parentRoute={route} />}
       screenOptions={{
         headerShown: false,
         drawerType: 'front',

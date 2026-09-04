@@ -89,11 +89,16 @@ export default function OrderDetailsScreen() {
   return (
     <View style={styles.flex}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={goBackWithResult}>
-          <Icon name="arrow-back" color={AppColors.textPrimary} size={22} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>{order.orderNumber}</Text>
-        <View style={{ width: 22 }} />
+        <View style={styles.headerLeft}>
+          <TouchableOpacity
+            onPress={goBackWithResult}
+            style={styles.backBtn}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Icon name="chevron-left" color={AppColors.primary} size={30} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>{order.orderNumber}</Text>
+        </View>
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
@@ -256,32 +261,52 @@ function Row({ label, value, isTotal, color }: { label: string; value: string; i
 const styles = StyleSheet.create({
   flex: { flex: 1, backgroundColor: AppColors.background },
   centerFill: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: AppColors.background },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, backgroundColor: AppColors.surface, borderBottomWidth: 1, borderColor: AppColors.border },
-  headerTitle: { fontSize: 17, fontWeight: '700', color: AppColors.textPrimary },
+  header: {
+    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
+    paddingHorizontal: 16, paddingTop: 50, paddingBottom: 14,
+    backgroundColor: AppColors.surface, borderBottomWidth: 1, borderColor: AppColors.border,
+  },
+  headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  backBtn: { marginLeft: -6 },
+  headerTitle: { fontSize: 17, fontWeight: '700', color: AppColors.textPrimary, letterSpacing: -0.3 },
   content: { padding: 16, paddingBottom: 24 },
   statusChip: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 20, alignSelf: 'flex-start' },
   statusDot: { width: 8, height: 8, borderRadius: 4 },
   statusChipText: { fontSize: 12, fontWeight: '700' },
-  sectionLabel: { color: AppColors.textSecondary, fontSize: 13, fontWeight: '600', marginTop: 18, marginBottom: 8 },
-  customerCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.surface, borderRadius: 14, borderWidth: 1, borderColor: AppColors.border, padding: 14, gap: 12 },
-  customerIcon: { width: 38, height: 38, borderRadius: 11, backgroundColor: AppColors.primarySoft, alignItems: 'center', justifyContent: 'center' },
+  sectionLabel: { color: AppColors.textSecondary, fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5, marginTop: 18, marginBottom: 8 },
+  customerCard: {
+    flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.surface,
+    borderRadius: 12, borderWidth: 1, borderColor: AppColors.border, padding: 14, gap: 12,
+    shadowColor: AppColors.textPrimary, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.02, shadowRadius: 4, elevation: 1,
+  },
+  customerIcon: { width: 38, height: 38, borderRadius: 10, backgroundColor: AppColors.primarySoft, alignItems: 'center', justifyContent: 'center' },
   customerName: { color: AppColors.textPrimary, fontSize: 14, fontWeight: '700' },
   customerPhone: { color: AppColors.textSecondary, fontSize: 12.5, marginTop: 2 },
-  addressCard: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, backgroundColor: AppColors.surface, borderRadius: 14, borderWidth: 1, borderColor: AppColors.border, padding: 14 },
+  addressCard: {
+    flexDirection: 'row', alignItems: 'flex-start', gap: 10, backgroundColor: AppColors.surface,
+    borderRadius: 12, borderWidth: 1, borderColor: AppColors.border, padding: 14,
+    shadowColor: AppColors.textPrimary, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.02, shadowRadius: 4, elevation: 1,
+  },
   addressText: { flex: 1, color: AppColors.textPrimary, fontSize: 13, lineHeight: 18 },
-  itemsCard: { backgroundColor: AppColors.surface, borderRadius: 16, borderWidth: 1, borderColor: AppColors.border },
+  itemsCard: {
+    backgroundColor: AppColors.surface, borderRadius: 12, borderWidth: 1, borderColor: AppColors.border,
+    shadowColor: AppColors.textPrimary, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.02, shadowRadius: 4, elevation: 1,
+  },
   itemRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, paddingVertical: 12 },
   itemRowBorder: { borderBottomWidth: 1, borderColor: AppColors.border },
   itemName: { color: AppColors.textPrimary, fontSize: 13.5, fontWeight: '600' },
   itemMeta: { color: AppColors.textSecondary, fontSize: 12, marginTop: 2 },
   itemTotal: { color: AppColors.textPrimary, fontSize: 13.5, fontWeight: '700' },
-  summaryCard: { backgroundColor: AppColors.surface, borderRadius: 16, borderWidth: 1, borderColor: AppColors.border, padding: 14 },
+  summaryCard: {
+    backgroundColor: AppColors.surface, borderRadius: 12, borderWidth: 1, borderColor: AppColors.border, padding: 14,
+    shadowColor: AppColors.textPrimary, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.02, shadowRadius: 4, elevation: 1,
+  },
   row: { flexDirection: 'row', alignItems: 'center', paddingVertical: 4 },
   rowLabel: { color: AppColors.textSecondary, fontSize: 13 },
   rowLabelTotal: { color: AppColors.textPrimary, fontSize: 14.5, fontWeight: '700' },
   rowValue: { fontSize: 13, fontWeight: '700' },
   divider: { height: 1, backgroundColor: AppColors.border, marginVertical: 10 },
-  cancelledBox: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, backgroundColor: AppColors.dangerSoft, borderRadius: 14, padding: 14 },
+  cancelledBox: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, backgroundColor: AppColors.dangerSoft, borderRadius: 12, padding: 14 },
   cancelledTitle: { color: AppColors.danger, fontSize: 13.5, fontWeight: '700' },
   cancelledReason: { color: AppColors.danger, fontSize: 12, marginTop: 2 },
   timelineRow: { flexDirection: 'row', alignItems: 'flex-start' },
@@ -295,10 +320,10 @@ const styles = StyleSheet.create({
   primaryButtonText: { color: '#fff', fontSize: 14, fontWeight: '600' },
   dangerOutlineButton: { borderWidth: 1, borderColor: AppColors.danger, borderRadius: 12, height: 46, alignItems: 'center', justifyContent: 'center', marginTop: 10 },
   dangerOutlineText: { color: AppColors.danger, fontSize: 14, fontWeight: '600' },
-  deliveredBox: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: AppColors.successSoft, borderRadius: 14, padding: 14, marginTop: 22 },
+  deliveredBox: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: AppColors.successSoft, borderRadius: 12, padding: 14, marginTop: 22 },
   deliveredText: { color: AppColors.success, fontSize: 13.5, fontWeight: '700' },
   dialogBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', alignItems: 'center', justifyContent: 'center' },
-  dialog: { backgroundColor: AppColors.surface, borderRadius: 16, padding: 20, width: '85%' },
+  dialog: { backgroundColor: AppColors.surface, borderRadius: 14, padding: 20, width: '85%', borderWidth: 1, borderColor: AppColors.border },
   dialogTitle: { color: AppColors.textPrimary, fontSize: 16, fontWeight: '700', marginBottom: 14 },
   dialogInput: { borderWidth: 1, borderColor: AppColors.border, borderRadius: 10, padding: 12, color: AppColors.textPrimary, fontSize: 13.5 },
   dialogActions: { flexDirection: 'row', justifyContent: 'flex-end', gap: 20, marginTop: 16 },

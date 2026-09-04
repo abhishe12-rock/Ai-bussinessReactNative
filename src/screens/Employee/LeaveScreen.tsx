@@ -64,13 +64,12 @@ export default function LeaveScreen() {
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
-          style={{ marginTop: 29 }}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
           <Icon name="chevron-left" color={AppColors.primary} size={30} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { marginTop: 29 }]}>Leave requests</Text>
-        <View style={{ width: 22 }} />
+        <Text style={styles.headerTitle}>Leave Requests</Text>
+        <View style={{ width: 30 }} />
       </View>
 
       <View style={styles.filterBar}>
@@ -96,7 +95,7 @@ export default function LeaveScreen() {
       {loading ? (
         <View style={styles.centerFill}><ActivityIndicator color={AppColors.primary} /></View>
       ) : error ? (
-        <View style={styles.centerFill}><Text style={{ color: AppColors.danger, fontSize: 12.5 }}>{error}</Text></View>
+        <View style={styles.centerFill}><Text style={{ color: AppColors.danger, fontSize: 12.5, fontWeight: '500' }}>{error}</Text></View>
       ) : filtered.length === 0 ? (
         <View style={styles.centerFill}><Text style={styles.emptyText}>No leave requests match this filter</Text></View>
       ) : (
@@ -116,10 +115,10 @@ export default function LeaveScreen() {
                 {r.reason ? <Text style={styles.cardReason}>Reason: {r.reason}</Text> : null}
                 {r.status === 'PENDING' && (
                   <View style={styles.actions}>
-                    <TouchableOpacity style={styles.rejectButton} onPress={() => updateStatus(r, 'REJECTED')}>
+                    <TouchableOpacity style={styles.rejectButton} onPress={() => updateStatus(r, 'REJECTED')} activeOpacity={0.7}>
                       <Text style={styles.rejectText}>Reject</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.approveButton} onPress={() => updateStatus(r, 'APPROVED')}>
+                    <TouchableOpacity style={styles.approveButton} onPress={() => updateStatus(r, 'APPROVED')} activeOpacity={0.7}>
                       <Text style={styles.approveText}>Approve</Text>
                     </TouchableOpacity>
                   </View>
@@ -135,28 +134,50 @@ export default function LeaveScreen() {
 
 const styles = StyleSheet.create({
   flex: { flex: 1, backgroundColor: AppColors.background },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, backgroundColor: AppColors.surface, borderBottomWidth: 1, borderColor: AppColors.border },
-  headerTitle: { fontSize: 18, fontWeight: '700', color: AppColors.textPrimary },
-  filterBar: { padding: 16, paddingBottom: 8, gap: 10 },
-  chip: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, backgroundColor: AppColors.surface, borderWidth: 1, borderColor: AppColors.border, marginRight: 8 },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 50,
+    paddingBottom: 14,
+    backgroundColor: AppColors.surface,
+    borderBottomWidth: 1,
+    borderColor: AppColors.border,
+  },
+  headerTitle: { fontSize: 17, fontWeight: '700', color: AppColors.textPrimary, letterSpacing: -0.3 },
+  filterBar: { paddingHorizontal: 16, paddingTop: 14, paddingBottom: 8, gap: 10 },
+  chip: { paddingHorizontal: 13, paddingVertical: 7, borderRadius: 8, backgroundColor: AppColors.surface, borderWidth: 1, borderColor: AppColors.border, marginRight: 8 },
   chipSelected: { backgroundColor: AppColors.primary, borderColor: AppColors.primary },
   chipText: { fontSize: 12, color: AppColors.textSecondary, fontWeight: '600' },
   chipTextSelected: { color: '#fff' },
-  employeeFilterBox: { flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.surface, borderRadius: 12, borderWidth: 1, borderColor: AppColors.border, paddingHorizontal: 12 },
+  employeeFilterBox: { flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.surface, borderRadius: 10, borderWidth: 1, borderColor: AppColors.border, paddingHorizontal: 10 },
   centerFill: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24 },
   emptyText: { color: AppColors.textSecondary, fontSize: 13 },
   content: { padding: 16, paddingBottom: 24 },
-  card: { backgroundColor: AppColors.surface, borderRadius: 16, borderWidth: 1, borderColor: AppColors.border, padding: 14, marginBottom: 12 },
+  card: {
+    backgroundColor: AppColors.surface,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: AppColors.border,
+    padding: 14,
+    marginBottom: 10,
+    shadowColor: AppColors.textPrimary,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.03,
+    shadowRadius: 6,
+    elevation: 1,
+  },
   cardTopRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   cardName: { color: AppColors.textPrimary, fontSize: 14.5, fontWeight: '700' },
-  cardSub: { color: AppColors.textSecondary, fontSize: 12.5, marginTop: 6 },
-  cardMuted: { color: AppColors.textMuted, fontSize: 11.5, marginTop: 3 },
-  cardReason: { color: AppColors.textSecondary, fontSize: 12, marginTop: 6 },
-  pill: { paddingHorizontal: 9, paddingVertical: 4, borderRadius: 20 },
+  cardSub: { color: AppColors.textSecondary, fontSize: 12.5, marginTop: 4 },
+  cardMuted: { color: AppColors.textMuted, fontSize: 11.5, marginTop: 2 },
+  cardReason: { color: AppColors.textSecondary, fontSize: 12, marginTop: 6, lineHeight: 17 },
+  pill: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6 },
   pillText: { fontSize: 10.5, fontWeight: '700' },
   actions: { flexDirection: 'row', gap: 10, marginTop: 12 },
-  rejectButton: { flex: 1, borderWidth: 1, borderColor: AppColors.danger, borderRadius: 10, paddingVertical: 10, alignItems: 'center' },
+  rejectButton: { flex: 1, borderWidth: 1, borderColor: AppColors.danger, borderRadius: 8, paddingVertical: 9, alignItems: 'center' },
   rejectText: { color: AppColors.danger, fontSize: 12.5, fontWeight: '600' },
-  approveButton: { flex: 1, backgroundColor: AppColors.primary, borderRadius: 10, paddingVertical: 10, alignItems: 'center' },
+  approveButton: { flex: 1, backgroundColor: AppColors.primary, borderRadius: 8, paddingVertical: 9, alignItems: 'center' },
   approveText: { color: '#fff', fontSize: 12.5, fontWeight: '600' },
 });

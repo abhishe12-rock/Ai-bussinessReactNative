@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
-import { Linking } from 'react-native';
+import { Linking, StatusBar } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
 import RootNavigator, { RootStackParamList } from './src/navigation/RootNavigator';
 
@@ -21,10 +22,13 @@ export default function App() {
   }, []);
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <NavigationContainer ref={navRef}>
-        <RootNavigator />
-      </NavigationContainer>
-    </GestureHandlerRootView>
+    <SafeAreaProvider>
+      <StatusBar barStyle="dark-content" />
+      <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#F6F8FC' }}>
+        <NavigationContainer ref={navRef}>
+          <RootNavigator />
+        </NavigationContainer>
+      </GestureHandlerRootView>
+    </SafeAreaProvider>
   );
 }

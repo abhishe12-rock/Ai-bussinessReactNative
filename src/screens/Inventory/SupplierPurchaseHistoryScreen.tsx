@@ -18,11 +18,16 @@ export default function SupplierPurchaseHistoryScreen() {
   return (
     <View style={styles.flex}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon name="arrow-back" color={AppColors.textPrimary} size={22} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>{supplier.name}</Text>
-        <View style={{ width: 22 }} />
+        <View style={styles.headerLeft}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backBtn}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Icon name="chevron-left" color={AppColors.primary} size={30} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>{supplier.name}</Text>
+        </View>
       </View>
 
       {RECORDS.length === 0 ? (
@@ -59,21 +64,34 @@ export default function SupplierPurchaseHistoryScreen() {
 
 const styles = StyleSheet.create({
   flex: { flex: 1, backgroundColor: AppColors.background },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, backgroundColor: AppColors.surface, borderBottomWidth: 1, borderColor: AppColors.border },
-  headerTitle: { fontSize: 17, fontWeight: '700', color: AppColors.textPrimary },
+  header: {
+    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
+    paddingHorizontal: 16, paddingTop: 50, paddingBottom: 14,
+    backgroundColor: AppColors.surface, borderBottomWidth: 1, borderColor: AppColors.border,
+  },
+  headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  backBtn: { marginLeft: -6 },
+  headerTitle: { fontSize: 17, fontWeight: '700', color: AppColors.textPrimary, letterSpacing: -0.3 },
   centerFill: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32 },
   emptyIconWrap: { width: 60, height: 60, borderRadius: 30, backgroundColor: AppColors.primarySoft, alignItems: 'center', justifyContent: 'center', marginBottom: 14 },
   emptyTitle: { color: AppColors.textPrimary, fontSize: 14.5, fontWeight: '700' },
   emptySubtitle: { color: AppColors.textSecondary, fontSize: 12.5, marginTop: 6, textAlign: 'center' },
-  content: { padding: 16, paddingBottom: 24 },
-  statBox: { borderRadius: 14, padding: 13 },
-  statLabel: { fontSize: 11, opacity: 0.85 },
+  content: { padding: 16, paddingBottom: 32 },
+  statBox: {
+    borderRadius: 12, padding: 12,
+    borderWidth: 1, borderColor: AppColors.border,
+    shadowColor: AppColors.textPrimary, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.02, shadowRadius: 4, elevation: 1,
+  },
+  statLabel: { fontSize: 11, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.4, opacity: 0.85 },
   statValue: { fontSize: 17, fontWeight: '800', marginTop: 5 },
-  sectionLabel: { color: AppColors.textSecondary, fontSize: 13, fontWeight: '600', marginTop: 22, marginBottom: 10 },
-  recordCard: { backgroundColor: AppColors.surface, borderRadius: 14, borderWidth: 1, borderColor: AppColors.border, padding: 13, marginBottom: 10 },
+  sectionLabel: { color: AppColors.textSecondary, fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5, marginTop: 24, marginBottom: 10 },
+  recordCard: {
+    backgroundColor: AppColors.surface, borderRadius: 12, borderWidth: 1, borderColor: AppColors.border, padding: 12, marginBottom: 8,
+    shadowColor: AppColors.textPrimary, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.02, shadowRadius: 4, elevation: 1,
+  },
   recordTopRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   poNumber: { color: AppColors.textPrimary, fontSize: 13.5, fontWeight: '700' },
-  statusPill: { backgroundColor: AppColors.successSoft, paddingHorizontal: 8, paddingVertical: 2, borderRadius: 20 },
+  statusPill: { backgroundColor: AppColors.successSoft, paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6 },
   statusText: { color: AppColors.success, fontSize: 10, fontWeight: '700' },
   amount: { color: AppColors.textPrimary, fontSize: 13.5, fontWeight: '700' },
   itemsText: { color: AppColors.textSecondary, fontSize: 12, marginTop: 5 },

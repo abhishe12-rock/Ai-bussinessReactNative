@@ -15,6 +15,7 @@ export interface RepairRecord {
   assignedTo?: string | null;
   assignedToName?: string | null;
   rejectionReason?: string | null;
+  cost?: number | null;
   createdAt: Date;
 }
 
@@ -33,6 +34,7 @@ export function repairFromMap(m: any): RepairRecord {
     assignedTo: m.assigned_to ?? null,
     assignedToName: m.employees ? m.employees.full_name : null,
     rejectionReason: m.rejection_reason ?? null,
+    cost: m.cost != null ? Number(m.cost) : null,
     createdAt: new Date(m.created_at),
   };
 }
@@ -153,6 +155,29 @@ export class RepairService {
 
   async updateRepairStatus(repairId: string, status: string): Promise<void> {
     const { error } = await this.client.from('repairs').update({ status }).eq('id', repairId);
+    if (error) throw error;
+  }
+
+  /// NEW: marks a repair COMPLETED and sets its final cost in the SAME
+  /// update. This matters — the `repairs_to_income` trigger only fires
+  /// when status becomes COMPLETED *and* cost > 0 in that one update.
+  /// If status and cost were set in two separate calls, the trigger
+  /// would fire on the status change while cost was still 0, and
+  /// silently create no Income row.
+  async completeRepair({
+    repairId,
+    cost,
+  }: {
+    repairId: string;
+    cost: number;
+  }): Promise<void> {
+    const { error } = await this.client
+      .from('repairs')
+      .update({
+        status: 'COMPLETED',
+        cost,
+      })
+      .eq('id', repairId);
     if (error) throw error;
   }
 

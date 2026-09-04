@@ -46,15 +46,16 @@ export default function ReturnsScreen() {
   return (
     <View style={styles.flex}>
       <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={{ marginTop: 29 }}
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-        >
-          <Icon name="chevron-left" color={AppColors.primary} size={30} />
-        </TouchableOpacity>
-        <Text style={[styles.headerTitle, { marginTop: 29 }]}>Returns</Text>
-        <View style={{ width: 22 }} />
+        <View style={styles.headerLeft}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backBtn}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Icon name="chevron-left" color={AppColors.primary} size={30} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Returns</Text>
+        </View>
       </View>
 
       <View style={styles.searchWrap}>
@@ -205,31 +206,53 @@ function ReturnSheet({ sale, items, onClose, onDone }: {
 
 const styles = StyleSheet.create({
   flex: { flex: 1, backgroundColor: AppColors.background },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, backgroundColor: AppColors.surface, borderBottomWidth: 1, borderColor: AppColors.border },
-  headerTitle: { fontSize: 18, fontWeight: '700', color: AppColors.textPrimary },
+  header: {
+    paddingHorizontal: 16, paddingTop: 50, paddingBottom: 14,
+    backgroundColor: AppColors.surface, borderBottomWidth: 1, borderColor: AppColors.border,
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  backBtn: {
+    marginLeft: -6,
+  },
+  headerTitle: { fontSize: 17, fontWeight: '700', color: AppColors.textPrimary, letterSpacing: -0.3 },
   searchWrap: { padding: 16, paddingBottom: 8 },
-  searchBox: { flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.surface, borderRadius: 12, borderWidth: 1, borderColor: AppColors.border, paddingHorizontal: 14 },
-  searchInput: { flex: 1, paddingVertical: 12, marginLeft: 8, color: AppColors.textPrimary },
+  searchBox: {
+    flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.surface,
+    borderRadius: 10, borderWidth: 1, borderColor: AppColors.border, paddingHorizontal: 12,
+  },
+  searchInput: { flex: 1, paddingVertical: 11, marginLeft: 8, color: AppColors.textPrimary, fontSize: 13.5 },
   centerFill: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24 },
   errorText: { color: AppColors.textSecondary, fontSize: 12.5, textAlign: 'center', marginTop: 10 },
-  retryText: { color: AppColors.primary, marginTop: 10 },
+  retryText: { color: AppColors.primary, marginTop: 10, fontWeight: '600' },
   emptyText: { color: AppColors.textSecondary, fontSize: 13 },
-  card: { flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.surface, borderRadius: 14, borderWidth: 1, borderColor: AppColors.border, padding: 13, gap: 6 },
-  cardIcon: { width: 40, height: 40, borderRadius: 11, backgroundColor: AppColors.dangerSoft, alignItems: 'center', justifyContent: 'center', marginRight: 6 },
+  card: {
+    flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.surface,
+    borderRadius: 12, borderWidth: 1, borderColor: AppColors.border, padding: 12, gap: 6,
+    shadowColor: AppColors.textPrimary, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.02, shadowRadius: 4, elevation: 1,
+  },
+  cardIcon: { width: 38, height: 38, borderRadius: 10, backgroundColor: AppColors.dangerSoft, alignItems: 'center', justifyContent: 'center', marginRight: 6 },
   cardInvoice: { color: AppColors.textPrimary, fontSize: 13.5, fontWeight: '700' },
   cardCustomer: { color: AppColors.textSecondary, fontSize: 12, marginTop: 2 },
   cardTotal: { color: AppColors.textPrimary, fontSize: 13.5, fontWeight: '700' },
-  sheetBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
-  sheet: { backgroundColor: AppColors.surface, borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 16, paddingBottom: 24 },
+  sheetBackdrop: { flex: 1, backgroundColor: 'rgba(15, 23, 42, 0.4)', justifyContent: 'flex-end' },
+  sheet: { backgroundColor: AppColors.surface, borderTopLeftRadius: 18, borderTopRightRadius: 18, padding: 16, paddingBottom: 24 },
   sheetHandle: { width: 36, height: 4, borderRadius: 4, backgroundColor: AppColors.border, alignSelf: 'center', marginBottom: 14 },
   sheetTitle: { color: AppColors.textPrimary, fontSize: 15, fontWeight: '700', marginBottom: 16 },
-  fieldLabel: { color: AppColors.textSecondary, fontSize: 12.5, fontWeight: '600', marginBottom: 8, marginTop: 6 },
-  pickerBox: { backgroundColor: AppColors.background, borderRadius: 12, borderWidth: 1, borderColor: AppColors.border },
+  fieldLabel: { color: AppColors.textSecondary, fontSize: 12, fontWeight: '600', marginBottom: 6, marginTop: 10, textTransform: 'uppercase', letterSpacing: 0.4 },
+  pickerBox: { backgroundColor: AppColors.background, borderRadius: 10, borderWidth: 1, borderColor: AppColors.border },
   returnableText: { fontSize: 12, fontWeight: '600', marginTop: 6 },
-  qtyRow: { flexDirection: 'row', alignItems: 'center', gap: 16 },
+  qtyRow: { flexDirection: 'row', alignItems: 'center', gap: 16, marginTop: 4 },
   qtyText: { color: AppColors.textPrimary, fontSize: 16, fontWeight: '700' },
-  reasonBox: { backgroundColor: AppColors.background, borderRadius: 12, borderWidth: 1, borderColor: AppColors.border, paddingHorizontal: 14 },
-  reasonInput: { paddingVertical: 14, color: AppColors.textPrimary, fontSize: 14 },
-  processButton: { backgroundColor: AppColors.danger, borderRadius: 12, height: 50, alignItems: 'center', justifyContent: 'center', marginTop: 22 },
-  processButtonText: { color: '#fff', fontSize: 15, fontWeight: '600' },
+  reasonBox: { backgroundColor: AppColors.background, borderRadius: 10, borderWidth: 1, borderColor: AppColors.border, paddingHorizontal: 12 },
+  reasonInput: { paddingVertical: 12, color: AppColors.textPrimary, fontSize: 13.5 },
+  processButton: {
+    backgroundColor: AppColors.danger, borderRadius: 10, height: 46,
+    alignItems: 'center', justifyContent: 'center', marginTop: 20,
+    shadowColor: AppColors.danger, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.2, shadowRadius: 8, elevation: 3,
+  },
+  processButtonText: { color: '#fff', fontSize: 14, fontWeight: '700' },
 });

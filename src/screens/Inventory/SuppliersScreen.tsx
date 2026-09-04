@@ -31,15 +31,17 @@ export default function SuppliersScreen() {
   return (
     <View style={styles.flex}>
       <View style={styles.header}>
-  <TouchableOpacity 
-    onPress={() => navigation.goBack()}
-    style={{ marginTop: 29 }}
-  >
-    <Icon name="arrow-back" color={AppColors.textPrimary} size={22} />
-  </TouchableOpacity>
-  <Text style={[styles.headerTitle, { marginTop: 29 }]}>Suppliers</Text>
-  <View style={{ width: 22 }} />
-</View>
+        <View style={styles.headerLeft}>
+          <TouchableOpacity 
+            onPress={() => navigation.goBack()}
+            style={styles.backBtn}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Icon name="chevron-left" color={AppColors.primary} size={30} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Suppliers</Text>
+        </View>
+      </View>
 
       {loading ? (
         <View style={styles.centerFill}><ActivityIndicator color={AppColors.primary} /></View>
@@ -59,7 +61,7 @@ export default function SuppliersScreen() {
         <FlatList
           data={suppliers}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
+          contentContainerStyle={{ padding: 16, paddingBottom: 150 }}
           ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
           refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}
           renderItem={({ item }) => (
@@ -103,21 +105,34 @@ function DetailRow({ icon, value }: { icon: any; value: string }) {
 
 const styles = StyleSheet.create({
   flex: { flex: 1, backgroundColor: AppColors.background },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, backgroundColor: AppColors.surface, borderBottomWidth: 1, borderColor: AppColors.border },
-  headerTitle: { fontSize: 18, fontWeight: '700', color: AppColors.textPrimary },
+  header: {
+    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
+    paddingHorizontal: 16, paddingTop: 50, paddingBottom: 14,
+    backgroundColor: AppColors.surface, borderBottomWidth: 1, borderColor: AppColors.border,
+  },
+  headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  backBtn: { marginLeft: -6 },
+  headerTitle: { fontSize: 17, fontWeight: '700', color: AppColors.textPrimary, letterSpacing: -0.3 },
   centerFill: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24 },
   errorText: { color: AppColors.textSecondary, fontSize: 12.5, textAlign: 'center', marginTop: 10 },
   retryText: { color: AppColors.primary, marginTop: 10 },
   emptyIconWrap: { width: 64, height: 64, borderRadius: 32, backgroundColor: AppColors.infoSoft, alignItems: 'center', justifyContent: 'center', marginBottom: 14 },
   emptyTitle: { color: AppColors.textPrimary, fontSize: 14.5, fontWeight: '600' },
   emptySubtitle: { color: AppColors.textSecondary, fontSize: 12.5, marginTop: 4, textAlign: 'center' },
-  card: { backgroundColor: AppColors.surface, borderRadius: 16, borderWidth: 1, borderColor: AppColors.border, padding: 14 },
+  card: {
+    backgroundColor: AppColors.surface, borderRadius: 18, borderWidth: 1, borderColor: AppColors.border, padding: 16,
+    shadowColor: '#000000', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.35, shadowRadius: 8, elevation: 3,
+  },
   cardTopRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  avatar: { width: 42, height: 42, borderRadius: 12, backgroundColor: AppColors.infoSoft, alignItems: 'center', justifyContent: 'center' },
+  avatar: { width: 44, height: 44, borderRadius: 13, backgroundColor: AppColors.infoSoft, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: `${AppColors.info}35` },
   cardName: { flex: 1, color: AppColors.textPrimary, fontSize: 14.5, fontWeight: '700' },
   divider: { height: 1, backgroundColor: AppColors.border, marginVertical: 10 },
   detailRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 8, marginTop: 6 },
   detailText: { flex: 1, color: AppColors.textSecondary, fontSize: 12.5, lineHeight: 17 },
-  fab: { position: 'absolute', right: 16, bottom: 20, flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.primary, borderRadius: 28, paddingVertical: 14, paddingHorizontal: 18, gap: 8, elevation: 4 },
-  fabText: { color: '#fff', fontWeight: '600', fontSize: 14 },
+  fab: {
+    position: 'absolute', right: 16, bottom: 84, flexDirection: 'row', alignItems: 'center',
+    backgroundColor: AppColors.primary, borderRadius: 16, paddingVertical: 13, paddingHorizontal: 20, gap: 8,
+    shadowColor: AppColors.primary, shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.45, shadowRadius: 14, elevation: 6,
+  },
+  fabText: { color: '#fff', fontWeight: '700', fontSize: 14 },
 });

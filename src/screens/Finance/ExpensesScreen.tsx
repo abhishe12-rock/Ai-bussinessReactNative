@@ -8,10 +8,11 @@ import {
   ActivityIndicator,
   TouchableOpacity,
 } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { AppColors } from '../theme/AppColors';
 import { ExpenseRecord, FinanceService } from '../../services/FinanceService.ts';
+import Icon from '@react-native-vector-icons/material-icons';
 
 const DATE_FILTER_OPTIONS = ['Today', 'Yesterday', 'This Week', 'This Month'];
 
@@ -61,6 +62,7 @@ function categoryIcon(category: string): string {
 }
 
 export default function ExpensesScreen() {
+  const navigation = useNavigation<any>();
   const [expenses, setExpenses] = useState<ExpenseRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -92,7 +94,16 @@ export default function ExpensesScreen() {
   return (
     <View style={styles.screen}>
       <View style={styles.appBar}>
-        <Text style={styles.appBarTitle}>Expenses</Text>
+        <View style={styles.headerLeft}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backBtn}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Icon name="chevron-left" color={AppColors.primary} size={30} />
+          </TouchableOpacity>
+          <Text style={styles.appBarTitle}>Expenses</Text>
+        </View>
       </View>
 
       <View style={styles.chipRow}>
@@ -166,19 +177,34 @@ function Chip({ label, selected, onPress }: { label: string; selected: boolean; 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: AppColors.background },
   appBar: {
-    height: 56,
-    justifyContent: 'center',
     paddingHorizontal: 16,
+    paddingTop: 50,
+    paddingBottom: 14,
     backgroundColor: AppColors.surface,
     borderBottomWidth: 1,
     borderBottomColor: AppColors.border,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  appBarTitle: { color: AppColors.textPrimary, fontSize: 18, fontWeight: '700' },
-  chipRow: { paddingHorizontal: 16, paddingTop: 14, paddingBottom: 8, height: 34 + 22 },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  backBtn: {
+    marginLeft: -6,
+  },
+  appBarTitle: {
+    color: AppColors.textPrimary,
+    fontSize: 17,
+    fontWeight: '700',
+    letterSpacing: -0.3,
+  },
+  chipRow: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 8, height: 34 + 20 },
   chip: {
-    height: 34,
+    height: 32,
     paddingHorizontal: 14,
-    borderRadius: 20,
+    borderRadius: 8,
     borderWidth: 1,
     borderColor: AppColors.border,
     backgroundColor: AppColors.surface,
@@ -189,28 +215,35 @@ const styles = StyleSheet.create({
   totalCard: {
     marginHorizontal: 16,
     marginBottom: 12,
-    padding: 14,
+    padding: 16,
     borderRadius: 14,
+    borderWidth: 1,
+    borderColor: `${AppColors.danger}30`,
     backgroundColor: AppColors.dangerSoft,
   },
-  totalLabel: { color: AppColors.danger, fontSize: 12 },
-  totalValue: { color: AppColors.danger, fontSize: 22, fontWeight: '800', marginTop: 4 },
+  totalLabel: { color: AppColors.danger, fontSize: 11, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5 },
+  totalValue: { color: AppColors.danger, fontSize: 24, fontWeight: '800', marginTop: 5, letterSpacing: -0.5 },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  errorText: { color: AppColors.danger, fontSize: 12.5 },
+  errorText: { color: AppColors.danger, fontSize: 12.5, fontWeight: '500' },
   emptyText: { color: AppColors.textSecondary, fontSize: 13 },
-  listContent: { paddingHorizontal: 16, paddingBottom: 24 },
+  listContent: { paddingHorizontal: 16, paddingBottom: 32 },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 13,
-    borderRadius: 14,
+    padding: 12,
+    borderRadius: 12,
     borderWidth: 1,
     borderColor: AppColors.border,
     backgroundColor: AppColors.surface,
+    shadowColor: AppColors.textPrimary,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.02,
+    shadowRadius: 4,
+    elevation: 1,
   },
   iconBox: {
-    width: 34,
-    height: 34,
+    width: 36,
+    height: 36,
     borderRadius: 10,
     backgroundColor: AppColors.dangerSoft,
     alignItems: 'center',
@@ -218,7 +251,7 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   rowTitle: { color: AppColors.textPrimary, fontSize: 13.5, fontWeight: '700' },
-  rowCategory: { color: AppColors.textSecondary, fontSize: 12, marginTop: 1 },
-  rowDate: { color: AppColors.textMuted, fontSize: 11, marginTop: 1 },
+  rowCategory: { color: AppColors.textSecondary, fontSize: 12, marginTop: 2 },
+  rowDate: { color: AppColors.textMuted, fontSize: 11, marginTop: 2 },
   rowAmount: { color: AppColors.danger, fontSize: 14, fontWeight: '700' },
 });

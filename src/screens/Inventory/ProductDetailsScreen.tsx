@@ -18,10 +18,16 @@ export default function ProductDetailsScreen() {
   return (
     <View style={styles.flex}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon name="arrow-back" color={AppColors.textPrimary} size={22} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Product details</Text>
+        <View style={styles.headerLeft}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backBtn}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Icon name="chevron-left" color={AppColors.primary} size={30} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Product Details</Text>
+        </View>
         <View style={styles.headerActions}>
           <TouchableOpacity style={{ marginRight: 16 }} onPress={() => setQrOpen(true)}>
             <Icon name="qr-code-2" color={AppColors.primary} size={22} />
@@ -125,36 +131,54 @@ function InfoRow({ icon, label, value, isLast }: { icon: any; label: string; val
 
 const styles = StyleSheet.create({
   flex: { flex: 1, backgroundColor: AppColors.background },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, backgroundColor: AppColors.surface, borderBottomWidth: 1, borderColor: AppColors.border },
-  headerTitle: { fontSize: 17, fontWeight: '700', color: AppColors.textPrimary },
+  header: {
+    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
+    paddingHorizontal: 16, paddingTop: 50, paddingBottom: 14,
+    backgroundColor: AppColors.surface, borderBottomWidth: 1, borderColor: AppColors.border,
+  },
+  headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  backBtn: { marginLeft: -6 },
+  headerTitle: { fontSize: 17, fontWeight: '700', color: AppColors.textPrimary, letterSpacing: -0.3 },
   headerActions: { flexDirection: 'row', alignItems: 'center' },
   content: { padding: 16, paddingBottom: 24 },
-  placeholderImage: { height: 180, borderRadius: 18, backgroundColor: AppColors.primarySoft, alignItems: 'center', justifyContent: 'center' },
-  imageCarousel: { height: 220, borderRadius: 18 },
-  carouselImage: { width: 340, height: 220, borderRadius: 18 },
+  placeholderImage: { height: 180, borderRadius: 12, backgroundColor: AppColors.primarySoft, alignItems: 'center', justifyContent: 'center' },
+  imageCarousel: { height: 220, borderRadius: 12 },
+  carouselImage: { width: 340, height: 220, borderRadius: 12 },
   dotsRow: { flexDirection: 'row', justifyContent: 'center', gap: 6, marginTop: 10 },
   dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: AppColors.border },
   dotActive: { backgroundColor: AppColors.primary },
-  productName: { color: AppColors.textPrimary, fontSize: 19, fontWeight: '800', marginTop: 18 },
+  productName: { color: AppColors.textPrimary, fontSize: 19, fontWeight: '800', marginTop: 18, letterSpacing: -0.3 },
   productSub: { color: AppColors.textSecondary, fontSize: 13, marginTop: 4 },
   statsRow: { flexDirection: 'row', gap: 10, marginTop: 16 },
-  statBox: { flex: 1, borderRadius: 14, padding: 13 },
-  statLabel: { fontSize: 11, opacity: 0.85 },
+  statBox: {
+    flex: 1, borderRadius: 12, padding: 12,
+    borderWidth: 1, borderColor: AppColors.border,
+    shadowColor: AppColors.textPrimary, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.02, shadowRadius: 4, elevation: 1,
+  },
+  statLabel: { fontSize: 11, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.4, opacity: 0.85 },
   statValue: { fontSize: 16, fontWeight: '800', marginTop: 5 },
-  infoCard: { backgroundColor: AppColors.surface, borderRadius: 16, borderWidth: 1, borderColor: AppColors.border, marginTop: 20 },
+  infoCard: {
+    backgroundColor: AppColors.surface, borderRadius: 12, borderWidth: 1, borderColor: AppColors.border, marginTop: 20,
+    shadowColor: AppColors.textPrimary, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.02, shadowRadius: 4, elevation: 1,
+  },
   infoRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, paddingVertical: 13, gap: 12 },
   infoRowBorder: { borderBottomWidth: 1, borderColor: AppColors.border },
   infoLabel: { color: AppColors.textSecondary, fontSize: 13 },
   infoValue: { color: AppColors.textPrimary, fontSize: 13, fontWeight: '600' },
-  sectionLabel: { color: AppColors.textSecondary, fontSize: 13, fontWeight: '600', marginTop: 16, marginBottom: 8 },
-  descriptionText: { color: AppColors.textPrimary, fontSize: 13, lineHeight: 19 },
-  qrButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, height: 48, borderRadius: 12, borderWidth: 1, borderColor: AppColors.border, marginTop: 20 },
+  sectionLabel: { color: AppColors.textSecondary, fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5, marginTop: 24, marginBottom: 8 },
+  descriptionText: { color: AppColors.textPrimary, fontSize: 13.5, lineHeight: 20 },
+  qrButton: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, height: 48,
+    borderRadius: 12, borderWidth: 1, borderColor: AppColors.border, marginTop: 20,
+    backgroundColor: AppColors.surface,
+    shadowColor: AppColors.textPrimary, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.02, shadowRadius: 4, elevation: 1,
+  },
   qrButtonText: { color: AppColors.textPrimary, fontSize: 14, fontWeight: '600' },
-  qrBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', alignItems: 'center', justifyContent: 'center' },
-  qrDialog: { backgroundColor: AppColors.surface, borderRadius: 20, padding: 24, alignItems: 'center', width: '85%' },
+  qrBackdrop: { flex: 1, backgroundColor: 'rgba(15,23,42,0.4)', alignItems: 'center', justifyContent: 'center' },
+  qrDialog: { backgroundColor: AppColors.surface, borderRadius: 14, padding: 24, alignItems: 'center', width: '85%', borderWidth: 1, borderColor: AppColors.border },
   qrTitle: { color: AppColors.textPrimary, fontSize: 15, fontWeight: '700', marginBottom: 16 },
-  qrCodeWrap: { backgroundColor: '#fff', borderRadius: 16, padding: 16 },
+  qrCodeWrap: { backgroundColor: '#fff', borderRadius: 12, padding: 16, borderWidth: 1, borderColor: AppColors.border },
   qrHint: { color: AppColors.textSecondary, fontSize: 11.5, marginTop: 12 },
-  qrDoneButton: { backgroundColor: AppColors.primary, borderRadius: 12, paddingVertical: 12, width: '100%', alignItems: 'center', marginTop: 18 },
+  qrDoneButton: { backgroundColor: AppColors.primary, borderRadius: 10, paddingVertical: 12, width: '100%', alignItems: 'center', marginTop: 18 },
   qrDoneText: { color: '#fff', fontSize: 14, fontWeight: '600' },
 });

@@ -98,37 +98,36 @@ export default function AddEmployeeScreen() {
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
-          style={{ marginTop: 29 }}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
           <Icon name="chevron-left" color={AppColors.primary} size={30} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { marginTop: 29 }]}>Add employee</Text>
-        <View style={{ width: 22 }} />
+        <Text style={styles.headerTitle}>Add Employee</Text>
+        <View style={{ width: 30 }} />
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
         <SectionLabel text="Personal information" />
 
-        <TouchableOpacity style={styles.photoRow} onPress={pickProfileImage}>
+        <TouchableOpacity style={styles.photoRow} onPress={pickProfileImage} activeOpacity={0.7}>
           {profileImage?.uri ? (
             <Image source={{ uri: profileImage.uri }} style={styles.photoThumb} />
           ) : (
-            <View style={styles.photoPlaceholder}><Icon name="person-outline" color={AppColors.textMuted} size={30} /></View>
+            <View style={styles.photoPlaceholder}><Icon name="person-outline" color={AppColors.primary} size={28} /></View>
           )}
           <View style={{ flex: 1, marginLeft: 14 }}>
-            <Text style={styles.photoTitle}>{profileImage ? 'Profile photo selected' : 'Profile photo'}</Text>
-            <Text style={styles.photoHint}>{profileImage ? 'Tap to change photo' : 'Tap to upload photo'}</Text>
+            <Text style={styles.photoTitle}>{profileImage ? 'Profile photo selected' : 'Employee photo'}</Text>
+            <Text style={styles.photoHint}>{profileImage ? 'Tap to change photo' : 'Upload photo (optional)'}</Text>
           </View>
           <Icon name="camera-alt" color={AppColors.textMuted} size={20} />
         </TouchableOpacity>
 
         <Field icon="person-outline" label="Full name *" value={name} onChangeText={setName} />
-        <Field icon="call" label="Phone" value={phone} onChangeText={setPhone} keyboardType="phone-pad" />
-        <Field icon="mail-outline" label="Email *" value={email} onChangeText={setEmail} keyboardType="email-address" />
+        <Field icon="call" label="Phone number" value={phone} onChangeText={setPhone} keyboardType="phone-pad" />
+        <Field icon="mail-outline" label="Email address *" value={email} onChangeText={setEmail} keyboardType="email-address" />
 
-        <TouchableOpacity style={styles.dateRow} onPress={() => setShowDobPicker(true)}>
-          <Icon name="cake" color={AppColors.textMuted} size={20} />
+        <TouchableOpacity style={styles.dateRow} onPress={() => setShowDobPicker(true)} activeOpacity={0.7}>
+          <Icon name="cake" color={AppColors.textMuted} size={18} />
           <Text style={styles.dateText}>{dob ? `Date of birth: ${dob.toLocaleDateString()}` : 'Date of birth'}</Text>
           <Icon name="calendar-today" color={AppColors.textMuted} size={18} />
         </TouchableOpacity>
@@ -152,7 +151,7 @@ export default function AddEmployeeScreen() {
           items={departments.map((d) => ({ id: d.id, name: d.name }))} />
         <Field icon="work-outline" label="Designation" value={designation} onChangeText={setDesignation} />
 
-        <TouchableOpacity style={styles.dateRow} onPress={() => setShowJoiningPicker(true)}>
+        <TouchableOpacity style={styles.dateRow} onPress={() => setShowJoiningPicker(true)} activeOpacity={0.7}>
           <Icon name="calendar-today" color={AppColors.textMuted} size={18} />
           <Text style={styles.dateText}>Joining date: {joiningDate.toLocaleDateString()}</Text>
         </TouchableOpacity>
@@ -167,15 +166,15 @@ export default function AddEmployeeScreen() {
         <Dropdown label="Employment type" icon="badge" value={employmentType} onChange={(v) => setEmploymentType(v ?? 'FULL_TIME')}
           items={[{ id: 'FULL_TIME', name: 'Full Time' }, { id: 'PART_TIME', name: 'Part Time' }, { id: 'CONTRACT', name: 'Contract' }]} />
 
-        <SectionLabel text="Salary information" />
+        <SectionLabel text="Compensation" />
         <Field icon="currency-rupee" label="Basic salary" value={basic} onChangeText={setBasic} keyboardType="numeric" />
         <View style={styles.row}>
           <View style={{ flex: 1 }}><Field icon="add-circle-outline" label="Allowances" value={allowances} onChangeText={setAllowances} keyboardType="numeric" /></View>
           <View style={{ flex: 1 }}><Field icon="remove-circle-outline" label="Deductions" value={deductions} onChangeText={setDeductions} keyboardType="numeric" /></View>
         </View>
 
-        <TouchableOpacity style={[styles.saveButton, saving && { opacity: 0.6 }]} onPress={save} disabled={saving}>
-          {saving ? <ActivityIndicator color="#fff" /> : <Text style={styles.saveButtonText}>Save employee</Text>}
+        <TouchableOpacity style={[styles.saveButton, saving && { opacity: 0.6 }]} onPress={save} disabled={saving} activeOpacity={0.8}>
+          {saving ? <ActivityIndicator color="#fff" /> : <Text style={styles.saveButtonText}>Save Employee</Text>}
         </TouchableOpacity>
       </ScrollView>
     </View>
@@ -189,9 +188,9 @@ function Field({ icon, label, value, onChangeText, keyboardType, multiline }: {
 }) {
   return (
     <View style={styles.fieldBox}>
-      <Icon name={icon} color={AppColors.textMuted} size={20} />
+      <Icon name={icon} color={AppColors.textMuted} size={18} />
       <TextInput
-        style={[styles.fieldInput, multiline && { height: 60, textAlignVertical: 'top' }]}
+        style={[styles.fieldInput, multiline && { height: 56, textAlignVertical: 'top' }]}
         placeholder={label} placeholderTextColor={AppColors.textMuted}
         value={value} onChangeText={onChangeText} keyboardType={keyboardType} multiline={multiline}
       />
@@ -204,7 +203,7 @@ function Dropdown({ label, icon, value, items, onChange }: {
 }) {
   return (
     <View style={styles.fieldBox}>
-      <Icon name={icon} color={AppColors.textMuted} size={20} />
+      <Icon name={icon} color={AppColors.textMuted} size={18} />
       <View style={{ flex: 1 }}>
         <Picker selectedValue={value ?? ''} onValueChange={(v) => onChange(v === '' ? null : String(v))}>
           <Picker.Item label={items.length === 0 ? `${label} (none added yet)` : label} value="" />
@@ -218,20 +217,85 @@ function Dropdown({ label, icon, value, items, onChange }: {
 const styles = StyleSheet.create({
   flex: { flex: 1, backgroundColor: AppColors.background },
   centerFill: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: AppColors.background },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, backgroundColor: AppColors.surface, borderBottomWidth: 1, borderColor: AppColors.border },
-  headerTitle: { fontSize: 17, fontWeight: '700', color: AppColors.textPrimary },
-  content: { padding: 16, paddingBottom: 40 },
-  sectionLabel: { color: AppColors.textSecondary, fontSize: 12.5, fontWeight: '600', marginBottom: 10, marginTop: 8 },
-  photoRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.surface, borderRadius: 12, borderWidth: 1, borderColor: AppColors.border, padding: 14, marginBottom: 12 },
-  photoThumb: { width: 58, height: 58, borderRadius: 10 },
-  photoPlaceholder: { width: 58, height: 58, borderRadius: 10, backgroundColor: AppColors.background, alignItems: 'center', justifyContent: 'center' },
-  photoTitle: { color: AppColors.textPrimary, fontSize: 14, fontWeight: '500' },
-  photoHint: { color: AppColors.textMuted, fontSize: 12, marginTop: 4 },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingTop: 50,
+    paddingBottom: 14,
+    backgroundColor: AppColors.surface,
+    borderBottomWidth: 1,
+    borderColor: AppColors.border,
+  },
+  headerTitle: { fontSize: 17, fontWeight: '700', color: AppColors.textPrimary, letterSpacing: -0.3 },
+  content: { padding: 16, paddingBottom: 84 },
+  sectionLabel: { color: AppColors.textSecondary, fontSize: 11.5, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.6, marginBottom: 8, marginTop: 14 },
+  photoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: AppColors.surface,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: AppColors.border,
+    padding: 12,
+    marginBottom: 10,
+    shadowColor: AppColors.textPrimary,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.03,
+    shadowRadius: 6,
+    elevation: 1,
+  },
+  photoThumb: { width: 52, height: 52, borderRadius: 12 },
+  photoPlaceholder: {
+    width: 52,
+    height: 52,
+    borderRadius: 12,
+    backgroundColor: AppColors.primarySoft,
+    borderWidth: 1,
+    borderColor: `${AppColors.primary}20`,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  photoTitle: { color: AppColors.textPrimary, fontSize: 13.5, fontWeight: '600' },
+  photoHint: { color: AppColors.textMuted, fontSize: 11.5, marginTop: 2 },
   row: { flexDirection: 'row', gap: 10 },
-  fieldBox: { flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.surface, borderRadius: 12, borderWidth: 1, borderColor: AppColors.border, paddingHorizontal: 14, marginBottom: 12 },
-  fieldInput: { flex: 1, paddingVertical: 14, marginLeft: 10, color: AppColors.textPrimary, fontSize: 14 },
-  dateRow: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: AppColors.surface, borderRadius: 12, borderWidth: 1, borderColor: AppColors.border, padding: 14, marginBottom: 12 },
-  dateText: { flex: 1, color: AppColors.textPrimary, fontSize: 14 },
-  saveButton: { backgroundColor: AppColors.primary, borderRadius: 12, height: 50, alignItems: 'center', justifyContent: 'center', marginTop: 16 },
-  saveButtonText: { color: '#fff', fontSize: 15, fontWeight: '600' },
+  fieldBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: AppColors.surface,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: AppColors.border,
+    paddingHorizontal: 12,
+    marginBottom: 10,
+  },
+  fieldInput: { flex: 1, paddingVertical: 11, marginLeft: 8, color: AppColors.textPrimary, fontSize: 13.5 },
+  dateRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: AppColors.surface,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: AppColors.border,
+    paddingHorizontal: 12,
+    paddingVertical: 13,
+    marginBottom: 10,
+  },
+  dateText: { flex: 1, color: AppColors.textPrimary, fontSize: 13.5 },
+  saveButton: {
+    backgroundColor: AppColors.primary,
+    borderRadius: 10,
+    height: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 20,
+    shadowColor: AppColors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  saveButtonText: { color: '#fff', fontSize: 14.5, fontWeight: '600' },
 });

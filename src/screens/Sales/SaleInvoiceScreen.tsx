@@ -47,11 +47,19 @@ export default function SaleInvoiceScreen() {
   return (
     <View style={styles.flex}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon name="arrow-back" color={AppColors.textPrimary} size={22} />
+        <View style={styles.headerLeft}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backBtn}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Icon name="chevron-left" color={AppColors.primary} size={30} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>{sale.invoiceNumber}</Text>
+        </View>
+        <TouchableOpacity hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+          <Icon name="share" color={AppColors.textSecondary} size={20} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>{sale.invoiceNumber}</Text>
-        <TouchableOpacity><Icon name="share" color={AppColors.textSecondary} size={20} /></TouchableOpacity>
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
@@ -132,33 +140,59 @@ function Row({ label, value, isTotal, color }: { label: string; value: string; i
 const styles = StyleSheet.create({
   flex: { flex: 1, backgroundColor: AppColors.background },
   centerFill: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: AppColors.background },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, backgroundColor: AppColors.surface, borderBottomWidth: 1, borderColor: AppColors.border },
-  headerTitle: { fontSize: 17, fontWeight: '700', color: AppColors.textPrimary },
-  content: { padding: 16, paddingBottom: 24 },
-  customerCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.surface, borderRadius: 16, borderWidth: 1, borderColor: AppColors.border, padding: 14 },
-  customerIcon: { width: 44, height: 44, borderRadius: 12, backgroundColor: AppColors.primarySoft, alignItems: 'center', justifyContent: 'center', marginRight: 12 },
-  customerName: { color: AppColors.textPrimary, fontSize: 15, fontWeight: '700' },
-  customerDate: { color: AppColors.textSecondary, fontSize: 12, marginTop: 2 },
-  statusPill: { paddingHorizontal: 9, paddingVertical: 4, borderRadius: 20 },
-  statusText: { fontSize: 10.5, fontWeight: '700' },
-  sectionLabel: { color: AppColors.textSecondary, fontSize: 13, fontWeight: '600', marginTop: 20, marginBottom: 10 },
-  itemsCard: { backgroundColor: AppColors.surface, borderRadius: 16, borderWidth: 1, borderColor: AppColors.border },
+  header: {
+    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
+    paddingHorizontal: 16, paddingTop: 50, paddingBottom: 14,
+    backgroundColor: AppColors.surface, borderBottomWidth: 1, borderColor: AppColors.border,
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  backBtn: {
+    marginLeft: -6,
+  },
+  headerTitle: { fontSize: 17, fontWeight: '700', color: AppColors.textPrimary, letterSpacing: -0.3 },
+  content: { padding: 16, paddingBottom: 32 },
+  customerCard: {
+    flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.surface,
+    borderRadius: 12, borderWidth: 1, borderColor: AppColors.border, padding: 14,
+    shadowColor: AppColors.textPrimary, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.02, shadowRadius: 4, elevation: 1,
+  },
+  customerIcon: { width: 40, height: 40, borderRadius: 10, backgroundColor: AppColors.primarySoft, alignItems: 'center', justifyContent: 'center', marginRight: 12 },
+  customerName: { color: AppColors.textPrimary, fontSize: 14, fontWeight: '700' },
+  customerDate: { color: AppColors.textSecondary, fontSize: 11.5, marginTop: 2 },
+  statusPill: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6 },
+  statusText: { fontSize: 10, fontWeight: '700' },
+  sectionLabel: { color: AppColors.textSecondary, fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5, marginTop: 20, marginBottom: 10 },
+  itemsCard: {
+    backgroundColor: AppColors.surface, borderRadius: 12, borderWidth: 1, borderColor: AppColors.border,
+    shadowColor: AppColors.textPrimary, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.02, shadowRadius: 4, elevation: 1,
+  },
   itemRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, paddingVertical: 12 },
   itemRowBorder: { borderBottomWidth: 1, borderColor: AppColors.border },
-  itemName: { color: AppColors.textPrimary, fontSize: 13.5, fontWeight: '600' },
-  itemMeta: { color: AppColors.textSecondary, fontSize: 12, marginTop: 2 },
+  itemName: { color: AppColors.textPrimary, fontSize: 13, fontWeight: '600' },
+  itemMeta: { color: AppColors.textSecondary, fontSize: 11.5, marginTop: 2 },
   itemTotal: { color: AppColors.textPrimary, fontSize: 13.5, fontWeight: '700' },
-  summaryCard: { backgroundColor: AppColors.surface, borderRadius: 16, borderWidth: 1, borderColor: AppColors.border, padding: 14, marginTop: 20 },
+  summaryCard: {
+    backgroundColor: AppColors.surface, borderRadius: 12, borderWidth: 1, borderColor: AppColors.border, padding: 14, marginTop: 20,
+    shadowColor: AppColors.textPrimary, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.02, shadowRadius: 4, elevation: 1,
+  },
   summaryRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 4 },
   summaryLabel: { color: AppColors.textSecondary, fontSize: 13 },
-  summaryLabelTotal: { color: AppColors.textPrimary, fontSize: 14.5, fontWeight: '700' },
+  summaryLabelTotal: { color: AppColors.textPrimary, fontSize: 14, fontWeight: '700' },
   summaryValue: { fontSize: 13, fontWeight: '700' },
   divider: { height: 1, backgroundColor: AppColors.border, marginVertical: 10 },
-  emptyPayments: { backgroundColor: AppColors.surface, borderRadius: 14, borderWidth: 1, borderColor: AppColors.border, padding: 16, alignItems: 'center' },
+  emptyPayments: { backgroundColor: AppColors.surface, borderRadius: 12, borderWidth: 1, borderColor: AppColors.border, padding: 16, alignItems: 'center' },
   emptyPaymentsText: { color: AppColors.textMuted, fontSize: 12.5 },
   paymentRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, paddingVertical: 12, gap: 8 },
   paymentMethod: { color: AppColors.textPrimary, fontSize: 13, fontWeight: '600' },
   paymentAmount: { color: AppColors.success, fontSize: 13, fontWeight: '700' },
-  recordButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: AppColors.primary, borderRadius: 12, height: 48, marginTop: 16 },
-  recordButtonText: { color: '#fff', fontSize: 14, fontWeight: '600' },
+  recordButton: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
+    backgroundColor: AppColors.primary, borderRadius: 10, height: 46, marginTop: 16,
+    shadowColor: AppColors.primary, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.2, shadowRadius: 8, elevation: 3,
+  },
+  recordButtonText: { color: '#fff', fontSize: 13.5, fontWeight: '700' },
 });

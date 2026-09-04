@@ -76,47 +76,47 @@ export default function AddCustomerScreen() {
 
   return (
     <View style={styles.flex}>
-  <View style={styles.header}>
-    <TouchableOpacity 
-      onPress={() => navigation.goBack()}
-      style={{ marginTop: 30 }}  // ← ADD THIS
-    >
-      <Icon name="arrow-back" color={AppColors.textPrimary} size={22} />
-    </TouchableOpacity>
-    <Text style={[styles.headerTitle, { marginTop: 35 }]}>Add customer</Text>  // ← ADD marginTop: 35
-    <View style={{ width: 22 }} />
-  </View>
+      <View style={styles.header}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
+          <Icon name="chevron-left" color={AppColors.primary} size={30} />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Add Customer</Text>
+        <View style={{ width: 30 }} />
+      </View>
 
       <ScrollView contentContainerStyle={styles.content}>
-        <TouchableOpacity style={styles.photoWrap} onPress={() => setSheetOpen(true)}>
+        <TouchableOpacity style={styles.photoWrap} onPress={() => setSheetOpen(true)} activeOpacity={0.8}>
           <View style={styles.photoCircle}>
             {photo?.uri ? (
               <Image source={{ uri: photo.uri }} style={styles.photoImg} />
             ) : (
-              <Icon name="add-a-photo" color={AppColors.primary} size={28} />
+              <Icon name="add-a-photo" color={AppColors.primary} size={26} />
             )}
           </View>
           <View style={styles.editBadge}>
-            <Icon name="edit" color="#fff" size={14} />
+            <Icon name="edit" color="#fff" size={13} />
           </View>
         </TouchableOpacity>
-        <Text style={styles.photoLabel}>{photo ? 'Photo selected' : 'Add customer photo'}</Text>
+        <Text style={styles.photoLabel}>{photo ? 'Photo selected' : 'Upload photo (optional)'}</Text>
 
         <SectionLabel text="Basic details" />
         <Field icon="person-outline" label="Customer name *" value={name} onChangeText={setName} />
         <Field icon="call" label="Mobile number *" value={phone} onChangeText={setPhone} keyboardType="phone-pad" />
         <Field icon="phone-forwarded" label="Alternate number" value={altPhone} onChangeText={setAltPhone} keyboardType="phone-pad" />
-        <Field icon="mail-outline" label="Email" value={email} onChangeText={setEmail} keyboardType="email-address" />
+        <Field icon="mail-outline" label="Email address" value={email} onChangeText={setEmail} keyboardType="email-address" />
 
-        <SectionLabel text="Address" />
-        <Field icon="location-on" label="Address" value={address} onChangeText={setAddress} multiline />
+        <SectionLabel text="Location" />
+        <Field icon="location-on" label="Street address" value={address} onChangeText={setAddress} multiline />
         <Field icon="location-city" label="City" value={city} onChangeText={setCity} />
 
         <SectionLabel text="Business (optional)" />
         <Field icon="receipt-long" label="GST number" value={gst} onChangeText={setGst} />
 
-        <TouchableOpacity style={[styles.saveButton, saving && { opacity: 0.6 }]} onPress={save} disabled={saving}>
-          {saving ? <ActivityIndicator color="#fff" /> : <Text style={styles.saveButtonText}>Save customer</Text>}
+        <TouchableOpacity style={[styles.saveButton, saving && { opacity: 0.6 }]} onPress={save} disabled={saving} activeOpacity={0.8}>
+          {saving ? <ActivityIndicator color="#fff" /> : <Text style={styles.saveButtonText}>Save Customer</Text>}
         </TouchableOpacity>
       </ScrollView>
 
@@ -148,8 +148,8 @@ function SectionLabel({ text }: { text: string }) {
 
 function PhotoOption({ icon, label, onPress }: { icon: any; label: string; onPress: () => void }) {
   return (
-    <TouchableOpacity style={styles.photoOption} onPress={onPress}>
-      <Icon name={icon} color={AppColors.primary} size={24} />
+    <TouchableOpacity style={styles.photoOption} onPress={onPress} activeOpacity={0.7}>
+      <Icon name={icon} color={AppColors.primary} size={22} />
       <Text style={styles.photoOptionLabel}>{label}</Text>
     </TouchableOpacity>
   );
@@ -163,9 +163,9 @@ function Field({
 }) {
   return (
     <View style={styles.fieldBox}>
-      <Icon name={icon} color={AppColors.textMuted} size={20} />
+      <Icon name={icon} color={AppColors.textMuted} size={18} />
       <TextInput
-        style={[styles.fieldInput, multiline && { height: 60, textAlignVertical: 'top' }]}
+        style={[styles.fieldInput, multiline && { height: 56, textAlignVertical: 'top' }]}
         placeholder={label}
         placeholderTextColor={AppColors.textMuted}
         value={value}
@@ -180,31 +180,79 @@ function Field({
 const styles = StyleSheet.create({
   flex: { flex: 1, backgroundColor: AppColors.background },
   header: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    padding: 16, backgroundColor: AppColors.surface, borderBottomWidth: 1, borderColor: AppColors.border,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingTop: 50,
+    paddingBottom: 14,
+    backgroundColor: AppColors.surface,
+    borderBottomWidth: 1,
+    borderColor: AppColors.border,
   },
-  headerTitle: { fontSize: 17, fontWeight: '600', color: AppColors.textPrimary },
-  content: { padding: 16, paddingBottom: 40 },
+  headerTitle: { fontSize: 17, fontWeight: '700', color: AppColors.textPrimary, letterSpacing: -0.3 },
+  content: { padding: 16, paddingBottom: 84 },
   photoWrap: { alignSelf: 'center', marginTop: 4 },
-  photoCircle: { width: 88, height: 88, borderRadius: 44, backgroundColor: AppColors.primarySoft, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
-  photoImg: { width: 88, height: 88, borderRadius: 44 },
-  editBadge: { position: 'absolute', right: 0, bottom: 0, width: 28, height: 28, borderRadius: 14, backgroundColor: AppColors.primary, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: AppColors.background },
-  photoLabel: { textAlign: 'center', color: AppColors.textSecondary, fontSize: 12, marginTop: 8, marginBottom: 22 },
-  sectionLabel: { color: AppColors.textSecondary, fontSize: 12.5, fontWeight: '600', marginBottom: 10, marginTop: 8 },
-  fieldBox: {
-    flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.surface,
-    borderRadius: 12, borderWidth: 1, borderColor: AppColors.border, paddingHorizontal: 14, marginBottom: 12,
+  photoCircle: {
+    width: 80,
+    height: 80,
+    borderRadius: 24,
+    backgroundColor: AppColors.primarySoft,
+    borderWidth: 1,
+    borderColor: `${AppColors.primary}35`,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
   },
-  fieldInput: { flex: 1, paddingVertical: 14, marginLeft: 10, color: AppColors.textPrimary, fontSize: 14 },
-  saveButton: { backgroundColor: AppColors.primary, borderRadius: 12, height: 50, alignItems: 'center', justifyContent: 'center', marginTop: 16 },
-  saveButtonText: { color: '#fff', fontSize: 15, fontWeight: '600' },
-  sheetBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
-  sheet: { backgroundColor: AppColors.surface, borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 16, paddingBottom: 24 },
-  sheetHandle: { width: 36, height: 4, borderRadius: 4, backgroundColor: AppColors.border, alignSelf: 'center', marginBottom: 16 },
+  photoImg: { width: 80, height: 80, borderRadius: 24 },
+  editBadge: {
+    position: 'absolute',
+    right: -4,
+    bottom: -4,
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    backgroundColor: AppColors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: AppColors.surface,
+  },
+  photoLabel: { textAlign: 'center', color: AppColors.textSecondary, fontSize: 12, marginTop: 8, marginBottom: 18, fontWeight: '500' },
+  sectionLabel: { color: AppColors.textSecondary, fontSize: 11.5, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.6, marginBottom: 8, marginTop: 12 },
+  fieldBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: AppColors.surfaceInput,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: AppColors.border,
+    paddingHorizontal: 12,
+    marginBottom: 10,
+    height: 50,
+  },
+  fieldInput: { flex: 1, paddingVertical: 12, marginLeft: 8, color: AppColors.textPrimary, fontSize: 13.5 },
+  saveButton: {
+    backgroundColor: AppColors.primary,
+    borderRadius: 14,
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 20,
+    shadowColor: AppColors.primary,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.45,
+    shadowRadius: 14,
+    elevation: 6,
+  },
+  saveButtonText: { color: '#fff', fontSize: 14.5, fontWeight: '700' },
+  sheetBackdrop: { flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.65)', justifyContent: 'flex-end' },
+  sheet: { backgroundColor: AppColors.surfaceElevated, borderTopLeftRadius: 26, borderTopRightRadius: 26, padding: 18, paddingBottom: 40, borderTopWidth: 1, borderColor: AppColors.border },
+  sheetHandle: { width: 36, height: 4, borderRadius: 2, backgroundColor: AppColors.border, alignSelf: 'center', marginBottom: 14 },
   sheetTitle: { color: AppColors.textPrimary, fontSize: 15, fontWeight: '700', textAlign: 'center', marginBottom: 16 },
   sheetRow: { flexDirection: 'row', gap: 10 },
-  photoOption: { flex: 1, alignItems: 'center', paddingVertical: 16, backgroundColor: AppColors.background, borderRadius: 14, borderWidth: 1, borderColor: AppColors.border },
+  photoOption: { flex: 1, alignItems: 'center', paddingVertical: 14, backgroundColor: AppColors.surfaceSoft, borderRadius: 14, borderWidth: 1, borderColor: AppColors.border },
   photoOptionLabel: { color: AppColors.textPrimary, fontSize: 12, fontWeight: '600', marginTop: 6 },
-  removeRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 10, paddingVertical: 8 },
-  removeText: { color: AppColors.danger, fontSize: 13 },
+  removeRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 12, paddingVertical: 8 },
+  removeText: { color: AppColors.danger, fontSize: 13, fontWeight: '500' },
 });

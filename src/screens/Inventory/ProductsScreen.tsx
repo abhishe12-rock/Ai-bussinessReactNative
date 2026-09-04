@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList, ActivityIndicator, RefreshControl, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList, ActivityIndicator, RefreshControl, Alert, Modal, Pressable } from 'react-native';
 import Icon from '@react-native-vector-icons/material-icons';
 import { useNavigation } from '@react-navigation/native';
 
@@ -14,7 +14,7 @@ export default function ProductsScreen() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState('');
-  const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
+  const [activeProduct, setActiveProduct] = useState<ProductRecord | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -50,21 +50,34 @@ export default function ProductsScreen() {
   return (
     <View style={styles.flex}>
       <View style={styles.header}>
+        <View style={styles.headerLeft}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backBtn}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Icon name="chevron-left" color={AppColors.primary} size={30} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Products</Text>
+        </View>
         <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={{ marginTop: 29 }}
+          onPress={() => navigation.navigate('LowStockAlert')}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
-          <Icon name="chevron-left" color={AppColors.primary} size={30} />
+          <Icon name="warning" color={AppColors.warning} size={22} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { marginTop: 29 }]}>Products</Text>
-        <View style={{ width: 22 }} />
       </View>
 
       <View style={styles.searchWrap}>
         <View style={styles.searchBox}>
           <Icon name="search" color={AppColors.textMuted} size={20} />
-          <TextInput style={styles.searchInput} placeholder="Search products" placeholderTextColor={AppColors.textMuted} value={query} onChangeText={setQuery} />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search products..."
+            placeholderTextColor={AppColors.textMuted}
+            value={query}
+            onChangeText={setQuery}
+          />
         </View>
       </View>
 
@@ -82,7 +95,7 @@ export default function ProductsScreen() {
         <FlatList
           data={filtered}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
+          contentContainerStyle={{ padding: 16, paddingBottom: 150 }}
           ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
           refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}
           renderItem={({ item }) => {
@@ -100,22 +113,13 @@ export default function ProductsScreen() {
                     </View>
                   </View>
                 </View>
-                <TouchableOpacity onPress={() => setMenuOpenId(menuOpenId === item.id ? null : item.id)}>
+                <TouchableOpacity
+                  onPress={() => setActiveProduct(item)}
+                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                  style={styles.moreBtn}
+                >
                   <Icon name="more-vert" color={AppColors.textMuted} size={20} />
                 </TouchableOpacity>
-                {menuOpenId === item.id && (
-                  <View style={styles.menu}>
-                    <TouchableOpacity style={styles.menuItem} onPress={() => { setMenuOpenId(null); navigation.navigate('ProductDetails', { product: item }); }}>
-                      <Icon name="visibility" color={AppColors.textSecondary} size={16} /><Text style={styles.menuText}>View</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.menuItem} onPress={() => { setMenuOpenId(null); navigation.navigate('EditProduct', { product: item, onSaved: load }); }}>
-                      <Icon name="edit" color={AppColors.textSecondary} size={16} /><Text style={styles.menuText}>Edit</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.menuItem} onPress={() => { setMenuOpenId(null); confirmDelete(item); }}>
-                      <Icon name="delete-outline" color={AppColors.danger} size={16} /><Text style={[styles.menuText, { color: AppColors.danger }]}>Delete</Text>
-                    </TouchableOpacity>
-                  </View>
-                )}
               </View>
             );
           }}
@@ -126,32 +130,202 @@ export default function ProductsScreen() {
         <Icon name="add" color="#fff" size={20} />
         <Text style={styles.fabText}>Add product</Text>
       </TouchableOpacity>
+
+      {/* PRODUCT ACTIONS SHEET */}
+      <Modal visible={!!activeProduct} transparent animationType="slide" onRequestClose={() => setActiveProduct(null)}>
+        <Pressable style={styles.sheetBackdrop} onPress={() => setActiveProduct(null)}>
+          <View style={styles.sheet}>
+            <View style={styles.sheetHandle} />
+            {activeProduct && (
+              <>
+                <View style={styles.sheetHeaderRow}>
+                  <View style={styles.sheetAvatar}>
+                    <Icon name="smartphone" color={AppColors.primary} size={22} />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.sheetProductName} numberOfLines={1}>{activeProduct.name}</Text>
+                    <Text style={styles.sheetProductSub}>
+                      {activeProduct.brandName ?? '—'} · {activeProduct.categoryName ?? '—'} · ₹{activeProduct.sellingPrice.toFixed(0)}
+                    </Text>
+                  </View>
+                </View>
+
+                <TouchableOpacity
+                  style={styles.actionRow}
+                  onPress={() => {
+                    const p = activeProduct;
+                    setActiveProduct(null);
+                    navigation.navigate('ProductDetails', { product: p });
+                  }}
+                >
+                  <View style={[styles.actionIconWrap, { backgroundColor: `${AppColors.primary}14` }]}>
+                    <Icon name="visibility" color={AppColors.primary} size={18} />
+                  </View>
+                  <Text style={styles.actionText}>View product details</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.actionRow}
+                  onPress={() => {
+                    const p = activeProduct;
+                    setActiveProduct(null);
+                    navigation.navigate('EditProduct', { product: p, onSaved: load });
+                  }}
+                >
+                  <View style={[styles.actionIconWrap, { backgroundColor: `${AppColors.primary}14` }]}>
+                    <Icon name="edit" color={AppColors.primary} size={18} />
+                  </View>
+                  <Text style={styles.actionText}>Edit product</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.actionRow}
+                  onPress={() => {
+                    const p = activeProduct;
+                    setActiveProduct(null);
+                    confirmDelete(p);
+                  }}
+                >
+                  <View style={[styles.actionIconWrap, { backgroundColor: `${AppColors.danger}14` }]}>
+                    <Icon name="delete-outline" color={AppColors.danger} size={18} />
+                  </View>
+                  <Text style={[styles.actionText, { color: AppColors.danger }]}>Delete product</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.cancelBtn} onPress={() => setActiveProduct(null)}>
+                  <Text style={styles.cancelText}>Cancel</Text>
+                </TouchableOpacity>
+              </>
+            )}
+          </View>
+        </Pressable>
+      </Modal>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   flex: { flex: 1, backgroundColor: AppColors.background },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, backgroundColor: AppColors.surface, borderBottomWidth: 1, borderColor: AppColors.border },
-  headerTitle: { fontSize: 18, fontWeight: '700', color: AppColors.textPrimary },
+  header: {
+    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
+    paddingHorizontal: 16, paddingTop: 50, paddingBottom: 14,
+    backgroundColor: AppColors.surface, borderBottomWidth: 1, borderColor: AppColors.border,
+  },
+  headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  backBtn: { marginLeft: -6 },
+  headerTitle: { fontSize: 17, fontWeight: '700', color: AppColors.textPrimary, letterSpacing: -0.3 },
   searchWrap: { padding: 16, paddingBottom: 8 },
-  searchBox: { flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.surface, borderRadius: 12, borderWidth: 1, borderColor: AppColors.border, paddingHorizontal: 14 },
-  searchInput: { flex: 1, paddingVertical: 12, marginLeft: 8, color: AppColors.textPrimary },
+  searchBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: AppColors.surface,
+    borderRadius: 12,
+    borderWidth: 1.2,
+    borderColor: AppColors.border,
+    paddingHorizontal: 14,
+    height: 48,
+    shadowColor: AppColors.primary,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.03,
+    shadowRadius: 4,
+    elevation: 1,
+  },
+  searchInput: { flex: 1, paddingVertical: 11, marginLeft: 8, color: AppColors.textPrimary, fontSize: 14, fontWeight: '500' },
   centerFill: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24 },
   errorText: { color: AppColors.textSecondary, fontSize: 12.5, textAlign: 'center', marginTop: 10 },
-  retryText: { color: AppColors.primary, marginTop: 10 },
-  emptyText: { color: AppColors.textSecondary, fontSize: 13 },
-  card: { flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.surface, borderRadius: 14, borderWidth: 1, borderColor: AppColors.border, padding: 13 },
-  avatar: { width: 44, height: 44, borderRadius: 12, backgroundColor: AppColors.primarySoft, alignItems: 'center', justifyContent: 'center', marginRight: 12 },
+  retryText: { color: AppColors.primary, marginTop: 10, fontWeight: '700' },
+  emptyText: { color: AppColors.textSecondary, fontSize: 13.5 },
+  card: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: AppColors.surface,
+    borderRadius: 16,
+    borderWidth: 1.2,
+    borderColor: AppColors.border,
+    padding: 14,
+    shadowColor: AppColors.primary,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  avatar: {
+    width: 44,
+    height: 44,
+    borderRadius: 14,
+    backgroundColor: AppColors.primarySoft,
+    borderWidth: 1,
+    borderColor: `${AppColors.primary}25`,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
   cardName: { color: AppColors.textPrimary, fontSize: 14, fontWeight: '700' },
   cardSub: { color: AppColors.textSecondary, fontSize: 12, marginTop: 2 },
   priceRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 4 },
-  priceText: { color: AppColors.textPrimary, fontSize: 13, fontWeight: '700' },
-  stockPill: { paddingHorizontal: 7, paddingVertical: 2, borderRadius: 20 },
-  stockText: { fontSize: 10.5, fontWeight: '700' },
-  menu: { position: 'absolute', right: 0, top: 40, backgroundColor: AppColors.surface, borderRadius: 12, borderWidth: 1, borderColor: AppColors.border, elevation: 4, zIndex: 10, width: 130 },
-  menuItem: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 12, paddingVertical: 10 },
-  menuText: { color: AppColors.textPrimary, fontSize: 13 },
-  fab: { position: 'absolute', right: 16, bottom: 20, flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.primary, borderRadius: 28, paddingVertical: 14, paddingHorizontal: 18, gap: 8, elevation: 4 },
-  fabText: { color: '#fff', fontWeight: '600', fontSize: 14 },
+  priceText: { color: AppColors.textPrimary, fontSize: 14, fontWeight: '800' },
+  stockPill: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8 },
+  stockText: { fontSize: 11, fontWeight: '700' },
+  moreBtn: { width: 34, height: 34, borderRadius: 10, backgroundColor: AppColors.surfaceSoft, alignItems: 'center', justifyContent: 'center' },
+  fab: {
+    position: 'absolute',
+    right: 16,
+    bottom: 84,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: AppColors.primary,
+    borderRadius: 14,
+    paddingVertical: 13,
+    paddingHorizontal: 20,
+    gap: 7,
+    shadowColor: AppColors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.28,
+    shadowRadius: 10,
+    elevation: 4,
+  },
+  fabText: { color: '#fff', fontWeight: '700', fontSize: 14 },
+  sheetBackdrop: { flex: 1, backgroundColor: 'rgba(15, 23, 42, 0.45)', justifyContent: 'flex-end' },
+  sheet: {
+    backgroundColor: AppColors.surface,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    paddingTop: 10,
+    paddingBottom: 40,
+    paddingHorizontal: 8,
+    borderWidth: 1,
+    borderColor: AppColors.border,
+  },
+  sheetHandle: { width: 36, height: 4, borderRadius: 2, backgroundColor: AppColors.border, alignSelf: 'center', marginBottom: 14 },
+  sheetHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingHorizontal: 16,
+    paddingBottom: 14,
+    marginBottom: 6,
+    borderBottomWidth: 1,
+    borderBottomColor: AppColors.border,
+  },
+  sheetAvatar: {
+    width: 42,
+    height: 42,
+    borderRadius: 10,
+    backgroundColor: AppColors.primarySoft,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  sheetProductName: { color: AppColors.textPrimary, fontSize: 14.5, fontWeight: '700' },
+  sheetProductSub: { color: AppColors.textSecondary, fontSize: 12, marginTop: 2 },
+  actionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 13,
+  },
+  actionIconWrap: { width: 34, height: 34, borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
+  actionText: { color: AppColors.textPrimary, fontSize: 14, fontWeight: '500' },
+  cancelBtn: { marginTop: 8, paddingVertical: 12, alignItems: 'center' },
+  cancelText: { color: AppColors.textSecondary, fontSize: 13.5, fontWeight: '600' },
 });

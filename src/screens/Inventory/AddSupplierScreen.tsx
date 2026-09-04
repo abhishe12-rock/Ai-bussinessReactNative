@@ -43,11 +43,16 @@ export default function AddSupplierScreen() {
   return (
     <View style={styles.flex}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon name="arrow-back" color={AppColors.textPrimary} size={22} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Add supplier</Text>
-        <View style={{ width: 22 }} />
+        <View style={styles.headerLeft}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backBtn}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Icon name="chevron-left" color={AppColors.primary} size={30} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Add Supplier</Text>
+        </View>
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
@@ -86,12 +91,18 @@ function Field({ icon, label, value, onChangeText, keyboardType, multiline }: {
 
 const styles = StyleSheet.create({
   flex: { flex: 1, backgroundColor: AppColors.background },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, backgroundColor: AppColors.surface, borderBottomWidth: 1, borderColor: AppColors.border },
-  headerTitle: { fontSize: 17, fontWeight: '700', color: AppColors.textPrimary },
-  content: { padding: 16, paddingBottom: 40 },
-  iconCircle: { width: 72, height: 72, borderRadius: 36, backgroundColor: AppColors.infoSoft, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', marginBottom: 24 },
-  fieldBox: { flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.surface, borderRadius: 12, borderWidth: 1, borderColor: AppColors.border, paddingHorizontal: 14, marginBottom: 12 },
-  fieldInput: { flex: 1, paddingVertical: 14, marginLeft: 10, color: AppColors.textPrimary, fontSize: 14 },
-  saveButton: { backgroundColor: AppColors.primary, borderRadius: 12, height: 50, alignItems: 'center', justifyContent: 'center', marginTop: 16 },
-  saveButtonText: { color: '#fff', fontSize: 15, fontWeight: '600' },
+  header: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    paddingHorizontal: 16, paddingTop: 50, paddingBottom: 14,
+    backgroundColor: AppColors.surface, borderBottomWidth: 1, borderColor: AppColors.border,
+  },
+  headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  backBtn: { marginLeft: -6 },
+  headerTitle: { fontSize: 17, fontWeight: '700', color: AppColors.textPrimary, letterSpacing: -0.3 },
+  content: { padding: 16, paddingBottom: 84 },
+  iconCircle: { width: 68, height: 68, borderRadius: 34, backgroundColor: AppColors.infoSoft, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', marginBottom: 24 },
+  fieldBox: { flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.surface, borderRadius: 12, borderWidth: 1, borderColor: AppColors.border, paddingHorizontal: 12, marginBottom: 12 },
+  fieldInput: { flex: 1, paddingVertical: 13, marginLeft: 10, color: AppColors.textPrimary, fontSize: 13.5 },
+  saveButton: { backgroundColor: AppColors.primary, borderRadius: 12, height: 48, alignItems: 'center', justifyContent: 'center', marginTop: 16 },
+  saveButtonText: { color: '#fff', fontSize: 14.5, fontWeight: '700' },
 });

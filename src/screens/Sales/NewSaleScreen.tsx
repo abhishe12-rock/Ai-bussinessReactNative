@@ -117,16 +117,17 @@ export default function NewSaleScreen() {
   return (
     <View style={styles.flex}>
       <View style={styles.header}>
-  <TouchableOpacity
-    onPress={() => navigation.goBack()}
-    style={{ marginTop: 29 }}
-    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-  >
-    <Icon name="chevron-left" color={AppColors.primary} size={30} />
-  </TouchableOpacity>
-  <Text style={[styles.headerTitle, { marginTop: 29 }]}>New sale</Text>
-  <View style={{ width: 22 }} />
-</View>
+        <View style={styles.headerLeft}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backBtn}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Icon name="chevron-left" color={AppColors.primary} size={30} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>New sale</Text>
+        </View>
+      </View>
 
       <ScrollView contentContainerStyle={styles.content}>
         <StepLabel title="Customer" />
@@ -344,47 +345,71 @@ function SummaryLine({ label, value, color, isTotal, editable }: { label: string
 
 const styles = StyleSheet.create({
   flex: { flex: 1, backgroundColor: AppColors.background },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, backgroundColor: AppColors.surface, borderBottomWidth: 1, borderColor: AppColors.border },
-  headerTitle: { fontSize: 17, fontWeight: '700', color: AppColors.textPrimary },
-  content: { padding: 16, paddingBottom: 24 },
-  stepLabel: { color: AppColors.textPrimary, fontSize: 14, fontWeight: '700', marginTop: 8, marginBottom: 10 },
+  header: {
+    paddingHorizontal: 16, paddingTop: 50, paddingBottom: 14,
+    backgroundColor: AppColors.surface, borderBottomWidth: 1, borderColor: AppColors.border,
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  backBtn: {
+    marginLeft: -6,
+  },
+  headerTitle: { fontSize: 17, fontWeight: '700', color: AppColors.textPrimary, letterSpacing: -0.3 },
+  content: { padding: 16, paddingBottom: 32 },
+  stepLabel: { color: AppColors.textPrimary, fontSize: 13.5, fontWeight: '700', marginTop: 12, marginBottom: 8, letterSpacing: -0.2 },
   stepRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   addLink: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  addLinkText: { color: AppColors.primary, fontSize: 12.5, fontWeight: '600' },
-  selectCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.surface, borderRadius: 14, borderWidth: 1, borderColor: AppColors.border, padding: 14, gap: 12 },
-  selectIcon: { width: 38, height: 38, borderRadius: 11, backgroundColor: AppColors.primarySoft, alignItems: 'center', justifyContent: 'center' },
-  selectPlaceholder: { flex: 1, color: AppColors.textMuted, fontSize: 14, fontWeight: '600' },
-  selectedName: { color: AppColors.textPrimary, fontSize: 14, fontWeight: '700' },
-  selectedSub: { color: AppColors.textSecondary, fontSize: 12 },
-  emptyProducts: { backgroundColor: AppColors.surface, borderRadius: 14, borderWidth: 1, borderColor: AppColors.border, padding: 20, alignItems: 'center' },
+  addLinkText: { color: AppColors.primary, fontSize: 12.5, fontWeight: '700' },
+  selectCard: {
+    flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.surface,
+    borderRadius: 12, borderWidth: 1, borderColor: AppColors.border, padding: 12, gap: 12,
+    shadowColor: AppColors.textPrimary, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.02, shadowRadius: 4, elevation: 1,
+  },
+  selectIcon: { width: 36, height: 36, borderRadius: 10, backgroundColor: AppColors.primarySoft, alignItems: 'center', justifyContent: 'center' },
+  selectPlaceholder: { flex: 1, color: AppColors.textMuted, fontSize: 13.5, fontWeight: '500' },
+  selectedName: { color: AppColors.textPrimary, fontSize: 13.5, fontWeight: '700' },
+  selectedSub: { color: AppColors.textSecondary, fontSize: 11.5, marginTop: 1 },
+  emptyProducts: { backgroundColor: AppColors.surface, borderRadius: 12, borderWidth: 1, borderColor: AppColors.border, padding: 18, alignItems: 'center' },
   emptyProductsText: { color: AppColors.textMuted, fontSize: 12.5 },
-  itemsCard: { backgroundColor: AppColors.surface, borderRadius: 14, borderWidth: 1, borderColor: AppColors.border },
-  itemRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, paddingVertical: 11, gap: 8 },
+  itemsCard: {
+    backgroundColor: AppColors.surface, borderRadius: 12, borderWidth: 1, borderColor: AppColors.border,
+    shadowColor: AppColors.textPrimary, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.02, shadowRadius: 4, elevation: 1,
+  },
+  itemRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 10, gap: 8 },
   itemRowBorder: { borderBottomWidth: 1, borderColor: AppColors.border },
-  itemName: { color: AppColors.textPrimary, fontSize: 13.5, fontWeight: '600' },
-  itemMeta: { color: AppColors.textSecondary, fontSize: 11.5, marginTop: 2 },
+  itemName: { color: AppColors.textPrimary, fontSize: 13, fontWeight: '600' },
+  itemMeta: { color: AppColors.textSecondary, fontSize: 11.5, marginTop: 1 },
   itemQty: { color: AppColors.textPrimary, fontSize: 13, fontWeight: '600', marginHorizontal: 4 },
   itemTotal: { color: AppColors.textPrimary, fontSize: 13.5, fontWeight: '700', marginLeft: 6 },
-  summaryCard: { backgroundColor: AppColors.surface, borderRadius: 14, borderWidth: 1, borderColor: AppColors.border, padding: 14 },
+  summaryCard: {
+    backgroundColor: AppColors.surface, borderRadius: 12, borderWidth: 1, borderColor: AppColors.border, padding: 14,
+    shadowColor: AppColors.textPrimary, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.02, shadowRadius: 4, elevation: 1,
+  },
   summaryLine: { flexDirection: 'row', alignItems: 'center', paddingVertical: 5 },
   summaryLabel: { color: AppColors.textSecondary, fontSize: 13 },
-  summaryLabelTotal: { color: AppColors.textPrimary, fontSize: 14.5, fontWeight: '700' },
+  summaryLabelTotal: { color: AppColors.textPrimary, fontSize: 14, fontWeight: '700' },
   summaryValue: { fontSize: 13, fontWeight: '700' },
   summaryValueTotal: { fontSize: 17 },
   divider: { height: 1, backgroundColor: AppColors.border, marginVertical: 10 },
   chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  chip: { paddingHorizontal: 14, paddingVertical: 9, borderRadius: 20, backgroundColor: AppColors.surface, borderWidth: 1, borderColor: AppColors.border },
+  chip: { paddingHorizontal: 13, paddingVertical: 8, borderRadius: 8, backgroundColor: AppColors.surface, borderWidth: 1, borderColor: AppColors.border },
   chipSelected: { backgroundColor: AppColors.primary, borderColor: AppColors.primary },
-  chipText: { color: AppColors.textSecondary, fontSize: 12.5, fontWeight: '600' },
+  chipText: { color: AppColors.textSecondary, fontSize: 12, fontWeight: '600' },
   chipTextSelected: { color: '#fff' },
-  fieldBox: { flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.surface, borderRadius: 12, borderWidth: 1, borderColor: AppColors.border, paddingHorizontal: 14, marginTop: 12 },
-  fieldInput: { flex: 1, paddingVertical: 14, marginLeft: 10, color: AppColors.textPrimary, fontSize: 14 },
-  remainingText: { fontSize: 12.5, fontWeight: '600', marginTop: 8 },
-  footer: { padding: 16, backgroundColor: AppColors.surface, borderTopWidth: 1, borderColor: AppColors.border },
-  completeButton: { backgroundColor: AppColors.primary, borderRadius: 14, height: 52, alignItems: 'center', justifyContent: 'center' },
-  completeButtonText: { color: '#fff', fontSize: 15, fontWeight: '700' },
+  fieldBox: {
+    flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.surface,
+    borderRadius: 10, borderWidth: 1, borderColor: AppColors.border, paddingHorizontal: 12, marginTop: 12,
+  },
+  fieldInput: { flex: 1, paddingVertical: 12, marginLeft: 8, color: AppColors.textPrimary, fontSize: 13.5 },
+  remainingText: { fontSize: 12, fontWeight: '600', marginTop: 8 },
+  footer: { paddingHorizontal: 16, paddingTop: 14, paddingBottom: 48, backgroundColor: AppColors.surface, borderTopWidth: 1, borderColor: AppColors.border },
+  completeButton: { backgroundColor: AppColors.primary, borderRadius: 12, height: 48, alignItems: 'center', justifyContent: 'center' },
+  completeButtonText: { color: '#fff', fontSize: 14.5, fontWeight: '700' },
   sheetBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
-  sheet: { backgroundColor: AppColors.surface, borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 16, paddingBottom: 24 },
+  sheet: { backgroundColor: AppColors.surface, borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 16, paddingBottom: 40 },
   sheetHandle: { width: 36, height: 4, borderRadius: 4, backgroundColor: AppColors.border, alignSelf: 'center', marginBottom: 14 },
   sheetTitle: { color: AppColors.textPrimary, fontSize: 15, fontWeight: '700', marginBottom: 10 },
   sheetError: { color: AppColors.danger, fontSize: 12.5, padding: 16 },

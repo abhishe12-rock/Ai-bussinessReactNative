@@ -100,15 +100,16 @@ export default function CreatePurchaseOrderScreen() {
   return (
     <View style={styles.flex}>
       <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={{ marginTop: 29 }}
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-        >
-          <Icon name="chevron-left" color={AppColors.primary} size={30} />
-        </TouchableOpacity>
-        <Text style={[styles.headerTitle, { marginTop: 29 }]}>Create purchase order</Text>
-        <View style={{ width: 22 }} />
+        <View style={styles.headerLeft}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backBtn}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Icon name="chevron-left" color={AppColors.primary} size={30} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Create Purchase Order</Text>
+        </View>
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
@@ -320,11 +321,17 @@ function SummaryLine({ label, value, color, isTotal, editable }: { label: string
 
 const styles = StyleSheet.create({
   flex: { flex: 1, backgroundColor: AppColors.background },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, backgroundColor: AppColors.surface, borderBottomWidth: 1, borderColor: AppColors.border },
-  headerTitle: { fontSize: 17, fontWeight: '700', color: AppColors.textPrimary },
+  header: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    paddingHorizontal: 16, paddingTop: 50, paddingBottom: 14,
+    backgroundColor: AppColors.surface, borderBottomWidth: 1, borderColor: AppColors.border,
+  },
+  headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  backBtn: { marginLeft: -6 },
+  headerTitle: { fontSize: 17, fontWeight: '700', color: AppColors.textPrimary, letterSpacing: -0.3 },
   content: { padding: 16, paddingBottom: 24 },
   label: { color: AppColors.textPrimary, fontSize: 14, fontWeight: '700', marginTop: 12, marginBottom: 8 },
-  selectCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.surface, borderRadius: 14, borderWidth: 1, borderColor: AppColors.border, padding: 14, gap: 12 },
+  selectCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.surface, borderRadius: 12, borderWidth: 1, borderColor: AppColors.border, padding: 14, gap: 12 },
   selectIcon: { width: 38, height: 38, borderRadius: 11, backgroundColor: AppColors.infoSoft, alignItems: 'center', justifyContent: 'center' },
   selectText: { flex: 1, color: AppColors.textPrimary, fontSize: 14, fontWeight: '600' },
   selectPlaceholder: { color: AppColors.textMuted },
@@ -359,11 +366,11 @@ const styles = StyleSheet.create({
   chipSelected: { backgroundColor: AppColors.primary, borderColor: AppColors.primary },
   chipText: { color: AppColors.textSecondary, fontSize: 12.5, fontWeight: '600' },
   chipTextSelected: { color: '#fff' },
-  footer: { padding: 16, backgroundColor: AppColors.surface, borderTopWidth: 1, borderColor: AppColors.border },
-  createButton: { backgroundColor: AppColors.primary, borderRadius: 14, height: 52, alignItems: 'center', justifyContent: 'center' },
-  createButtonText: { color: '#fff', fontSize: 15, fontWeight: '700' },
+  footer: { paddingHorizontal: 16, paddingTop: 14, paddingBottom: 48, backgroundColor: AppColors.surface, borderTopWidth: 1, borderColor: AppColors.border },
+  createButton: { backgroundColor: AppColors.primary, borderRadius: 12, height: 48, alignItems: 'center', justifyContent: 'center' },
+  createButtonText: { color: '#fff', fontSize: 14.5, fontWeight: '700' },
   sheetBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
-  sheet: { backgroundColor: AppColors.surface, borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 16, paddingBottom: 24 },
+  sheet: { backgroundColor: AppColors.surface, borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 16, paddingBottom: 40 },
   sheetHandle: { width: 36, height: 4, borderRadius: 4, backgroundColor: AppColors.border, alignSelf: 'center', marginBottom: 14 },
   sheetTitle: { color: AppColors.textPrimary, fontSize: 15, fontWeight: '700', marginBottom: 10 },
   sheetError: { color: AppColors.danger, fontSize: 12.5, padding: 16 },

@@ -1,3 +1,4 @@
+
 import React, { useCallback, useMemo, useState } from 'react';
 import {
   View,
@@ -8,9 +9,11 @@ import {
   ActivityIndicator,
   TouchableOpacity,
 } from 'react-native';
-import { useFocusEffect, useRoute } from '@react-navigation/native';
+import { useFocusEffect, useRoute, useNavigation } from '@react-navigation/native';
 import { AppColors } from '../theme/AppColors';
 import { EmiRecord, FinanceService } from '../../services/FinanceService.ts';
+import Icon from '@react-native-vector-icons/material-icons';
+
 function formatDMY(d: Date): string {
   return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
 }
@@ -24,6 +27,7 @@ const STATUS_OPTIONS = ['All', 'PENDING', 'PAID', 'OVERDUE'];
 type EmiScreenParams = { loanId?: string; loanName?: string } | undefined;
 
 export default function EmiScreen() {
+  const navigation = useNavigation<any>();
   const route = useRoute();
   const { loanId, loanName } = (route.params as EmiScreenParams) ?? {};
 
@@ -106,7 +110,16 @@ export default function EmiScreen() {
   return (
     <View style={styles.screen}>
       <View style={styles.appBar}>
-        <Text style={styles.appBarTitle}>{loanName ?? 'EMI'}</Text>
+        <View style={styles.headerLeft}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backBtn}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Icon name="chevron-left" color={AppColors.primary} size={30} />
+          </TouchableOpacity>
+          <Text style={styles.appBarTitle}>{loanName ?? 'EMI'}</Text>
+        </View>
       </View>
 
       <View style={styles.chipRow}>
@@ -197,19 +210,34 @@ function Chip({ label, selected, onPress }: { label: string; selected: boolean; 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: AppColors.background },
   appBar: {
-    height: 56,
-    justifyContent: 'center',
     paddingHorizontal: 16,
+    paddingTop: 50,
+    paddingBottom: 14,
     backgroundColor: AppColors.surface,
     borderBottomWidth: 1,
     borderBottomColor: AppColors.border,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  appBarTitle: { color: AppColors.textPrimary, fontSize: 18, fontWeight: '700' },
-  chipRow: { paddingHorizontal: 16, paddingTop: 14, paddingBottom: 8, height: 34 + 22 },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  backBtn: {
+    marginLeft: -6,
+  },
+  appBarTitle: {
+    color: AppColors.textPrimary,
+    fontSize: 17,
+    fontWeight: '700',
+    letterSpacing: -0.3,
+  },
+  chipRow: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 8, height: 34 + 20 },
   chip: {
-    height: 34,
+    height: 32,
     paddingHorizontal: 14,
-    borderRadius: 20,
+    borderRadius: 8,
     borderWidth: 1,
     borderColor: AppColors.border,
     backgroundColor: AppColors.surface,
@@ -218,27 +246,32 @@ const styles = StyleSheet.create({
   },
   chipLabel: { fontSize: 12, fontWeight: '600', color: AppColors.textSecondary },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  errorText: { color: AppColors.danger, fontSize: 12.5 },
+  errorText: { color: AppColors.danger, fontSize: 12.5, fontWeight: '500' },
   emptyText: { color: AppColors.textSecondary, fontSize: 13 },
-  listContent: { paddingHorizontal: 16, paddingBottom: 24 },
+  listContent: { paddingHorizontal: 16, paddingBottom: 32 },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 13,
-    borderRadius: 14,
+    padding: 12,
+    borderRadius: 12,
     borderWidth: 1,
     borderColor: AppColors.border,
     backgroundColor: AppColors.surface,
+    shadowColor: AppColors.textPrimary,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.02,
+    shadowRadius: 4,
+    elevation: 1,
   },
   rowLoanName: { color: AppColors.textSecondary, fontSize: 11.5 },
   rowDate: { color: AppColors.textPrimary, fontSize: 13.5, fontWeight: '700' },
   rowAmount: { color: AppColors.textSecondary, fontSize: 12 },
-  statusPill: { paddingHorizontal: 9, paddingVertical: 4, borderRadius: 20 },
+  statusPill: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6 },
   statusPillText: { fontSize: 10.5, fontWeight: '700' },
   markPaidBtn: {
-    height: 34,
+    height: 32,
     paddingHorizontal: 12,
-    borderRadius: 10,
+    borderRadius: 8,
     backgroundColor: AppColors.primary,
     alignItems: 'center',
     justifyContent: 'center',

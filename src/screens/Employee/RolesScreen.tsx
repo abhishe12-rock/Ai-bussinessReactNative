@@ -34,24 +34,27 @@ export default function RolesScreen() {
   return (
     <View style={styles.flex}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon name="arrow-back" color={AppColors.textPrimary} size={22} />
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
+          <Icon name="chevron-left" color={AppColors.primary} size={30} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Roles</Text>
-        <View style={{ width: 22 }} />
+        <Text style={styles.headerTitle}>Roles & Permissions</Text>
+        <View style={{ width: 30 }} />
       </View>
 
       {loading ? (
         <View style={styles.centerFill}><ActivityIndicator color={AppColors.primary} /></View>
       ) : error ? (
-        <View style={styles.centerFill}><Text style={{ color: AppColors.danger, fontSize: 12.5 }}>{error}</Text></View>
+        <View style={styles.centerFill}><Text style={{ color: AppColors.danger, fontSize: 12.5, fontWeight: '500' }}>{error}</Text></View>
       ) : roles.length === 0 ? (
-        <View style={styles.centerFill}><Text style={styles.emptyText}>No roles yet — run the seed insert or tap Add role</Text></View>
+        <View style={styles.centerFill}><Text style={styles.emptyText}>No roles configured yet</Text></View>
       ) : (
         <FlatList
           data={roles}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
+          contentContainerStyle={{ padding: 16, paddingBottom: 150 }}
           ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
           refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}
           renderItem={({ item }) => (
@@ -67,19 +70,19 @@ export default function RolesScreen() {
         />
       )}
 
-      <TouchableOpacity style={styles.fab} onPress={() => setDialogOpen(true)}>
-        <Icon name="add" color="#fff" size={20} />
+      <TouchableOpacity style={styles.fab} onPress={() => setDialogOpen(true)} activeOpacity={0.8}>
+        <Icon name="add" color="#fff" size={18} />
         <Text style={styles.fabText}>Add role</Text>
       </TouchableOpacity>
 
       <Modal visible={dialogOpen} transparent animationType="fade" onRequestClose={() => setDialogOpen(false)}>
         <View style={styles.dialogBackdrop}>
           <View style={styles.dialog}>
-            <Text style={styles.dialogTitle}>Add role</Text>
-            <TextInput style={styles.dialogInput} placeholder="Role name" placeholderTextColor={AppColors.textMuted} value={newRoleName} onChangeText={setNewRoleName} />
+            <Text style={styles.dialogTitle}>Add New Role</Text>
+            <TextInput style={styles.dialogInput} placeholder="Role title (e.g. Sales Lead)" placeholderTextColor={AppColors.textMuted} value={newRoleName} onChangeText={setNewRoleName} />
             <View style={styles.dialogActions}>
               <TouchableOpacity onPress={() => setDialogOpen(false)}><Text style={styles.dialogCancel}>Cancel</Text></TouchableOpacity>
-              <TouchableOpacity onPress={() => setDialogOpen(false)}><Text style={styles.dialogAdd}>Add</Text></TouchableOpacity>
+              <TouchableOpacity onPress={() => setDialogOpen(false)}><Text style={styles.dialogAdd}>Create</Text></TouchableOpacity>
             </View>
           </View>
         </View>
@@ -90,21 +93,70 @@ export default function RolesScreen() {
 
 const styles = StyleSheet.create({
   flex: { flex: 1, backgroundColor: AppColors.background },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, backgroundColor: AppColors.surface, borderBottomWidth: 1, borderColor: AppColors.border },
-  headerTitle: { fontSize: 18, fontWeight: '700', color: AppColors.textPrimary },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 50,
+    paddingBottom: 14,
+    backgroundColor: AppColors.surface,
+    borderBottomWidth: 1,
+    borderColor: AppColors.border,
+  },
+  headerTitle: { fontSize: 17, fontWeight: '700', color: AppColors.textPrimary, letterSpacing: -0.3 },
   centerFill: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32 },
-  emptyText: { color: AppColors.textSecondary, fontSize: 12.5, textAlign: 'center' },
-  card: { flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.surface, borderRadius: 14, borderWidth: 1, borderColor: AppColors.border, padding: 13, gap: 12 },
-  iconWrap: { width: 42, height: 42, borderRadius: 12, backgroundColor: AppColors.primarySoft, alignItems: 'center', justifyContent: 'center' },
+  emptyText: { color: AppColors.textSecondary, fontSize: 13, textAlign: 'center' },
+  card: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: AppColors.surface,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: AppColors.border,
+    padding: 14,
+    gap: 12,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.35,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  iconWrap: {
+    width: 42,
+    height: 42,
+    borderRadius: 13,
+    backgroundColor: AppColors.primarySoft,
+    borderWidth: 1,
+    borderColor: `${AppColors.primary}35`,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   cardName: { color: AppColors.textPrimary, fontSize: 14, fontWeight: '700' },
   cardDesc: { color: AppColors.textSecondary, fontSize: 12, marginTop: 2 },
-  fab: { position: 'absolute', right: 16, bottom: 20, flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.primary, borderRadius: 28, paddingVertical: 14, paddingHorizontal: 18, gap: 8, elevation: 4 },
-  fabText: { color: '#fff', fontWeight: '600', fontSize: 14 },
-  dialogBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', alignItems: 'center', justifyContent: 'center' },
-  dialog: { backgroundColor: AppColors.surface, borderRadius: 16, padding: 20, width: '85%' },
-  dialogTitle: { color: AppColors.textPrimary, fontSize: 16, fontWeight: '700', marginBottom: 14 },
-  dialogInput: { borderWidth: 1, borderColor: AppColors.border, borderRadius: 10, padding: 12, color: AppColors.textPrimary },
-  dialogActions: { flexDirection: 'row', justifyContent: 'flex-end', gap: 20, marginTop: 16 },
-  dialogCancel: { color: AppColors.textSecondary, fontSize: 14 },
-  dialogAdd: { color: AppColors.primary, fontWeight: '700', fontSize: 14 },
+  fab: {
+    position: 'absolute',
+    right: 16,
+    bottom: 84,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: AppColors.primary,
+    borderRadius: 16,
+    paddingVertical: 13,
+    paddingHorizontal: 20,
+    gap: 7,
+    shadowColor: AppColors.primary,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.45,
+    shadowRadius: 14,
+    elevation: 6,
+  },
+  fabText: { color: '#fff', fontWeight: '700', fontSize: 14 },
+  dialogBackdrop: { flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.65)', alignItems: 'center', justifyContent: 'center' },
+  dialog: { backgroundColor: AppColors.surfaceElevated, borderRadius: 20, padding: 22, width: '85%', borderWidth: 1, borderColor: AppColors.border },
+  dialogTitle: { color: AppColors.textPrimary, fontSize: 15.5, fontWeight: '700', marginBottom: 12 },
+  dialogInput: { borderWidth: 1, borderColor: AppColors.border, borderRadius: 12, paddingHorizontal: 12, paddingVertical: 11, color: AppColors.textPrimary, fontSize: 13.5, backgroundColor: AppColors.surfaceInput },
+  dialogActions: { flexDirection: 'row', justifyContent: 'flex-end', gap: 16, marginTop: 16 },
+  dialogCancel: { color: AppColors.textSecondary, fontSize: 13.5, fontWeight: '600' },
+  dialogAdd: { color: AppColors.primary, fontWeight: '700', fontSize: 13.5 },
 });

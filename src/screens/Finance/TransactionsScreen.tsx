@@ -9,10 +9,12 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { AppColors } from '../theme/AppColors';
 import { FinanceService, TransactionRecord } from '../../services/FinanceService.ts';
+import Icon from '@react-native-vector-icons/material-icons';
+
 const DATE_FILTER_OPTIONS = ['Today', 'Yesterday', 'This Week', 'This Month'];
 
 function startDateFor(filter: string): Date | undefined {
@@ -60,6 +62,7 @@ function formatRupee(n: number): string {
 const TYPE_OPTIONS = ['All', 'INCOME', 'EXPENSE'];
 
 export default function TransactionsScreen() {
+  const navigation = useNavigation<any>();
   const [transactions, setTransactions] = useState<TransactionRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -103,7 +106,16 @@ export default function TransactionsScreen() {
   return (
     <View style={styles.screen}>
       <View style={styles.appBar}>
-        <Text style={styles.appBarTitle}>Transactions</Text>
+        <View style={styles.headerLeft}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backBtn}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Icon name="chevron-left" color={AppColors.primary} size={30} />
+          </TouchableOpacity>
+          <Text style={styles.appBarTitle}>Transactions</Text>
+        </View>
       </View>
 
       <View style={styles.chipRow}>
@@ -215,19 +227,34 @@ function Chip({
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: AppColors.background },
   appBar: {
-    height: 56,
-    justifyContent: 'center',
     paddingHorizontal: 16,
+    paddingTop: 50,
+    paddingBottom: 14,
     backgroundColor: AppColors.surface,
     borderBottomWidth: 1,
     borderBottomColor: AppColors.border,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  appBarTitle: { color: AppColors.textPrimary, fontSize: 18, fontWeight: '700' },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  backBtn: {
+    marginLeft: -6,
+  },
+  appBarTitle: {
+    color: AppColors.textPrimary,
+    fontSize: 17,
+    fontWeight: '700',
+    letterSpacing: -0.3,
+  },
   chipRow: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 6, height: 34 + 18 },
   chip: {
-    height: 34,
+    height: 32,
     paddingHorizontal: 14,
-    borderRadius: 20,
+    borderRadius: 8,
     borderWidth: 1,
     borderColor: AppColors.border,
     backgroundColor: AppColors.surface,
@@ -236,22 +263,27 @@ const styles = StyleSheet.create({
   },
   chipLabel: { fontSize: 12, fontWeight: '600', color: AppColors.textSecondary },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  errorText: { color: AppColors.danger, fontSize: 12.5 },
+  errorText: { color: AppColors.danger, fontSize: 12.5, fontWeight: '500' },
   emptyText: { color: AppColors.textSecondary, fontSize: 13 },
-  listContent: { padding: 16, paddingBottom: 24 },
-  groupLabel: { color: AppColors.textSecondary, fontSize: 11.5, fontWeight: '700', letterSpacing: 0.5, marginBottom: 8 },
+  listContent: { padding: 16, paddingBottom: 32 },
+  groupLabel: { color: AppColors.textSecondary, fontSize: 11, fontWeight: '700', letterSpacing: 0.6, marginBottom: 8, textTransform: 'uppercase' },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 13,
-    borderRadius: 14,
+    padding: 12,
+    borderRadius: 12,
     borderWidth: 1,
     borderColor: AppColors.border,
     backgroundColor: AppColors.surface,
     marginBottom: 8,
+    shadowColor: AppColors.textPrimary,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.02,
+    shadowRadius: 4,
+    elevation: 1,
   },
-  iconBox: { width: 34, height: 34, borderRadius: 10, alignItems: 'center', justifyContent: 'center', marginRight: 12 },
+  iconBox: { width: 36, height: 36, borderRadius: 10, alignItems: 'center', justifyContent: 'center', marginRight: 12 },
   rowTitle: { color: AppColors.textPrimary, fontSize: 13, fontWeight: '600' },
-  rowDescription: { color: AppColors.textMuted, fontSize: 11, marginTop: 1 },
+  rowDescription: { color: AppColors.textMuted, fontSize: 11, marginTop: 2 },
   rowAmount: { fontSize: 13.5, fontWeight: '700' },
 });

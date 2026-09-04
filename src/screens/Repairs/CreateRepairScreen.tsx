@@ -195,7 +195,7 @@ function CustomerPickerModal({ visible, onClose, onPicked }: {
         <View style={styles.header}>
           <View style={styles.headerLeft}>
             <TouchableOpacity
-              onPress={() => navigation.goBack()}  // ← NOW WORKS
+              onPress={onClose}
               style={styles.backBtn}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
@@ -248,12 +248,16 @@ function CustomerPickerModal({ visible, onClose, onPicked }: {
 const styles = StyleSheet.create({
   flex: { flex: 1, backgroundColor: AppColors.background },
   centerFill: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  header: { padding: 16, paddingTop: 50, backgroundColor: AppColors.surface, borderBottomWidth: 1, borderColor: AppColors.border },
-  headerTitle: { fontSize: 17, fontWeight: '700', color: AppColors.textPrimary },
-  content: { padding: 16, paddingBottom: 24 },
-  sectionLabel: { color: AppColors.textSecondary, fontSize: 13, fontWeight: '600', marginTop: 20, marginBottom: 10 },
-  customerCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.surface, borderRadius: 12, borderWidth: 1, borderColor: AppColors.border, padding: 14, gap: 10 },
-  customerAvatar: { width: 40, height: 40, borderRadius: 20, backgroundColor: AppColors.primarySoft, alignItems: 'center', justifyContent: 'center' },
+  header: { paddingHorizontal: 16, paddingTop: 50, paddingBottom: 14, backgroundColor: AppColors.surface, borderBottomWidth: 1, borderColor: AppColors.border },
+  headerTitle: { fontSize: 17, fontWeight: '700', color: AppColors.textPrimary, letterSpacing: -0.3 },
+  content: { padding: 16, paddingBottom: 84 },
+  sectionLabel: { color: AppColors.textSecondary, fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5, marginTop: 20, marginBottom: 10 },
+  customerCard: {
+    flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.surface,
+    borderRadius: 12, borderWidth: 1, borderColor: AppColors.border, padding: 14, gap: 10,
+    shadowColor: AppColors.textPrimary, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.02, shadowRadius: 4, elevation: 1,
+  },
+  customerAvatar: { width: 40, height: 40, borderRadius: 10, backgroundColor: AppColors.primarySoft, alignItems: 'center', justifyContent: 'center' },
   customerAvatarText: { color: AppColors.primary, fontWeight: '700' },
   customerName: { color: AppColors.textPrimary, fontSize: 14, fontWeight: '700' },
   customerPhone: { color: AppColors.textSecondary, fontSize: 12.5 },
@@ -262,23 +266,27 @@ const styles = StyleSheet.create({
   fieldBox: { flexDirection: 'row', alignItems: 'flex-start', backgroundColor: AppColors.surface, borderRadius: 12, borderWidth: 1, borderColor: AppColors.border, paddingHorizontal: 14, paddingVertical: 14, marginBottom: 12, gap: 10 },
   fieldInput: { flex: 1, color: AppColors.textPrimary, fontSize: 14, paddingVertical: 0 },
   pickerBox: { flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.surface, borderRadius: 12, borderWidth: 1, borderColor: AppColors.border, paddingHorizontal: 14, gap: 10 },
-  saveButton: { backgroundColor: AppColors.primary, borderRadius: 12, height: 50, alignItems: 'center', justifyContent: 'center', marginTop: 28 },
+  saveButton: { backgroundColor: AppColors.primary, borderRadius: 12, height: 48, alignItems: 'center', justifyContent: 'center', marginTop: 28 },
   saveButtonText: { color: '#fff', fontSize: 15, fontWeight: '600' },
   searchWrap: { padding: 16 },
   searchBox: { flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.surface, borderRadius: 12, borderWidth: 1, borderColor: AppColors.border, paddingHorizontal: 14 },
   searchInput: { flex: 1, paddingVertical: 12, marginLeft: 8, color: AppColors.textPrimary },
   emptyText: { color: AppColors.textSecondary, fontSize: 13 },
-  customerListCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.surface, borderRadius: 14, borderWidth: 1, borderColor: AppColors.border, padding: 14, gap: 12 },
-  avatar: { width: 42, height: 42, borderRadius: 21, backgroundColor: AppColors.primarySoft, alignItems: 'center', justifyContent: 'center' },
+  customerListCard: {
+    flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.surface,
+    borderRadius: 12, borderWidth: 1, borderColor: AppColors.border, padding: 14, gap: 12,
+    shadowColor: AppColors.textPrimary, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.02, shadowRadius: 4, elevation: 1,
+  },
+  avatar: { width: 42, height: 42, borderRadius: 10, backgroundColor: AppColors.primarySoft, alignItems: 'center', justifyContent: 'center' },
   avatarText: { color: AppColors.primary, fontWeight: '700' },
   cardName: { color: AppColors.textPrimary, fontSize: 14.5, fontWeight: '600' },
   cardPhone: { color: AppColors.textSecondary, fontSize: 12.5 },
   headerLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 10,
   },
   backBtn: {
-    padding: 4,
+    marginLeft: -6,
   },
 });

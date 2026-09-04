@@ -51,25 +51,24 @@ export default function ActivityLogScreen() {
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
-          style={{ marginTop: 29 }}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
           <Icon name="chevron-left" color={AppColors.primary} size={30} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { marginTop: 29 }]}>Activity log</Text>
-        <View style={{ width: 22 }} />
+        <Text style={styles.headerTitle}>Activity Audit Log</Text>
+        <View style={{ width: 30 }} />
       </View>
 
       <View style={styles.filterRow}>
         <View style={styles.filterBox}>
           <Picker selectedValue={employeeFilter} onValueChange={setEmployeeFilter}>
-            <Picker.Item label="All" value="All" />
+            <Picker.Item label="All Employees" value="All" />
             {employeeNames.map((n) => <Picker.Item key={n} label={n} value={n} />)}
           </Picker>
         </View>
         <View style={styles.filterBox}>
           <Picker selectedValue={moduleFilter} onValueChange={setModuleFilter}>
-            <Picker.Item label="All" value="All" />
+            <Picker.Item label="All Modules" value="All" />
             {moduleNames.map((m) => <Picker.Item key={m} label={m} value={m} />)}
           </Picker>
         </View>
@@ -78,9 +77,9 @@ export default function ActivityLogScreen() {
       {loading ? (
         <View style={styles.centerFill}><ActivityIndicator color={AppColors.primary} /></View>
       ) : error ? (
-        <View style={styles.centerFill}><Text style={{ color: AppColors.danger, fontSize: 12.5 }}>{error}</Text></View>
+        <View style={styles.centerFill}><Text style={{ color: AppColors.danger, fontSize: 12.5, fontWeight: '500' }}>{error}</Text></View>
       ) : filtered.length === 0 ? (
-        <View style={styles.centerFill}><Text style={styles.emptyText}>No activity matches this filter</Text></View>
+        <View style={styles.centerFill}><Text style={styles.emptyText}>No activity records match this filter</Text></View>
       ) : (
         <ScrollView contentContainerStyle={styles.content} refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}>
           {filtered.map((log) => (
@@ -106,15 +105,40 @@ export default function ActivityLogScreen() {
 
 const styles = StyleSheet.create({
   flex: { flex: 1, backgroundColor: AppColors.background },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, backgroundColor: AppColors.surface, borderBottomWidth: 1, borderColor: AppColors.border },
-  headerTitle: { fontSize: 18, fontWeight: '700', color: AppColors.textPrimary },
-  filterRow: { flexDirection: 'row', gap: 10, padding: 16, paddingBottom: 8 },
-  filterBox: { flex: 1, backgroundColor: AppColors.surface, borderRadius: 12, borderWidth: 1, borderColor: AppColors.border },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 50,
+    paddingBottom: 14,
+    backgroundColor: AppColors.surface,
+    borderBottomWidth: 1,
+    borderColor: AppColors.border,
+  },
+  headerTitle: { fontSize: 17, fontWeight: '700', color: AppColors.textPrimary, letterSpacing: -0.3 },
+  filterRow: { flexDirection: 'row', gap: 10, paddingHorizontal: 16, paddingTop: 14, paddingBottom: 8 },
+  filterBox: { flex: 1, backgroundColor: AppColors.surface, borderRadius: 10, borderWidth: 1, borderColor: AppColors.border },
   centerFill: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   emptyText: { color: AppColors.textSecondary, fontSize: 13 },
   content: { padding: 16, paddingBottom: 24 },
-  card: { flexDirection: 'row', alignItems: 'flex-start', backgroundColor: AppColors.surface, borderRadius: 14, borderWidth: 1, borderColor: AppColors.border, padding: 13, marginBottom: 10, gap: 12 },
-  cardIcon: { width: 34, height: 34, borderRadius: 10, backgroundColor: AppColors.primarySoft, alignItems: 'center', justifyContent: 'center' },
+  card: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    backgroundColor: AppColors.surface,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: AppColors.border,
+    padding: 13,
+    marginBottom: 8,
+    gap: 12,
+    shadowColor: AppColors.textPrimary,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.03,
+    shadowRadius: 6,
+    elevation: 1,
+  },
+  cardIcon: { width: 32, height: 32, borderRadius: 8, backgroundColor: AppColors.primarySoft, alignItems: 'center', justifyContent: 'center' },
   cardTitle: {},
   cardName: { color: AppColors.textPrimary, fontSize: 13, fontWeight: '700' },
   cardMeta: { color: AppColors.textSecondary, fontSize: 12 },

@@ -35,15 +35,16 @@ export default function PurchaseHistoryScreen() {
   return (
     <View style={styles.flex}>
       <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={{ marginTop: 29 }}
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-        >
-          <Icon name="chevron-left" color={AppColors.primary} size={30} />
-        </TouchableOpacity>
-        <Text style={[styles.headerTitle, { marginTop: 29 }]}>Purchase history</Text>
-        <View style={{ width: 22 }} />
+        <View style={styles.headerLeft}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backBtn}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Icon name="chevron-left" color={AppColors.primary} size={30} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Purchase History</Text>
+        </View>
       </View>
 
       <View style={styles.searchWrap}>
@@ -89,8 +90,14 @@ export default function PurchaseHistoryScreen() {
 
 const styles = StyleSheet.create({
   flex: { flex: 1, backgroundColor: AppColors.background },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, backgroundColor: AppColors.surface, borderBottomWidth: 1, borderColor: AppColors.border },
-  headerTitle: { fontSize: 18, fontWeight: '700', color: AppColors.textPrimary },
+  header: {
+    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
+    paddingHorizontal: 16, paddingTop: 50, paddingBottom: 14,
+    backgroundColor: AppColors.surface, borderBottomWidth: 1, borderColor: AppColors.border,
+  },
+  headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  backBtn: { marginLeft: -6 },
+  headerTitle: { fontSize: 17, fontWeight: '700', color: AppColors.textPrimary, letterSpacing: -0.3 },
   searchWrap: { padding: 16, paddingBottom: 8 },
   searchBox: { flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.surface, borderRadius: 12, borderWidth: 1, borderColor: AppColors.border, paddingHorizontal: 14 },
   searchInput: { flex: 1, paddingVertical: 12, marginLeft: 8, color: AppColors.textPrimary },
@@ -98,8 +105,12 @@ const styles = StyleSheet.create({
   errorText: { color: AppColors.textSecondary, fontSize: 12.5, textAlign: 'center', marginTop: 10 },
   retryText: { color: AppColors.primary, marginTop: 10 },
   emptyText: { color: AppColors.textSecondary, fontSize: 13 },
-  card: { flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.surface, borderRadius: 14, borderWidth: 1, borderColor: AppColors.border, padding: 13 },
-  cardIcon: { width: 40, height: 40, borderRadius: 11, backgroundColor: AppColors.successSoft, alignItems: 'center', justifyContent: 'center', marginRight: 12 },
+  card: {
+    flexDirection: 'row', alignItems: 'center', backgroundColor: AppColors.surface,
+    borderRadius: 12, borderWidth: 1, borderColor: AppColors.border, padding: 13,
+    shadowColor: AppColors.textPrimary, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.02, shadowRadius: 4, elevation: 1,
+  },
+  cardIcon: { width: 40, height: 40, borderRadius: 10, backgroundColor: AppColors.successSoft, alignItems: 'center', justifyContent: 'center', marginRight: 12 },
   cardNumber: { color: AppColors.textPrimary, fontSize: 13.5, fontWeight: '700' },
   cardSupplier: { color: AppColors.textSecondary, fontSize: 12, marginTop: 2 },
   cardDate: { color: AppColors.textMuted, fontSize: 11, marginTop: 2 },

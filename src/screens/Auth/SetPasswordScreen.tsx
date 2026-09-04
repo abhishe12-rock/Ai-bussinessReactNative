@@ -69,27 +69,89 @@ export default function SetPasswordScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Welcome!</Text>
-      <Text style={styles.subtitle}>Create your password to activate your employee account.</Text>
+      <View style={styles.card}>
+        <Text style={styles.title}>Activate Account</Text>
+        <Text style={styles.subtitle}>Set a secure password for your enterprise workspace account.</Text>
 
-      <TextInput style={styles.input} placeholder="Password" secureTextEntry value={password} onChangeText={setPassword} />
-      <TextInput style={styles.input} placeholder="Confirm Password" secureTextEntry value={confirmPassword} onChangeText={setConfirmPassword} />
+        <Text style={styles.label}>New Password</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="At least 6 characters"
+          placeholderTextColor={AppColors.textMuted}
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
+        />
 
-      {errorText ? <Text style={styles.errorText}>{errorText}</Text> : null}
+        <Text style={styles.label}>Confirm Password</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Re-enter password"
+          placeholderTextColor={AppColors.textMuted}
+          secureTextEntry
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+        />
 
-      <TouchableOpacity style={[styles.button, loading && { opacity: 0.6 }]} onPress={setPasswordHandler} disabled={loading}>
-        {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Create Password</Text>}
-      </TouchableOpacity>
+        {errorText ? <Text style={styles.errorText}>{errorText}</Text> : null}
+
+        <TouchableOpacity
+          style={[styles.button, loading && { opacity: 0.6 }]}
+          onPress={setPasswordHandler}
+          disabled={loading}
+          activeOpacity={0.8}
+        >
+          {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Activate Account</Text>}
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 24, justifyContent: 'center', backgroundColor: AppColors.background },
-  title: { fontSize: 28, fontWeight: '700', textAlign: 'center', color: AppColors.textPrimary },
-  subtitle: { textAlign: 'center', marginTop: 10, marginBottom: 30, color: AppColors.textSecondary },
-  input: { borderWidth: 1, borderColor: AppColors.border, borderRadius: 12, padding: 14, marginBottom: 16, color: AppColors.textPrimary },
-  errorText: { color: AppColors.danger, marginBottom: 12, textAlign: 'center' },
-  button: { backgroundColor: AppColors.primary, borderRadius: 12, padding: 16, alignItems: 'center' },
-  buttonText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  container: { flex: 1, padding: 20, justifyContent: 'center', backgroundColor: AppColors.background },
+  card: {
+    backgroundColor: AppColors.surface,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: AppColors.border,
+    padding: 28,
+    maxWidth: 420,
+    width: '100%',
+    alignSelf: 'center',
+    shadowColor: AppColors.textPrimary,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.04,
+    shadowRadius: 14,
+    elevation: 2,
+  },
+  title: { fontSize: 23, fontWeight: '800', textAlign: 'center', color: AppColors.textPrimary, letterSpacing: -0.5 },
+  subtitle: { textAlign: 'center', marginTop: 6, marginBottom: 24, color: AppColors.textSecondary, fontSize: 13, fontWeight: '500' },
+  label: { fontSize: 12.5, fontWeight: '600', color: AppColors.textPrimary, marginBottom: 7 },
+  input: {
+    borderWidth: 1,
+    borderColor: AppColors.border,
+    borderRadius: 10,
+    height: 48,
+    paddingHorizontal: 14,
+    marginBottom: 16,
+    color: AppColors.textPrimary,
+    backgroundColor: AppColors.surface,
+    fontSize: 13.5,
+  },
+  errorText: { color: AppColors.danger, marginBottom: 12, textAlign: 'center', fontSize: 12, fontWeight: '500' },
+  button: {
+    backgroundColor: AppColors.primary,
+    borderRadius: 10,
+    height: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 4,
+    shadowColor: AppColors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.22,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  buttonText: { color: '#fff', fontSize: 14.5, fontWeight: '700' },
 });
