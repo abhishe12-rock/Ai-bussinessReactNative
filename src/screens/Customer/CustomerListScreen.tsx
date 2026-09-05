@@ -17,7 +17,12 @@ import { useNavigation } from '@react-navigation/native';
 
 import { CustomerService, CustomerRecord } from '../../services/CustomerService';
 import { AppColors } from '../theme/AppColors';
-import { FadeInUp, SpringTouch } from '../theme/Animations';
+import {
+  FadeInUp,
+  FloatingGeometricOrb,
+  SpringTouch,
+  ScaleIn,
+} from '../theme/Animations';
 
 type SortBy = 'name' | 'city';
 type FilterStatus = 'All' | 'Active' | 'Inactive';
@@ -160,33 +165,52 @@ export default function CustomerListScreen() {
 
   return (
     <View style={styles.flex}>
+      {/* Ambient background floating orbs */}
+      <FloatingGeometricOrb
+        size={220}
+        top={-50}
+        right={-50}
+        color="rgba(91, 77, 248, 0.07)"
+        duration={5500}
+        floatDistance={12}
+      />
+      <FloatingGeometricOrb
+        size={160}
+        bottom={40}
+        left={-40}
+        color="rgba(16, 185, 129, 0.06)"
+        duration={4500}
+        floatDistance={10}
+      />
+
       {/* TOP HEADER */}
       <View style={styles.header}>
-        <TouchableOpacity
+        <SpringTouch
           onPress={() => navigation.goBack()}
+          activeScale={0.88}
           style={styles.backBtn}
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
           <Icon name="chevron-left" color={AppColors.textPrimary} size={28} />
-        </TouchableOpacity>
+        </SpringTouch>
 
         <Text style={styles.headerTitle}>Customers</Text>
 
         <View style={styles.headerRight}>
-          <TouchableOpacity
+          <SpringTouch
             onPress={() => setSortSheetOpen(true)}
+            activeScale={0.88}
             style={styles.headerIconBtn}
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
             <Icon name="search" color={AppColors.textPrimary} size={22} />
-          </TouchableOpacity>
-          <TouchableOpacity
+          </SpringTouch>
+          <SpringTouch
             onPress={() => navigation.navigate('AddCustomer', { onSaved: loadCustomers })}
-            style={styles.headerAddBtn}
-            activeOpacity={0.8}
+            activeScale={0.88}
           >
-            <Icon name="add" color="#FFFFFF" size={18} />
-          </TouchableOpacity>
+            <View style={styles.headerAddBtn}>
+              <Icon name="add" color="#FFFFFF" size={18} />
+            </View>
+          </SpringTouch>
         </View>
       </View>
 
@@ -207,13 +231,14 @@ export default function CustomerListScreen() {
             </TouchableOpacity>
           )}
         </View>
-        <TouchableOpacity
+        <SpringTouch
           onPress={() => setSortSheetOpen(true)}
-          style={styles.filterBtn}
-          activeOpacity={0.7}
+          activeScale={0.88}
         >
-          <Icon name="tune" color={AppColors.textSecondary} size={20} />
-        </TouchableOpacity>
+          <View style={styles.filterBtn}>
+            <Icon name="tune" color={AppColors.textSecondary} size={20} />
+          </View>
+        </SpringTouch>
       </View>
 
       {/* SEGMENTED FILTER TABS */}
@@ -221,16 +246,17 @@ export default function CustomerListScreen() {
         {(['All', 'Active', 'Inactive'] as FilterStatus[]).map((tab) => {
           const isSelected = filterTab === tab;
           return (
-            <TouchableOpacity
+            <SpringTouch
               key={tab}
               onPress={() => setFilterTab(tab)}
-              style={[styles.filterTab, isSelected && styles.filterTabActive]}
-              activeOpacity={0.8}
+              activeScale={0.92}
             >
-              <Text style={[styles.filterTabText, isSelected && styles.filterTabTextActive]}>
-                {tab}
-              </Text>
-            </TouchableOpacity>
+              <View style={[styles.filterTab, isSelected && styles.filterTabActive]}>
+                <Text style={[styles.filterTabText, isSelected && styles.filterTabTextActive]}>
+                  {tab}
+                </Text>
+              </View>
+            </SpringTouch>
           );
         })}
       </View>

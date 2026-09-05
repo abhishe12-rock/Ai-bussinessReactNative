@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import Icon from '@react-native-vector-icons/material-icons';
 import { useNavigation, DrawerActions } from '@react-navigation/native';
 import { AppColors } from '../screens/theme/AppColors';
+import { SpringTouch } from '../screens/theme/Animations';
 
 type ActiveTab = 'Home' | 'Customers' | 'Sales' | 'Purchases' | 'Orders' | 'Inventory' | 'Repairs' | 'Payroll' | 'Reports' | 'More';
 
@@ -34,80 +35,94 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({ activeTab, onCenterP
   return (
     <View style={styles.container}>
       {/* Home tab */}
-      <TouchableOpacity
+      <SpringTouch
         style={styles.tabItem}
-        activeOpacity={0.7}
+        activeScale={0.86}
         onPress={() => handleTabPress('Home')}
       >
-        <Icon
-          name="home"
-          size={24}
-          color={isHome ? AppColors.primary : AppColors.textMuted}
-        />
-        <Text style={[styles.tabLabel, isHome && styles.tabLabelActive]}>Home</Text>
-      </TouchableOpacity>
+        <View style={styles.tabContent}>
+          <Icon
+            name="home"
+            size={23}
+            color={isHome ? AppColors.primary : AppColors.textMuted}
+          />
+          <Text style={[styles.tabLabel, isHome && styles.tabLabelActive]}>Home</Text>
+          {isHome && <View style={styles.activeDot} />}
+        </View>
+      </SpringTouch>
 
       {/* Module tab (Customers, Sales, etc.) */}
-      <TouchableOpacity
+      <SpringTouch
         style={styles.tabItem}
-        activeOpacity={0.7}
+        activeScale={0.86}
         onPress={() => handleTabPress(activeTab === 'Home' ? 'Customers' : activeTab)}
       >
-        <Icon
-          name={
-            activeTab === 'Sales' ? 'point-of-sale' :
-            activeTab === 'Orders' ? 'shopping-bag' :
-            activeTab === 'Inventory' ? 'inventory-2' :
-            activeTab === 'Repairs' ? 'build' :
-            activeTab === 'Payroll' ? 'payments' :
-            'groups'
-          }
-          size={24}
-          color={isModule ? AppColors.primary : AppColors.textMuted}
-        />
-        <Text style={[styles.tabLabel, isModule && styles.tabLabelActive]}>
-          {activeTab === 'Home' ? 'Customers' : activeTab}
-        </Text>
-      </TouchableOpacity>
+        <View style={styles.tabContent}>
+          <Icon
+            name={
+              activeTab === 'Sales' ? 'point-of-sale' :
+              activeTab === 'Orders' ? 'shopping-bag' :
+              activeTab === 'Inventory' ? 'inventory-2' :
+              activeTab === 'Repairs' ? 'build' :
+              activeTab === 'Payroll' ? 'payments' :
+              'groups'
+            }
+            size={23}
+            color={isModule ? AppColors.primary : AppColors.textMuted}
+          />
+          <Text style={[styles.tabLabel, isModule && styles.tabLabelActive]}>
+            {activeTab === 'Home' ? 'Customers' : activeTab}
+          </Text>
+          {isModule && <View style={styles.activeDot} />}
+        </View>
+      </SpringTouch>
 
-      {/* Center Floating Purple (+) Button */}
+      {/* Center Floating Purple (+) Button with tactile spring & ambient glow */}
       <View style={styles.centerButtonWrapper}>
-        <TouchableOpacity
-          style={styles.centerButton}
-          activeOpacity={0.85}
+        <View style={styles.centerButtonGlow} />
+        <SpringTouch
+          activeScale={0.88}
           onPress={onCenterPress ?? (() => navigation.dispatch(DrawerActions.openDrawer()))}
         >
-          <Icon name="add" size={28} color="#FFFFFF" />
-        </TouchableOpacity>
+          <View style={styles.centerButton}>
+            <Icon name="add" size={28} color="#FFFFFF" />
+          </View>
+        </SpringTouch>
       </View>
 
       {/* Reports tab */}
-      <TouchableOpacity
+      <SpringTouch
         style={styles.tabItem}
-        activeOpacity={0.7}
+        activeScale={0.86}
         onPress={() => handleTabPress('Reports')}
       >
-        <Icon
-          name="bar-chart"
-          size={24}
-          color={isReports ? AppColors.primary : AppColors.textMuted}
-        />
-        <Text style={[styles.tabLabel, isReports && styles.tabLabelActive]}>Reports</Text>
-      </TouchableOpacity>
+        <View style={styles.tabContent}>
+          <Icon
+            name="bar-chart"
+            size={23}
+            color={isReports ? AppColors.primary : AppColors.textMuted}
+          />
+          <Text style={[styles.tabLabel, isReports && styles.tabLabelActive]}>Reports</Text>
+          {isReports && <View style={styles.activeDot} />}
+        </View>
+      </SpringTouch>
 
       {/* More tab */}
-      <TouchableOpacity
+      <SpringTouch
         style={styles.tabItem}
-        activeOpacity={0.7}
+        activeScale={0.86}
         onPress={() => handleTabPress('More')}
       >
-        <Icon
-          name="more-horiz"
-          size={24}
-          color={isMore ? AppColors.primary : AppColors.textMuted}
-        />
-        <Text style={[styles.tabLabel, isMore && styles.tabLabelActive]}>More</Text>
-      </TouchableOpacity>
+        <View style={styles.tabContent}>
+          <Icon
+            name="more-horiz"
+            size={23}
+            color={isMore ? AppColors.primary : AppColors.textMuted}
+          />
+          <Text style={[styles.tabLabel, isMore && styles.tabLabelActive]}>More</Text>
+          {isMore && <View style={styles.activeDot} />}
+        </View>
+      </SpringTouch>
     </View>
   );
 };
@@ -138,6 +153,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 6,
   },
+  tabContent: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  activeDot: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: AppColors.primary,
+    marginTop: 3,
+  },
   tabLabel: {
     fontSize: 10.5,
     fontWeight: '500',
@@ -153,6 +179,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 10,
+  },
+  centerButtonGlow: {
+    position: 'absolute',
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: AppColors.primary,
+    opacity: 0.22,
   },
   centerButton: {
     width: 52,

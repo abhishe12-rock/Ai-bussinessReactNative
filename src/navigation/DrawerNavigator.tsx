@@ -14,7 +14,7 @@ import { supabase } from '../lib/supabase';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import DashboardScreen, { getVisibleDrawerItems, DrawerItemDef } from '../screens/Auth/Dashboard/DashboardScreen';
 import { AppColors } from '../screens/theme/AppColors';
-import { FloatingGeometricOrb, SpringTouch } from '../screens/theme/Animations';
+import { FloatingGeometricOrb, SpringTouch, ScaleIn } from '../screens/theme/Animations';
 
 // Import all customer screens
 import CustomerListScreen from '../screens/Customer/CustomerListScreen';
@@ -467,11 +467,13 @@ function CustomDrawerContent(props: DrawerContentComponentProps & { parentRoute?
         />
 
         <View style={styles.headerUserRow}>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarLetter}>
-              {(employeeName || 'A').charAt(0).toUpperCase()}
-            </Text>
-          </View>
+          <ScaleIn delay={80} initialScale={0.7} bounciness={10}>
+            <View style={styles.avatar}>
+              <Text style={styles.avatarLetter}>
+                {(employeeName || 'A').charAt(0).toUpperCase()}
+              </Text>
+            </View>
+          </ScaleIn>
           <View style={styles.headerUserInfo}>
             <Text style={styles.headerTitle} numberOfLines={1}>
               {employeeName || 'Abhishek'}

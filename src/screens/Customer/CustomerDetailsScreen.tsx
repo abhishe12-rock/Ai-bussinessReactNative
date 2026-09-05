@@ -15,7 +15,12 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { CustomerRecord } from '../../services/CustomerService';
 import { RepairService, RepairRecord } from '../../services/RepairService';
 import { AppColors, AppShadows } from '../theme/AppColors';
-import { FadeInUp, SpringTouch } from '../theme/Animations';
+import {
+  FadeInUp,
+  FloatingGeometricOrb,
+  SpringTouch,
+  ScaleIn,
+} from '../theme/Animations';
 
 const TABS = ['Overview', 'Purchases', 'Repairs', 'EMI', 'Ledger', 'Documents'];
 
@@ -60,6 +65,24 @@ export default function CustomerDetailsScreen() {
 
   return (
     <View style={styles.flex}>
+      {/* Background ambient orbs */}
+      <FloatingGeometricOrb
+        size={200}
+        top={-40}
+        right={-50}
+        color="rgba(91, 77, 248, 0.07)"
+        duration={5500}
+        floatDistance={12}
+      />
+      <FloatingGeometricOrb
+        size={150}
+        bottom={30}
+        left={-40}
+        color="rgba(16, 185, 129, 0.06)"
+        duration={4500}
+        floatDistance={10}
+      />
+
       {/* TOP HEADER */}
       <View style={styles.header}>
         <SpringTouch
@@ -93,9 +116,11 @@ export default function CustomerDetailsScreen() {
       {/* PROFILE ROW */}
       <FadeInUp delay={30}>
         <View style={styles.profileRow}>
-          <View style={[styles.avatar, { backgroundColor: pastel.bg }]}>
-            <Text style={[styles.avatarText, { color: pastel.text }]}>{initials}</Text>
-          </View>
+          <ScaleIn delay={80} initialScale={0.65} bounciness={10}>
+            <View style={[styles.avatar, { backgroundColor: pastel.bg }]}>
+              <Text style={[styles.avatarText, { color: pastel.text }]}>{initials}</Text>
+            </View>
+          </ScaleIn>
           <View style={{ flex: 1 }}>
             <Text style={styles.name} numberOfLines={1}>{customer.name}</Text>
             <View style={styles.subRow}>

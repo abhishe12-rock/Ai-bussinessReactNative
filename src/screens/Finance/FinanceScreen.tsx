@@ -13,6 +13,12 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { AppColors } from '../theme/AppColors';
 import { FinanceService, TransactionRecord } from '../../services/FinanceService.ts';
 import Icon from '@react-native-vector-icons/material-icons';
+import {
+  FadeInUp,
+  FloatingGeometricOrb,
+  SpringTouch,
+  ScaleIn,
+} from '../theme/Animations';
 
 function formatDMY(d: Date): string {
   return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
@@ -70,15 +76,32 @@ export default function FinanceHomeScreen() {
 
   return (
     <View style={styles.screen}>
+      <FloatingGeometricOrb
+        size={220}
+        top={-50}
+        right={-50}
+        color="rgba(91, 77, 248, 0.08)"
+        duration={5500}
+        floatDistance={12}
+      />
+      <FloatingGeometricOrb
+        size={160}
+        bottom={50}
+        left={-40}
+        color="rgba(16, 185, 129, 0.06)"
+        duration={4500}
+        floatDistance={10}
+      />
+
       <View style={styles.appBar}>
         <View style={styles.headerLeft}>
-          <TouchableOpacity
+          <SpringTouch
             onPress={() => navigation.goBack()}
+            activeScale={0.88}
             style={styles.backBtn}
-            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
             <Icon name="chevron-left" color={AppColors.primary} size={30} />
-          </TouchableOpacity>
+          </SpringTouch>
           <View>
             <Text style={styles.appBarTitle}>Finance</Text>
             <Text style={styles.appBarSubtitle}>Loans, expenses and ledger</Text>
@@ -97,54 +120,67 @@ export default function FinanceHomeScreen() {
       ) : (
         <ScrollView
           contentContainerStyle={styles.content}
+          showsVerticalScrollIndicator={false}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => load(true)} tintColor={AppColors.primary} />}
         >
-          <BalanceCard net={summary.net} />
+          <FadeInUp delay={60} duration={480}>
+            <BalanceCard net={summary.net} />
+          </FadeInUp>
 
           <View style={styles.statsRow}>
-            <StatCard
-              label="Income"
-              value={formatRupee(summary.income)}
-              icon="arrow-bottom-left"
-              color={AppColors.success}
-              bg={AppColors.successSoft}
-            />
+            <ScaleIn delay={120} style={{ flex: 1 }}>
+              <StatCard
+                label="Income"
+                value={formatRupee(summary.income)}
+                icon="arrow-bottom-left"
+                color={AppColors.success}
+                bg={AppColors.successSoft}
+              />
+            </ScaleIn>
             <View style={{ width: 10 }} />
-            <StatCard
-              label="Expenses"
-              value={formatRupee(summary.expenses)}
-              icon="arrow-top-right"
-              color={AppColors.danger}
-              bg={AppColors.dangerSoft}
-            />
+            <ScaleIn delay={180} style={{ flex: 1 }}>
+              <StatCard
+                label="Expenses"
+                value={formatRupee(summary.expenses)}
+                icon="arrow-top-right"
+                color={AppColors.danger}
+                bg={AppColors.dangerSoft}
+              />
+            </ScaleIn>
           </View>
 
-          <Text style={styles.sectionLabel}>Manage</Text>
+          <FadeInUp delay={220} distance={10}>
+            <Text style={styles.sectionLabel}>Manage</Text>
+          </FadeInUp>
           <View style={styles.grid}>
-            {menuItems.map((item) => (
-              <MenuCard
-                key={item.screen}
-                icon={item.icon}
-                label={item.label}
-                color={item.color}
-                bg={item.bg}
-                onPress={() => navigation.navigate(item.screen)}
-              />
+            {menuItems.map((item, index) => (
+              <ScaleIn key={item.screen} delay={240 + index * 40} style={{ width: '31%' }}>
+                <MenuCard
+                  icon={item.icon}
+                  label={item.label}
+                  color={item.color}
+                  bg={item.bg}
+                  onPress={() => navigation.navigate(item.screen)}
+                />
+              </ScaleIn>
             ))}
           </View>
 
-          <Text style={styles.sectionLabel}>Recent transactions</Text>
+          <FadeInUp delay={320} distance={10}>
+            <Text style={styles.sectionLabel}>Recent transactions</Text>
+          </FadeInUp>
           {recent.length === 0 ? (
             <Text style={styles.emptyText}>No transactions yet</Text>
           ) : (
-            recent.map((t) => (
-              <TxnRow
-                key={t.id}
-                title={`${t.referenceName ?? t.sourceType} · ${t.description ?? ''}`}
-                date={formatDMY(t.createdAt)}
-                amount={`${t.type === 'INCOME' ? '+' : '-'}${formatRupee(t.amount)}`}
-                credit={t.type === 'INCOME'}
-              />
+            recent.map((t, index) => (
+              <FadeInUp key={t.id} delay={340 + index * 40} distance={12}>
+                <TxnRow
+                  title={`${t.referenceName ?? t.sourceType} · ${t.description ?? ''}`}
+                  date={formatDMY(t.createdAt)}
+                  amount={`${t.type === 'INCOME' ? '+' : '-'}${formatRupee(t.amount)}`}
+                  credit={t.type === 'INCOME'}
+                />
+              </FadeInUp>
             ))
           )}
         </ScrollView>
@@ -201,12 +237,14 @@ function MenuCard({
   onPress: () => void;
 }) {
   return (
-    <TouchableOpacity activeOpacity={0.7} style={styles.menuCard} onPress={onPress}>
-      <View style={[styles.menuIconBox, { backgroundColor: bg }]}>
-        <MaterialCommunityIcons name={icon} color={color} size={20} />
+    <SpringTouch activeScale={0.92} onPress={onPress} style={{ width: '100%' }}>
+      <View style={styles.menuCard}>
+        <View style={[styles.menuIconBox, { backgroundColor: bg }]}>
+          <MaterialCommunityIcons name={icon} color={color} size={20} />
+        </View>
+        <Text style={styles.menuLabel}>{label}</Text>
       </View>
-      <Text style={styles.menuLabel}>{label}</Text>
-    </TouchableOpacity>
+    </SpringTouch>
   );
 }
 

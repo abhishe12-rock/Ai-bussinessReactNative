@@ -4,7 +4,12 @@ import Icon from '@react-native-vector-icons/material-icons';
 import { useNavigation } from '@react-navigation/native';
 
 import { AppColors, AppShadows, AppRadius } from '../theme/AppColors';
-import { FadeInUp, SpringTouch, PulsingGlow } from '../theme/Animations';
+import {
+  FadeInUp,
+  FloatingGeometricOrb,
+  SpringTouch,
+  PulsingGlow,
+} from '../theme/Animations';
 
 const TOTAL_PRODUCTS = 248;
 const LOW_STOCK_COUNT = 7;
@@ -15,16 +20,34 @@ export default function InventoryHomeScreen() {
 
   return (
     <View style={styles.flex}>
+      {/* Background ambient orbs */}
+      <FloatingGeometricOrb
+        size={220}
+        top={-50}
+        right={-50}
+        color="rgba(91, 77, 248, 0.08)"
+        duration={5500}
+        floatDistance={12}
+      />
+      <FloatingGeometricOrb
+        size={150}
+        bottom={30}
+        left={-40}
+        color="rgba(14, 165, 233, 0.06)"
+        duration={4500}
+        floatDistance={10}
+      />
+
       {/* HEADER */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <TouchableOpacity
+          <SpringTouch
             onPress={() => navigation.goBack()}
+            activeScale={0.88}
             style={styles.backBtn}
-            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
             <Icon name="arrow-back-ios" color={AppColors.textPrimary} size={20} />
-          </TouchableOpacity>
+          </SpringTouch>
           <View>
             <Text style={styles.headerTitle} numberOfLines={1}>
               Inventory
@@ -35,13 +58,14 @@ export default function InventoryHomeScreen() {
           </View>
         </View>
 
-        <TouchableOpacity
-          style={styles.actionHeaderBtn}
+        <SpringTouch
           onPress={() => navigation.navigate('BarcodeScanner')}
-          activeOpacity={0.7}
+          activeScale={0.88}
         >
-          <Icon name="qr-code-scanner" size={20} color={AppColors.textPrimary} />
-        </TouchableOpacity>
+          <View style={styles.actionHeaderBtn}>
+            <Icon name="qr-code-scanner" size={20} color={AppColors.textPrimary} />
+          </View>
+        </SpringTouch>
       </View>
 
       <ScrollView

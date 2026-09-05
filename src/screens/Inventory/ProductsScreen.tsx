@@ -5,6 +5,12 @@ import { useNavigation } from '@react-navigation/native';
 
 import { ProductService, ProductRecord } from '../../services/ProductService';
 import { AppColors } from '../theme/AppColors';
+import {
+  FadeInUp,
+  FloatingGeometricOrb,
+  SpringTouch,
+  ScaleIn,
+} from '../theme/Animations';
 
 const service = new ProductService();
 
@@ -49,23 +55,41 @@ export default function ProductsScreen() {
 
   return (
     <View style={styles.flex}>
+      {/* Background ambient orbs */}
+      <FloatingGeometricOrb
+        size={220}
+        top={-50}
+        right={-50}
+        color="rgba(91, 77, 248, 0.07)"
+        duration={5500}
+        floatDistance={12}
+      />
+      <FloatingGeometricOrb
+        size={150}
+        bottom={40}
+        left={-40}
+        color="rgba(16, 185, 129, 0.06)"
+        duration={4500}
+        floatDistance={10}
+      />
+
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <TouchableOpacity
+          <SpringTouch
             onPress={() => navigation.goBack()}
+            activeScale={0.88}
             style={styles.backBtn}
-            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
             <Icon name="chevron-left" color={AppColors.primary} size={30} />
-          </TouchableOpacity>
+          </SpringTouch>
           <Text style={styles.headerTitle}>Products</Text>
         </View>
-        <TouchableOpacity
+        <SpringTouch
           onPress={() => navigation.navigate('LowStockAlert')}
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          activeScale={0.88}
         >
           <Icon name="warning" color={AppColors.warning} size={22} />
-        </TouchableOpacity>
+        </SpringTouch>
       </View>
 
       <View style={styles.searchWrap}>
@@ -98,38 +122,48 @@ export default function ProductsScreen() {
           contentContainerStyle={{ padding: 16, paddingBottom: 150 }}
           ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
           refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}
-          renderItem={({ item }) => {
+          renderItem={({ item, index }) => {
             const low = item.quantity < item.minimumStock;
             return (
-              <View style={styles.card}>
-                <View style={styles.avatar}><Icon name="smartphone" color={AppColors.primary} size={22} /></View>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.cardName}>{item.name}</Text>
-                  <Text style={styles.cardSub}>{item.brandName ?? '—'} · {item.categoryName ?? '—'}</Text>
-                  <View style={styles.priceRow}>
-                    <Text style={styles.priceText}>₹{item.sellingPrice.toFixed(0)}</Text>
-                    <View style={[styles.stockPill, { backgroundColor: low ? AppColors.dangerSoft : AppColors.successSoft }]}>
-                      <Text style={[styles.stockText, { color: low ? AppColors.danger : AppColors.success }]}>Stock: {item.quantity}</Text>
+              <FadeInUp delay={Math.min(index * 35, 300)} distance={12}>
+                <View style={styles.card}>
+                  <ScaleIn delay={50} initialScale={0.7} bounciness={8}>
+                    <View style={styles.avatar}><Icon name="smartphone" color={AppColors.primary} size={22} /></View>
+                  </ScaleIn>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.cardName}>{item.name}</Text>
+                    <Text style={styles.cardSub}>{item.brandName ?? '—'} · {item.categoryName ?? '—'}</Text>
+                    <View style={styles.priceRow}>
+                      <Text style={styles.priceText}>₹{item.sellingPrice.toFixed(0)}</Text>
+                      <View style={[styles.stockPill, { backgroundColor: low ? AppColors.dangerSoft : AppColors.successSoft }]}>
+                        <Text style={[styles.stockText, { color: low ? AppColors.danger : AppColors.success }]}>Stock: {item.quantity}</Text>
+                      </View>
                     </View>
                   </View>
+                  <TouchableOpacity
+                    onPress={() => setActiveProduct(item)}
+                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                    style={styles.moreBtn}
+                  >
+                    <Icon name="more-vert" color={AppColors.textMuted} size={20} />
+                  </TouchableOpacity>
                 </View>
-                <TouchableOpacity
-                  onPress={() => setActiveProduct(item)}
-                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                  style={styles.moreBtn}
-                >
-                  <Icon name="more-vert" color={AppColors.textMuted} size={20} />
-                </TouchableOpacity>
-              </View>
+              </FadeInUp>
             );
           }}
         />
       )}
 
-      <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('AddProduct', { onSaved: load })}>
-        <Icon name="add" color="#fff" size={20} />
-        <Text style={styles.fabText}>Add product</Text>
-      </TouchableOpacity>
+      <SpringTouch
+        style={styles.fab}
+        activeScale={0.92}
+        onPress={() => navigation.navigate('AddProduct', { onSaved: load })}
+      >
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <Icon name="add" color="#fff" size={20} />
+          <Text style={styles.fabText}>Add product</Text>
+        </View>
+      </SpringTouch>
 
       {/* PRODUCT ACTIONS SHEET */}
       <Modal visible={!!activeProduct} transparent animationType="slide" onRequestClose={() => setActiveProduct(null)}>

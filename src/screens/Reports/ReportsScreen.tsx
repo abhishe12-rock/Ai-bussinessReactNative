@@ -46,22 +46,39 @@ export default function ReportsScreen() {
 
   return (
     <View style={styles.flex}>
+      {/* Background ambient orbs */}
+      <FloatingGeometricOrb
+        size={220}
+        top={-50}
+        right={-50}
+        color="rgba(91, 77, 248, 0.08)"
+        duration={5500}
+        floatDistance={12}
+      />
+      <FloatingGeometricOrb
+        size={150}
+        bottom={100}
+        left={-40}
+        color="rgba(16, 185, 129, 0.06)"
+        duration={4500}
+        floatDistance={10}
+      />
+
       {/* HEADER */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <TouchableOpacity
+          <SpringTouch
             onPress={() => navigation.goBack()}
+            activeScale={0.88}
             style={styles.backBtn}
-            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
             <Icon name="arrow-back-ios" color={AppColors.textPrimary} size={20} />
-          </TouchableOpacity>
+          </SpringTouch>
           <Text style={styles.headerTitle}>Reports & Analytics</Text>
         </View>
 
         <View style={styles.headerRight}>
-          <TouchableOpacity
-            style={styles.rangeBtn}
+          <SpringTouch
             onPress={() => {
               Alert.alert('Select Period', '', [
                 { text: 'This Week', onPress: () => setSelectedRange('This Week') },
@@ -70,11 +87,13 @@ export default function ReportsScreen() {
                 { text: 'This Year', onPress: () => setSelectedRange('This Year') },
               ]);
             }}
-            activeOpacity={0.7}
+            activeScale={0.92}
           >
-            <Text style={styles.rangeBtnText}>{selectedRange}</Text>
-            <Icon name="keyboard-arrow-down" size={16} color={AppColors.textSecondary} />
-          </TouchableOpacity>
+            <View style={styles.rangeBtn}>
+              <Text style={styles.rangeBtnText}>{selectedRange}</Text>
+              <Icon name="keyboard-arrow-down" size={16} color={AppColors.textSecondary} />
+            </View>
+          </SpringTouch>
         </View>
       </View>
 

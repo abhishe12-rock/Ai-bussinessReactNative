@@ -5,6 +5,12 @@ import { useNavigation } from '@react-navigation/native';
 import { supabase } from '../../lib/supabase';
 import { EmployeeService } from '../../services/EmployeeService';
 import { AppColors } from '../../screens/theme/AppColors.ts';
+import {
+  FadeInUp,
+  FloatingGeometricOrb,
+  SpringTouch,
+  ShakeView,
+} from '../theme/Animations';
 
 const employeeService = new EmployeeService();
 
@@ -69,41 +75,72 @@ export default function SetPasswordScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.card}>
-        <Text style={styles.title}>Activate Account</Text>
-        <Text style={styles.subtitle}>Set a secure password for your enterprise workspace account.</Text>
+      <FloatingGeometricOrb
+        size={220}
+        top={-40}
+        right={-50}
+        color="rgba(91, 77, 248, 0.08)"
+        duration={5200}
+        floatDistance={12}
+      />
+      <FloatingGeometricOrb
+        size={160}
+        bottom={20}
+        left={-40}
+        color="rgba(16, 185, 129, 0.06)"
+        duration={4200}
+        floatDistance={10}
+      />
 
-        <Text style={styles.label}>New Password</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="At least 6 characters"
-          placeholderTextColor={AppColors.textMuted}
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
+      <FadeInUp delay={60} duration={480}>
+        <View style={styles.card}>
+          <Text style={styles.title}>Activate Account</Text>
+          <Text style={styles.subtitle}>Set a secure password for your enterprise workspace account.</Text>
 
-        <Text style={styles.label}>Confirm Password</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Re-enter password"
-          placeholderTextColor={AppColors.textMuted}
-          secureTextEntry
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-        />
+          <FadeInUp delay={120} distance={12}>
+            <Text style={styles.label}>New Password</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="At least 6 characters"
+              placeholderTextColor={AppColors.textMuted}
+              secureTextEntry
+              value={password}
+              onChangeText={setPassword}
+            />
+          </FadeInUp>
 
-        {errorText ? <Text style={styles.errorText}>{errorText}</Text> : null}
+          <FadeInUp delay={180} distance={12}>
+            <Text style={styles.label}>Confirm Password</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Re-enter password"
+              placeholderTextColor={AppColors.textMuted}
+              secureTextEntry
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+            />
+          </FadeInUp>
 
-        <TouchableOpacity
-          style={[styles.button, loading && { opacity: 0.6 }]}
-          onPress={setPasswordHandler}
-          disabled={loading}
-          activeOpacity={0.8}
-        >
-          {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Activate Account</Text>}
-        </TouchableOpacity>
-      </View>
+          {errorText ? (
+            <ShakeView trigger={errorText}>
+              <Text style={styles.errorText}>{errorText}</Text>
+            </ShakeView>
+          ) : null}
+
+          <FadeInUp delay={240} distance={12}>
+            <SpringTouch
+              onPress={setPasswordHandler}
+              disabled={loading}
+              activeScale={0.97}
+              style={{ width: '100%' }}
+            >
+              <View style={[styles.button, loading && { opacity: 0.6 }]}>
+                {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Activate Account</Text>}
+              </View>
+            </SpringTouch>
+          </FadeInUp>
+        </View>
+      </FadeInUp>
     </View>
   );
 }

@@ -7,6 +7,12 @@ import { CustomerService, CustomerRecord } from '../../services/CustomerService'
 import { ProductService, ProductRecord } from '../../services/ProductService';
 import { SalesService, SaleCartItem } from '../../services/SalesService';
 import { AppColors } from '../theme/AppColors';
+import {
+  FadeInUp,
+  FloatingGeometricOrb,
+  SpringTouch,
+  ScaleIn,
+} from '../theme/Animations';
 
 const customerService = new CustomerService();
 const productService = new ProductService();
@@ -100,7 +106,12 @@ export default function NewSaleScreen() {
     }
     setCompleting(true);
     try {
-      const cartItems: SaleCartItem[] = items.map((i) => ({ productId: i.productId, productName: i.name, price: i.price, quantity: i.quantity }));
+      const cartItems: SaleCartItem[] = items.map((i) => ({
+        productId: i.productId ?? null,
+        productName: i.name,
+        price: i.price,
+        quantity: i.quantity,
+      }));
       await salesService.completeSale({
         customerId: selectedCustomer.id, items: cartItems, subtotal,
         discountPercent, discountAmount, taxPercent, taxAmount: tax,
@@ -116,104 +127,135 @@ export default function NewSaleScreen() {
 
   return (
     <View style={styles.flex}>
+      <FloatingGeometricOrb
+        size={220}
+        top={-40}
+        right={-50}
+        color="rgba(91, 77, 248, 0.08)"
+        duration={5500}
+        floatDistance={12}
+      />
+      <FloatingGeometricOrb
+        size={160}
+        bottom={80}
+        left={-40}
+        color="rgba(16, 185, 129, 0.06)"
+        duration={4500}
+        floatDistance={10}
+      />
+
       <View style={styles.header}>
-        <View style={styles.headerLeft}>
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            style={styles.backBtn}
-            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-          >
-            <Icon name="chevron-left" color={AppColors.primary} size={30} />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>New sale</Text>
-        </View>
+        <SpringTouch
+          onPress={() => navigation.goBack()}
+          activeScale={0.88}
+          style={styles.backBtn}
+        >
+          <Icon name="chevron-left" color={AppColors.primary} size={30} />
+        </SpringTouch>
+        <Text style={styles.headerTitle}>New Sale</Text>
+        <View style={{ width: 30 }} />
       </View>
 
-      <ScrollView contentContainerStyle={styles.content}>
-        <StepLabel title="Customer" />
-        <TouchableOpacity style={styles.selectCard} onPress={openCustomerSheet}>
-          <View style={styles.selectIcon}><Icon name={selectedCustomer ? 'person' : 'person-search'} color={AppColors.primary} size={19} /></View>
-          {selectedCustomer ? (
-            <View style={{ flex: 1 }}>
-              <Text style={styles.selectedName}>{selectedCustomer.name}</Text>
-              <Text style={styles.selectedSub}>{selectedCustomer.phone}</Text>
-            </View>
-          ) : (
-            <Text style={styles.selectPlaceholder}>Select customer</Text>
-          )}
-          <Icon name="chevron-right" color={AppColors.textMuted} size={20} />
-        </TouchableOpacity>
-
-        <View style={styles.stepRow}>
-          <StepLabel title="Products" />
-          <TouchableOpacity style={styles.addLink} onPress={openProductSheet}>
-            <Icon name="add" color={AppColors.primary} size={16} />
-            <Text style={styles.addLinkText}>Add</Text>
-          </TouchableOpacity>
-        </View>
-
-        {items.length === 0 ? (
-          <View style={styles.emptyProducts}><Text style={styles.emptyProductsText}>No products added yet</Text></View>
-        ) : (
-          <View style={styles.itemsCard}>
-            {items.map((item, i) => (
-              <View key={i} style={[styles.itemRow, i !== items.length - 1 && styles.itemRowBorder]}>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.itemName}>{item.name}</Text>
-                  <Text style={styles.itemMeta}>₹{item.price.toFixed(0)} × {item.quantity}</Text>
-                </View>
-                <TouchableOpacity onPress={() => decrementQty(i)}><Icon name="remove-circle-outline" color={AppColors.textMuted} size={20} /></TouchableOpacity>
-                <Text style={styles.itemQty}>{item.quantity}</Text>
-                <TouchableOpacity onPress={() => incrementQty(i)}><Icon name="add-circle-outline" color={AppColors.primary} size={20} /></TouchableOpacity>
-                <Text style={styles.itemTotal}>₹{(item.price * item.quantity).toFixed(0)}</Text>
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        <FadeInUp delay={60} distance={12}>
+          <StepLabel title="Customer" />
+          <TouchableOpacity style={styles.selectCard} onPress={openCustomerSheet} activeOpacity={0.8}>
+            <View style={styles.selectIcon}><Icon name={selectedCustomer ? 'person' : 'person-search'} color={AppColors.primary} size={19} /></View>
+            {selectedCustomer ? (
+              <View style={{ flex: 1 }}>
+                <Text style={styles.selectedName}>{selectedCustomer.name}</Text>
+                <Text style={styles.selectedSub}>{selectedCustomer.phone}</Text>
               </View>
-            ))}
+            ) : (
+              <Text style={styles.selectPlaceholder}>Select customer</Text>
+            )}
+            <Icon name="chevron-right" color={AppColors.textMuted} size={20} />
+          </TouchableOpacity>
+        </FadeInUp>
+
+        <FadeInUp delay={120} distance={12}>
+          <View style={styles.stepRow}>
+            <StepLabel title="Products" />
+            <TouchableOpacity style={styles.addLink} onPress={openProductSheet}>
+              <Icon name="add" color={AppColors.primary} size={16} />
+              <Text style={styles.addLinkText}>Add</Text>
+            </TouchableOpacity>
           </View>
-        )}
 
-        <StepLabel title="Discount & tax" />
-        <View style={styles.summaryCard}>
-          <SummaryLine label="Subtotal" value={`₹${subtotal.toFixed(0)}`} />
-          <TouchableOpacity onPress={() => { setDiscountInput(discountPercent > 0 ? String(discountPercent) : ''); setDiscountDialogOpen(true); }}>
-            <SummaryLine label={`Discount (${discountPercent.toFixed(0)}%)`} value={`- ₹${discountAmount.toFixed(0)}`} color={AppColors.danger} editable />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => { setTaxInput(String(taxPercent)); setTaxDialogOpen(true); }}>
-            <SummaryLine label={`Tax (${taxPercent.toFixed(0)}%)`} value={`+ ₹${tax.toFixed(0)}`} color={AppColors.info} editable />
-          </TouchableOpacity>
-          <View style={styles.divider} />
-          <SummaryLine label="Total" value={`₹${grandTotal.toFixed(0)}`} isTotal />
-        </View>
+          {items.length === 0 ? (
+            <View style={styles.emptyProducts}><Text style={styles.emptyProductsText}>No products added yet</Text></View>
+          ) : (
+            <View style={styles.itemsCard}>
+              {items.map((item, i) => (
+                <View key={i} style={[styles.itemRow, i !== items.length - 1 && styles.itemRowBorder]}>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.itemName}>{item.name}</Text>
+                    <Text style={styles.itemMeta}>₹{item.price.toFixed(0)} × {item.quantity}</Text>
+                  </View>
+                  <TouchableOpacity onPress={() => decrementQty(i)}><Icon name="remove-circle-outline" color={AppColors.textMuted} size={20} /></TouchableOpacity>
+                  <Text style={styles.itemQty}>{item.quantity}</Text>
+                  <TouchableOpacity onPress={() => incrementQty(i)}><Icon name="add-circle-outline" color={AppColors.primary} size={20} /></TouchableOpacity>
+                  <Text style={styles.itemTotal}>₹{(item.price * item.quantity).toFixed(0)}</Text>
+                </View>
+              ))}
+            </View>
+          )}
+        </FadeInUp>
 
-        <StepLabel title="Payment" />
-        <View style={styles.chipRow}>
-          {PAYMENT_METHODS.map((m) => {
-            const selected = paymentMethod === m;
-            return (
-              <TouchableOpacity key={m} style={[styles.chip, selected && styles.chipSelected]} onPress={() => setPaymentMethod(m)}>
-                <Text style={[styles.chipText, selected && styles.chipTextSelected]}>{m}</Text>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
+        <FadeInUp delay={180} distance={12}>
+          <StepLabel title="Discount & tax" />
+          <View style={styles.summaryCard}>
+            <SummaryLine label="Subtotal" value={`₹${subtotal.toFixed(0)}`} />
+            <TouchableOpacity onPress={() => { setDiscountInput(discountPercent > 0 ? String(discountPercent) : ''); setDiscountDialogOpen(true); }}>
+              <SummaryLine label={`Discount (${discountPercent.toFixed(0)}%)`} value={`- ₹${discountAmount.toFixed(0)}`} color={AppColors.danger} editable />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => { setTaxInput(String(taxPercent)); setTaxDialogOpen(true); }}>
+              <SummaryLine label={`Tax (${taxPercent.toFixed(0)}%)`} value={`+ ₹${tax.toFixed(0)}`} color={AppColors.info} editable />
+            </TouchableOpacity>
+            <View style={styles.divider} />
+            <SummaryLine label="Total" value={`₹${grandTotal.toFixed(0)}`} isTotal />
+          </View>
+        </FadeInUp>
 
-        <View style={styles.fieldBox}>
-          <Icon name="currency-rupee" color={AppColors.textMuted} size={20} />
-          <TextInput style={styles.fieldInput} placeholder="Paid amount" placeholderTextColor={AppColors.textMuted} value={paid} onChangeText={setPaid} keyboardType="numeric" />
-        </View>
-        {paid.length > 0 && (
-          <Text style={[styles.remainingText, { color: remaining > 0 ? AppColors.danger : AppColors.success }]}>
-            {remaining > 0 ? `Remaining: ₹${remaining.toFixed(0)}` : 'Fully paid'}
-          </Text>
-        )}
+        <FadeInUp delay={240} distance={12}>
+          <StepLabel title="Payment" />
+          <View style={styles.chipRow}>
+            {PAYMENT_METHODS.map((m) => {
+              const selected = paymentMethod === m;
+              return (
+                <SpringTouch key={m} activeScale={0.92} onPress={() => setPaymentMethod(m)}>
+                  <View style={[styles.chip, selected && styles.chipSelected]}>
+                    <Text style={[styles.chipText, selected && styles.chipTextSelected]}>{m}</Text>
+                  </View>
+                </SpringTouch>
+              );
+            })}
+          </View>
+
+          <View style={styles.fieldBox}>
+            <Icon name="currency-rupee" color={AppColors.textMuted} size={20} />
+            <TextInput style={styles.fieldInput} placeholder="Paid amount" placeholderTextColor={AppColors.textMuted} value={paid} onChangeText={setPaid} keyboardType="numeric" />
+          </View>
+          {paid.length > 0 && (
+            <Text style={[styles.remainingText, { color: remaining > 0 ? AppColors.danger : AppColors.success }]}>
+              {remaining > 0 ? `Remaining: ₹${remaining.toFixed(0)}` : 'Fully paid'}
+            </Text>
+          )}
+        </FadeInUp>
       </ScrollView>
 
       <View style={styles.footer}>
-        <TouchableOpacity style={[styles.completeButton, completing && { opacity: 0.6 }]} onPress={completeSale} disabled={completing}>
-          {completing ? <ActivityIndicator color="#fff" /> : <Text style={styles.completeButtonText}>Complete sale · ₹{grandTotal.toFixed(0)}</Text>}
-        </TouchableOpacity>
+        <SpringTouch
+          onPress={completeSale}
+          disabled={completing}
+          activeScale={0.97}
+        >
+          <View style={[styles.completeButton, completing && { opacity: 0.6 }]}>
+            {completing ? <ActivityIndicator color="#fff" /> : <Text style={styles.completeButtonText}>Complete sale · ₹{grandTotal.toFixed(0)}</Text>}
+          </View>
+        </SpringTouch>
       </View>
 
-      {/* Customer sheet */}
       <Modal visible={customerSheetOpen} transparent animationType="slide" onRequestClose={() => setCustomerSheetOpen(false)}>
         <Pressable style={styles.sheetBackdrop} onPress={() => setCustomerSheetOpen(false)}>
           <View style={styles.sheet}>

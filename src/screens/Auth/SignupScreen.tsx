@@ -8,6 +8,13 @@ import { useNavigation } from '@react-navigation/native';
 
 import { supabase } from '../../lib/supabase';
 import { AppColors } from '../../screens/theme/AppColors.ts';
+import {
+  FadeInUp,
+  FloatingGeometricOrb,
+  SpringTouch,
+  ScaleIn,
+  ShakeView,
+} from '../theme/Animations';
 
 export default function SignupScreen() {
   const navigation = useNavigation();
@@ -65,107 +72,176 @@ export default function SignupScreen() {
 
   return (
     <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.card}>
-          <View style={styles.headerRow}>
-            <TouchableOpacity onPress={() => navigation.goBack()} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-              <Icon name="chevron-left" size={28} color={AppColors.primary} />
-            </TouchableOpacity>
-            <View style={styles.brandIcon}>
-              <Icon name="psychology" color="#fff" size={22} />
-            </View>
-            <Text style={styles.brandTextPrimary}>AI</Text>
-            <Text style={styles.brandTextAccent}>Business</Text>
-          </View>
+      {/* Ambient Floating Geometric Orbs */}
+      <FloatingGeometricOrb
+        size={230}
+        top={-50}
+        right={-60}
+        color="rgba(91, 77, 248, 0.08)"
+        duration={5500}
+        floatDistance={12}
+      />
+      <FloatingGeometricOrb
+        size={170}
+        bottom={30}
+        left={-50}
+        color="rgba(16, 185, 129, 0.06)"
+        duration={4500}
+        floatDistance={10}
+      />
+      <FloatingGeometricOrb
+        size={100}
+        top={140}
+        left={-30}
+        color="rgba(59, 130, 246, 0.05)"
+        duration={3800}
+        floatDistance={8}
+      />
 
-          <Text style={styles.title}>Create Account</Text>
-          <Text style={styles.subtitle}>Start your AI journey today</Text>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <FadeInUp delay={60} duration={500}>
+          <View style={styles.card}>
+            {/* Header with back arrow & brand badge */}
+            <View style={styles.headerRow}>
+              <SpringTouch
+                onPress={() => navigation.goBack()}
+                activeScale={0.88}
+                style={styles.backBtnWrap}
+              >
+                <Icon name="chevron-left" size={28} color={AppColors.primary} />
+              </SpringTouch>
 
-          <Text style={styles.label}>Full Name</Text>
-          <View style={styles.inputWrapper}>
-            <Icon name="person-outline" color={AppColors.textMuted} size={18} />
-            <TextInput
-              style={styles.input}
-              placeholder="John Doe"
-              placeholderTextColor={AppColors.textMuted}
-              value={name}
-              onChangeText={setName}
-            />
-          </View>
+              <ScaleIn delay={120} bounciness={10}>
+                <View style={styles.brandIcon}>
+                  <Icon name="psychology" color="#fff" size={22} />
+                </View>
+              </ScaleIn>
 
-          <Text style={styles.label}>Email</Text>
-          <View style={styles.inputWrapper}>
-            <Icon name="mail-outline" color={AppColors.textMuted} size={18} />
-            <TextInput
-              style={styles.input}
-              placeholder="you@aibusiness.ai"
-              placeholderTextColor={AppColors.textMuted}
-              autoCapitalize="none"
-              keyboardType="email-address"
-              value={email}
-              onChangeText={setEmail}
-            />
-          </View>
-
-          <Text style={styles.label}>Password</Text>
-          <View style={styles.inputWrapper}>
-            <Icon name="lock-outline" color={AppColors.textMuted} size={18} />
-            <TextInput
-              style={styles.input}
-              placeholder="••••••••"
-              placeholderTextColor={AppColors.textMuted}
-              secureTextEntry={obscurePassword}
-              value={password}
-              onChangeText={setPassword}
-            />
-            <TouchableOpacity onPress={() => setObscurePassword((v) => !v)}>
-              <Icon name={obscurePassword ? 'visibility-off' : 'visibility'} color={AppColors.textMuted} size={18} />
-            </TouchableOpacity>
-          </View>
-
-          <Text style={styles.label}>Confirm Password</Text>
-          <View style={styles.inputWrapper}>
-            <Icon name="lock-outline" color={AppColors.textMuted} size={18} />
-            <TextInput
-              style={styles.input}
-              placeholder="••••••••"
-              placeholderTextColor={AppColors.textMuted}
-              secureTextEntry={obscureConfirm}
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-            />
-            <TouchableOpacity onPress={() => setObscureConfirm((v) => !v)}>
-              <Icon name={obscureConfirm ? 'visibility-off' : 'visibility'} color={AppColors.textMuted} size={18} />
-            </TouchableOpacity>
-          </View>
-
-          {errorText ? <Text style={styles.errorText}>{errorText}</Text> : null}
-
-          <TouchableOpacity
-            style={[styles.signupButton, isLoading && styles.disabledButton]}
-            onPress={handleSignUp}
-            disabled={isLoading}
-            activeOpacity={0.8}
-          >
-            {isLoading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <View style={styles.rowCenter}>
-                <Icon name="person-add" color="#fff" size={18} />
-                <Text style={styles.signupButtonText}>Create Enterprise Account</Text>
+              <View style={styles.brandTitleRow}>
+                <Text style={styles.brandTextPrimary}>AI </Text>
+                <Text style={styles.brandTextAccent}>Business</Text>
               </View>
-            )}
-          </TouchableOpacity>
+            </View>
 
-          <View style={styles.divider} />
+            <FadeInUp delay={100} distance={12}>
+              <Text style={styles.title}>Create Account</Text>
+              <Text style={styles.subtitle}>Start your enterprise AI journey today</Text>
+            </FadeInUp>
 
-          <View style={styles.loginRow}>
-            <Text style={styles.loginPrompt}>Already have an account?</Text>
-            <TouchableOpacity onPress={() => navigation.goBack()} activeOpacity={0.7}>
-              <Text style={styles.loginLink}>Sign In</Text>
-            </TouchableOpacity>
+            {/* Form Fields - Staggered entrance */}
+            <FadeInUp delay={150} distance={14}>
+              <Text style={styles.label}>Full Name</Text>
+              <View style={styles.inputWrapper}>
+                <Icon name="person-outline" color={AppColors.textMuted} size={18} />
+                <TextInput
+                  style={styles.input}
+                  placeholder="John Doe"
+                  placeholderTextColor={AppColors.textMuted}
+                  value={name}
+                  onChangeText={setName}
+                />
+              </View>
+            </FadeInUp>
+
+            <FadeInUp delay={200} distance={14}>
+              <Text style={styles.label}>Email</Text>
+              <View style={styles.inputWrapper}>
+                <Icon name="mail-outline" color={AppColors.textMuted} size={18} />
+                <TextInput
+                  style={styles.input}
+                  placeholder="you@aibusiness.ai"
+                  placeholderTextColor={AppColors.textMuted}
+                  autoCapitalize="none"
+                  keyboardType="email-address"
+                  value={email}
+                  onChangeText={setEmail}
+                />
+              </View>
+            </FadeInUp>
+
+            <FadeInUp delay={250} distance={14}>
+              <Text style={styles.label}>Password</Text>
+              <View style={styles.inputWrapper}>
+                <Icon name="lock-outline" color={AppColors.textMuted} size={18} />
+                <TextInput
+                  style={styles.input}
+                  placeholder="••••••••"
+                  placeholderTextColor={AppColors.textMuted}
+                  secureTextEntry={obscurePassword}
+                  value={password}
+                  onChangeText={setPassword}
+                />
+                <TouchableOpacity onPress={() => setObscurePassword((v) => !v)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                  <Icon name={obscurePassword ? 'visibility-off' : 'visibility'} color={AppColors.textMuted} size={18} />
+                </TouchableOpacity>
+              </View>
+            </FadeInUp>
+
+            <FadeInUp delay={300} distance={14}>
+              <Text style={styles.label}>Confirm Password</Text>
+              <View style={styles.inputWrapper}>
+                <Icon name="lock-outline" color={AppColors.textMuted} size={18} />
+                <TextInput
+                  style={styles.input}
+                  placeholder="••••••••"
+                  placeholderTextColor={AppColors.textMuted}
+                  secureTextEntry={obscureConfirm}
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword}
+                />
+                <TouchableOpacity onPress={() => setObscureConfirm((v) => !v)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                  <Icon name={obscureConfirm ? 'visibility-off' : 'visibility'} color={AppColors.textMuted} size={18} />
+                </TouchableOpacity>
+              </View>
+            </FadeInUp>
+
+            {/* Animated Horizontal Shake on Error */}
+            {errorText ? (
+              <ShakeView trigger={errorText}>
+                <View style={styles.errorBanner}>
+                  <Icon name="error-outline" color={AppColors.danger} size={16} />
+                  <Text style={styles.errorText}>{errorText}</Text>
+                </View>
+              </ShakeView>
+            ) : null}
+
+            {/* Tactile Button with SpringTouch */}
+            <FadeInUp delay={340} distance={14}>
+              <SpringTouch
+                onPress={handleSignUp}
+                disabled={isLoading}
+                activeScale={0.97}
+                style={{ width: '100%' }}
+              >
+                <View style={[styles.signupButton, isLoading && styles.disabledButton]}>
+                  {isLoading ? (
+                    <ActivityIndicator color="#fff" />
+                  ) : (
+                    <View style={styles.rowCenter}>
+                      <Icon name="person-add" color="#fff" size={18} />
+                      <Text style={styles.signupButtonText}>Create Enterprise Account</Text>
+                    </View>
+                  )}
+                </View>
+              </SpringTouch>
+            </FadeInUp>
+
+            <View style={styles.divider} />
+
+            {/* Sign in prompt with SpringTouch */}
+            <FadeInUp delay={380} distance={10}>
+              <View style={styles.loginRow}>
+                <Text style={styles.loginPrompt}>Already have an account?</Text>
+                <SpringTouch onPress={() => navigation.goBack()} activeScale={0.92}>
+                  <View style={styles.signInPill}>
+                    <Text style={styles.loginLink}>Sign In</Text>
+                    <Icon name="arrow-forward" size={14} color={AppColors.secondary} />
+                  </View>
+                </SpringTouch>
+              </View>
+            </FadeInUp>
           </View>
-        </View>
+        </FadeInUp>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -222,7 +298,21 @@ const styles = StyleSheet.create({
     height: 48,
   },
   input: { flex: 1, paddingVertical: 12, marginLeft: 8, color: AppColors.textPrimary, fontSize: 13.5 },
-  errorText: { color: AppColors.danger, fontSize: 12, marginBottom: 12, fontWeight: '500' },
+  backBtnWrap: { padding: 4 },
+  brandTitleRow: { flexDirection: 'row', alignItems: 'center' },
+  errorBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FEF2F2',
+    borderWidth: 1,
+    borderColor: '#FECACA',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    marginBottom: 14,
+    gap: 8,
+  },
+  errorText: { color: AppColors.danger, fontSize: 12, fontWeight: '600', flex: 1 },
   signupButton: {
     backgroundColor: AppColors.primary,
     borderRadius: 10,
@@ -242,5 +332,14 @@ const styles = StyleSheet.create({
   divider: { height: 1, backgroundColor: AppColors.border, marginVertical: 20 },
   loginRow: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },
   loginPrompt: { fontSize: 12.5, color: AppColors.textSecondary, marginRight: 6, fontWeight: '500' },
+  signInPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: AppColors.secondarySoft,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 8,
+    gap: 4,
+  },
   loginLink: { fontSize: 13, fontWeight: '700', color: AppColors.secondary },
 });

@@ -9,6 +9,12 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 
 import { CustomerService, CustomerRecord, LocalImageFile } from '../../services/CustomerService';
 import { AppColors } from '../theme/AppColors';
+import {
+  FadeInUp,
+  FloatingGeometricOrb,
+  SpringTouch,
+  ScaleIn,
+} from '../theme/Animations';
 
 const service = new CustomerService();
 
@@ -76,48 +82,84 @@ export default function AddCustomerScreen() {
 
   return (
     <View style={styles.flex}>
+      {/* Background ambient orbs */}
+      <FloatingGeometricOrb
+        size={220}
+        top={-50}
+        right={-60}
+        color="rgba(91, 77, 248, 0.07)"
+        duration={5500}
+        floatDistance={12}
+      />
+      <FloatingGeometricOrb
+        size={150}
+        bottom={40}
+        left={-40}
+        color="rgba(16, 185, 129, 0.06)"
+        duration={4500}
+        floatDistance={10}
+      />
+
       <View style={styles.header}>
-        <TouchableOpacity
+        <SpringTouch
           onPress={() => navigation.goBack()}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          activeScale={0.88}
+          style={{ padding: 4 }}
         >
           <Icon name="chevron-left" color={AppColors.primary} size={30} />
-        </TouchableOpacity>
+        </SpringTouch>
         <Text style={styles.headerTitle}>Add Customer</Text>
         <View style={{ width: 30 }} />
       </View>
 
-      <ScrollView contentContainerStyle={styles.content}>
-        <TouchableOpacity style={styles.photoWrap} onPress={() => setSheetOpen(true)} activeOpacity={0.8}>
-          <View style={styles.photoCircle}>
-            {photo?.uri ? (
-              <Image source={{ uri: photo.uri }} style={styles.photoImg} />
-            ) : (
-              <Icon name="add-a-photo" color={AppColors.primary} size={26} />
-            )}
-          </View>
-          <View style={styles.editBadge}>
-            <Icon name="edit" color="#fff" size={13} />
-          </View>
-        </TouchableOpacity>
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        <ScaleIn delay={80} initialScale={0.7} bounciness={10}>
+          <TouchableOpacity style={styles.photoWrap} onPress={() => setSheetOpen(true)} activeOpacity={0.8}>
+            <View style={styles.photoCircle}>
+              {photo?.uri ? (
+                <Image source={{ uri: photo.uri }} style={styles.photoImg} />
+              ) : (
+                <Icon name="add-a-photo" color={AppColors.primary} size={26} />
+              )}
+            </View>
+            <View style={styles.editBadge}>
+              <Icon name="edit" color="#fff" size={13} />
+            </View>
+          </TouchableOpacity>
+        </ScaleIn>
         <Text style={styles.photoLabel}>{photo ? 'Photo selected' : 'Upload photo (optional)'}</Text>
 
-        <SectionLabel text="Basic details" />
-        <Field icon="person-outline" label="Customer name *" value={name} onChangeText={setName} />
-        <Field icon="call" label="Mobile number *" value={phone} onChangeText={setPhone} keyboardType="phone-pad" />
-        <Field icon="phone-forwarded" label="Alternate number" value={altPhone} onChangeText={setAltPhone} keyboardType="phone-pad" />
-        <Field icon="mail-outline" label="Email address" value={email} onChangeText={setEmail} keyboardType="email-address" />
+        <FadeInUp delay={120} distance={14}>
+          <SectionLabel text="Basic details" />
+          <Field icon="person-outline" label="Customer name *" value={name} onChangeText={setName} />
+          <Field icon="call" label="Mobile number *" value={phone} onChangeText={setPhone} keyboardType="phone-pad" />
+          <Field icon="phone-forwarded" label="Alternate number" value={altPhone} onChangeText={setAltPhone} keyboardType="phone-pad" />
+          <Field icon="mail-outline" label="Email address" value={email} onChangeText={setEmail} keyboardType="email-address" />
+        </FadeInUp>
 
-        <SectionLabel text="Location" />
-        <Field icon="location-on" label="Street address" value={address} onChangeText={setAddress} multiline />
-        <Field icon="location-city" label="City" value={city} onChangeText={setCity} />
+        <FadeInUp delay={200} distance={14}>
+          <SectionLabel text="Location" />
+          <Field icon="location-on" label="Street address" value={address} onChangeText={setAddress} multiline />
+          <Field icon="location-city" label="City" value={city} onChangeText={setCity} />
+        </FadeInUp>
 
-        <SectionLabel text="Business (optional)" />
-        <Field icon="receipt-long" label="GST number" value={gst} onChangeText={setGst} />
+        <FadeInUp delay={280} distance={14}>
+          <SectionLabel text="Business (optional)" />
+          <Field icon="receipt-long" label="GST number" value={gst} onChangeText={setGst} />
+        </FadeInUp>
 
-        <TouchableOpacity style={[styles.saveButton, saving && { opacity: 0.6 }]} onPress={save} disabled={saving} activeOpacity={0.8}>
-          {saving ? <ActivityIndicator color="#fff" /> : <Text style={styles.saveButtonText}>Save Customer</Text>}
-        </TouchableOpacity>
+        <FadeInUp delay={340} distance={12}>
+          <SpringTouch
+            onPress={save}
+            disabled={saving}
+            activeScale={0.97}
+            style={{ width: '100%', marginTop: 8 }}
+          >
+            <View style={[styles.saveButton, saving && { opacity: 0.6 }]}>
+              {saving ? <ActivityIndicator color="#fff" /> : <Text style={styles.saveButtonText}>Save Customer</Text>}
+            </View>
+          </SpringTouch>
+        </FadeInUp>
       </ScrollView>
 
       <Modal visible={sheetOpen} transparent animationType="slide" onRequestClose={() => setSheetOpen(false)}>
