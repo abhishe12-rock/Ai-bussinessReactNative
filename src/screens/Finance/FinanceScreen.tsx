@@ -62,16 +62,17 @@ export default function FinanceHomeScreen() {
   const menuItems: {
     icon: string;
     label: string;
+    subtitle: string;
     color: string;
     bg: string;
     screen: string;
   }[] = [
-      { icon: 'bank-outline', label: 'Loans', color: AppColors.primary, bg: AppColors.primarySoft, screen: 'Loans' },
-      { icon: 'credit-card-outline', label: 'EMI', color: AppColors.info, bg: AppColors.infoSoft, screen: 'Emi' },
-      { icon: 'arrow-top-right', label: 'Expenses', color: AppColors.danger, bg: AppColors.dangerSoft, screen: 'Expenses' },
-      { icon: 'arrow-bottom-left', label: 'Income', color: AppColors.success, bg: AppColors.successSoft, screen: 'Income' },
-      { icon: 'book-open-outline', label: 'Ledger', color: AppColors.warning, bg: AppColors.warningSoft, screen: 'Ledger' },
-      { icon: 'receipt', label: 'Transactions', color: AppColors.teal, bg: AppColors.tealSoft, screen: 'Transactions' },
+      { icon: 'arrow-top-right', label: 'Expenses', subtitle: 'Track expenditures', color: AppColors.danger, bg: AppColors.dangerSoft, screen: 'Expenses' },
+      { icon: 'arrow-bottom-left', label: 'Income', subtitle: 'Revenue & inflows', color: AppColors.success, bg: AppColors.successSoft, screen: 'Income' },
+      { icon: 'bank-outline', label: 'Loans', subtitle: 'Borrowings & debt', color: AppColors.primary, bg: AppColors.primarySoft, screen: 'Loans' },
+      { icon: 'credit-card-outline', label: 'EMI', subtitle: 'Monthly installments', color: AppColors.info, bg: AppColors.infoSoft, screen: 'Emi' },
+      { icon: 'book-open-outline', label: 'Ledger', subtitle: 'Customer & vendor', color: AppColors.warning, bg: AppColors.warningSoft, screen: 'Ledger' },
+      { icon: 'receipt', label: 'Transactions', subtitle: 'Audit & history', color: AppColors.teal, bg: AppColors.tealSoft, screen: 'Transactions' },
     ];
 
   return (
@@ -135,9 +136,10 @@ export default function FinanceHomeScreen() {
                 icon="arrow-bottom-left"
                 color={AppColors.success}
                 bg={AppColors.successSoft}
+                onPress={() => navigation.navigate('Income')}
               />
             </ScaleIn>
-            <View style={{ width: 10 }} />
+            <View style={{ width: 12 }} />
             <ScaleIn delay={180} style={{ flex: 1 }}>
               <StatCard
                 label="Expenses"
@@ -145,6 +147,7 @@ export default function FinanceHomeScreen() {
                 icon="arrow-top-right"
                 color={AppColors.danger}
                 bg={AppColors.dangerSoft}
+                onPress={() => navigation.navigate('Expenses')}
               />
             </ScaleIn>
           </View>
@@ -154,10 +157,11 @@ export default function FinanceHomeScreen() {
           </FadeInUp>
           <View style={styles.grid}>
             {menuItems.map((item, index) => (
-              <ScaleIn key={item.screen} delay={240 + index * 40} style={{ width: '31%' }}>
+              <ScaleIn key={item.screen} delay={240 + index * 30} style={styles.menuCardWrapper}>
                 <MenuCard
                   icon={item.icon}
                   label={item.label}
+                  subtitle={item.subtitle}
                   color={item.color}
                   bg={item.bg}
                   onPress={() => navigation.navigate(item.screen)}
@@ -205,44 +209,77 @@ function StatCard({
   icon,
   color,
   bg,
+  onPress,
 }: {
   label: string;
   value: string;
   icon: string;
   color: string;
   bg: string;
+  onPress?: () => void;
 }) {
-  return (
-    <View style={[styles.statCard, { backgroundColor: bg, flex: 1 }]}>
+  const inner = (
+    <View style={[styles.statCard, { backgroundColor: bg }]}>
       <View style={styles.statCardHeader}>
-        <MaterialCommunityIcons name={icon} color={color} size={15} />
+        <View style={[styles.statIconWrap, { backgroundColor: 'rgba(255, 255, 255, 0.75)' }]}>
+          <MaterialCommunityIcons name={icon} color={color} size={15} />
+        </View>
         <Text style={[styles.statCardLabel, { color }]}>{label}</Text>
+        {onPress && (
+          <MaterialCommunityIcons
+            name="chevron-right"
+            color={color}
+            size={16}
+            style={styles.statChevron}
+          />
+        )}
       </View>
       <Text style={[styles.statCardValue, { color }]}>{value}</Text>
     </View>
   );
+
+  if (onPress) {
+    return (
+      <SpringTouch activeScale={0.96} onPress={onPress} style={{ width: '100%' }}>
+        {inner}
+      </SpringTouch>
+    );
+  }
+  return inner;
 }
 
 function MenuCard({
   icon,
   label,
+  subtitle,
   color,
   bg,
   onPress,
 }: {
   icon: string;
   label: string;
+  subtitle: string;
   color: string;
   bg: string;
   onPress: () => void;
 }) {
   return (
-    <SpringTouch activeScale={0.92} onPress={onPress} style={{ width: '100%' }}>
+    <SpringTouch activeScale={0.95} onPress={onPress} style={{ width: '100%' }}>
       <View style={styles.menuCard}>
-        <View style={[styles.menuIconBox, { backgroundColor: bg }]}>
-          <MaterialCommunityIcons name={icon} color={color} size={20} />
+        <View style={styles.menuCardTop}>
+          <View style={[styles.menuIconBox, { backgroundColor: bg }]}>
+            <MaterialCommunityIcons name={icon} color={color} size={22} />
+          </View>
+          <MaterialCommunityIcons name="chevron-right" color={AppColors.textMuted} size={18} />
         </View>
-        <Text style={styles.menuLabel}>{label}</Text>
+        <View style={styles.menuCardBottom}>
+          <Text style={styles.menuLabel} numberOfLines={1}>
+            {label}
+          </Text>
+          <Text style={styles.menuSubtitle} numberOfLines={1}>
+            {subtitle}
+          </Text>
+        </View>
       </View>
     </SpringTouch>
   );
@@ -338,30 +375,53 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     borderWidth: 1,
     borderColor: AppColors.border,
+    width: '100%',
   },
   statCardHeader: { flexDirection: 'row', alignItems: 'center' },
-  statCardLabel: { fontSize: 11, fontWeight: '700', marginLeft: 5, textTransform: 'uppercase', letterSpacing: 0.5 },
-  statCardValue: { fontSize: 19, fontWeight: '800', marginTop: 6, letterSpacing: -0.4 },
-  sectionLabel: { color: AppColors.textSecondary, fontSize: 12, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 0.7, marginTop: 24, marginBottom: 10 },
+  statIconWrap: {
+    width: 26,
+    height: 26,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  statChevron: {
+    marginLeft: 'auto',
+  },
+  statCardLabel: { fontSize: 11, fontWeight: '700', marginLeft: 6, textTransform: 'uppercase', letterSpacing: 0.5 },
+  statCardValue: { fontSize: 19, fontWeight: '800', marginTop: 8, letterSpacing: -0.4 },
+  sectionLabel: { color: AppColors.textSecondary, fontSize: 12, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 0.7, marginTop: 24, marginBottom: 12 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
+  menuCardWrapper: {
+    width: '48.5%',
+    marginBottom: 12,
+  },
   menuCard: {
-    width: '48%',
-    aspectRatio: 1.35,
+    width: '100%',
     backgroundColor: AppColors.surface,
     borderRadius: 18,
     borderWidth: 1,
     borderColor: AppColors.border,
     padding: 14,
-    justifyContent: 'center',
-    marginBottom: 10,
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.3,
+    minHeight: 112,
+    justifyContent: 'space-between',
+    shadowColor: '#1E1B4B',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
     shadowRadius: 8,
-    elevation: 3,
+    elevation: 2,
   },
-  menuIconBox: { width: 42, height: 42, borderRadius: 13, alignItems: 'center', justifyContent: 'center' },
-  menuLabel: { color: AppColors.textPrimary, fontSize: 13.5, fontWeight: '700', marginTop: 10 },
+  menuCardTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  menuIconBox: { width: 40, height: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
+  menuCardBottom: {
+    marginTop: 12,
+  },
+  menuLabel: { color: AppColors.textPrimary, fontSize: 14.5, fontWeight: '700', letterSpacing: -0.2 },
+  menuSubtitle: { color: AppColors.textSecondary, fontSize: 11.5, fontWeight: '500', marginTop: 2 },
   emptyText: { color: AppColors.textSecondary, fontSize: 13, marginTop: 10 },
   txnRow: {
     flexDirection: 'row',

@@ -25,7 +25,6 @@ import {
 } from '../theme/Animations';
 
 type SortBy = 'name' | 'city';
-type FilterStatus = 'All' | 'Active' | 'Inactive';
 
 const service = new CustomerService();
 
@@ -53,7 +52,6 @@ export default function CustomerListScreen() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState('');
-  const [filterTab, setFilterTab] = useState<FilterStatus>('All');
   const [sortBy, setSortBy] = useState<SortBy>('name');
   const [sortSheetOpen, setSortSheetOpen] = useState(false);
 
@@ -82,19 +80,14 @@ export default function CustomerListScreen() {
       (c) =>
         c.name.toLowerCase().includes(query.toLowerCase()) ||
         c.phone.includes(query) ||
-        (c.email && c.email.toLowerCase().includes(query.toLowerCase())),
+        (c.email && c.email.toLowerCase().includes(query.toLowerCase())) ||
+        (c.city && c.city.toLowerCase().includes(query.toLowerCase())),
     );
-
-    if (filterTab === 'Active') {
-      list = list.filter((c) => (c as any).status !== 'inactive');
-    } else if (filterTab === 'Inactive') {
-      list = list.filter((c) => (c as any).status === 'inactive');
-    }
 
     if (sortBy === 'name') list = [...list].sort((a, b) => a.name.localeCompare(b.name));
     if (sortBy === 'city') list = [...list].sort((a, b) => (a.city ?? '').localeCompare(b.city ?? ''));
     return list;
-  }, [customers, query, filterTab, sortBy]);
+  }, [customers, query, sortBy]);
 
   const confirmDelete = (customer: CustomerRecord) => {
     Alert.alert('Delete customer?', `Are you sure you want to delete ${customer.name}?`, [
@@ -201,7 +194,7 @@ export default function CustomerListScreen() {
             activeScale={0.88}
             style={styles.headerIconBtn}
           >
-            <Icon name="search" color={AppColors.textPrimary} size={22} />
+            <Icon name="swap-vert" color={AppColors.textPrimary} size={22} />
           </SpringTouch>
           <SpringTouch
             onPress={() => navigation.navigate('AddCustomer', { onSaved: loadCustomers })}
@@ -220,7 +213,7 @@ export default function CustomerListScreen() {
           <Icon name="search" color={AppColors.textMuted} size={20} />
           <TextInput
             style={styles.searchInput}
-            placeholder="Search customers..."
+            placeholder="Search by name, phone or city..."
             placeholderTextColor={AppColors.textMuted}
             value={query}
             onChangeText={setQuery}
@@ -241,24 +234,28 @@ export default function CustomerListScreen() {
         </SpringTouch>
       </View>
 
-      {/* SEGMENTED FILTER TABS */}
-      <View style={styles.tabRow}>
-        {(['All', 'Active', 'Inactive'] as FilterStatus[]).map((tab) => {
-          const isSelected = filterTab === tab;
-          return (
-            <SpringTouch
-              key={tab}
-              onPress={() => setFilterTab(tab)}
-              activeScale={0.92}
-            >
-              <View style={[styles.filterTab, isSelected && styles.filterTabActive]}>
-                <Text style={[styles.filterTabText, isSelected && styles.filterTabTextActive]}>
-                  {tab}
-                </Text>
-              </View>
-            </SpringTouch>
-          );
-        })}
+      {/* CUSTOMER COUNT & SORT SUMMARY BAR */}
+      <View style={styles.subBar}>
+        <View style={styles.countBadge}>
+          <Text style={styles.countText}>
+            {loading
+              ? 'Loading customers...'
+              : query.trim()
+              ? `${filtered.length} of ${customers.length} customers`
+              : `${filtered.length} ${filtered.length === 1 ? 'customer' : 'customers'}`}
+          </Text>
+        </View>
+
+        <TouchableOpacity
+          style={styles.sortPill}
+          onPress={() => setSortSheetOpen(true)}
+          activeOpacity={0.7}
+        >
+          <Icon name="swap-vert" size={15} color={AppColors.primary} />
+          <Text style={styles.sortPillText}>
+            {sortBy === 'name' ? 'Name (A–Z)' : 'City'}
+          </Text>
+        </TouchableOpacity>
       </View>
 
       {/* BODY LIST */}
@@ -502,35 +499,48 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
 
-  tabRow: {
+  subBar: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 16,
-    marginBottom: 12,
-    gap: 10,
+    marginBottom: 10,
+    marginTop: 2,
   },
-  filterTab: {
-    flex: 1,
-    paddingVertical: 8,
-    borderRadius: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#FFFFFF',
+  countBadge: {
+    backgroundColor: AppColors.surfaceSoft,
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    borderRadius: 10,
     borderWidth: 1,
     borderColor: AppColors.border,
   },
-  filterTabActive: {
-    backgroundColor: AppColors.primary,
-    borderColor: AppColors.primary,
-  },
-  filterTabText: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: AppColors.textSecondary,
-  },
-  filterTabTextActive: {
-    color: '#FFFFFF',
+  countText: {
+    fontSize: 12,
     fontWeight: '700',
+    color: AppColors.textSecondary,
+    letterSpacing: 0.2,
+  },
+  sortPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: AppColors.border,
+    shadowColor: '#1E1B4B',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.03,
+    shadowRadius: 3,
+    elevation: 1,
+  },
+  sortPillText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: AppColors.primary,
   },
 
   centerFill: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24 },
@@ -604,32 +614,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  cardRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  statusPill: {
-    paddingHorizontal: 9,
-    paddingVertical: 3.5,
-    borderRadius: 12,
-  },
-  statusPillActive: {
-    backgroundColor: AppColors.successSoft,
-  },
-  statusPillInactive: {
-    backgroundColor: AppColors.warningSoft,
-  },
-  statusText: {
-    fontSize: 11,
-    fontWeight: '700',
-  },
-  statusTextActive: {
-    color: AppColors.success,
-  },
-  statusTextInactive: {
-    color: AppColors.warning,
   },
 
   sheetBackdrop: { flex: 1, backgroundColor: 'rgba(30, 27, 75, 0.45)', justifyContent: 'flex-end' },
