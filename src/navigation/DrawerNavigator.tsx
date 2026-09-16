@@ -93,6 +93,8 @@ import AiAgentsScreen from '../screens/AiAgents/AiAgentsScreen';
 import DocumentCenterScreen from '../screens/DocumentCenter/DocumentCenterScreen';
 import AiInsightsScreen from '../screens/AiInsights/AiInsightsScreen';
 import McpToolsScreen from '../screens/McpTools/McpToolsScreen';
+import NotificationsScreen from '../screens/Notifications/NotificationsScreen';
+import SettingsScreen from '../screens/Settings/SettingsScreen';
 
 function Stub({ name }: { name: string }) {
   const navigation = useNavigation<any>();
@@ -264,11 +266,15 @@ const SCREEN_COMPONENTS: Record<string, React.ComponentType> = {
   MyAttendance: MyAttendanceScreen,
   RequestLeave: RequestLeaveScreen,
   MyActivity: MyActivityScreen,
+  Notifications: NotificationsScreen,
+  Settings: SettingsScreen,
 };
 
 // One icon per module — falls back to a generic icon if a screen key isn't listed here.
 const SCREEN_ICONS: Record<string, string> = {
   Dashboard: 'view-dashboard-outline',
+  Notifications: 'bell-outline',
+  Settings: 'cog-outline',
   AiAssistant: 'robot-outline',
   CustomerList: 'account-group-outline',
   Inventory: 'archive-outline',

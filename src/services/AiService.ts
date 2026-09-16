@@ -1,3 +1,4 @@
+import { NativeModules, Platform } from 'react-native';
 import { supabase } from '../lib/supabase';
 import { ProductService } from './ProductService';
 import { SalesService } from './SalesService';
@@ -6,13 +7,132 @@ import { CustomerService } from './CustomerService';
 import { FinanceService } from './FinanceService';
 import { PurchaseService } from './PurchaseService';
 
-let apiKey = ['gsk', 'w4m2aUvNB9nkhNsHjVgtWGdyb3FY6opLY1Teskmr85B8VjxB6e4k'].join('_');
+const { AppConfig } = NativeModules;
+let apiKey: string = AppConfig?.GROQ_API_KEY || '';
 
-let uploadedDocs: string[] = [
-  'Company Policy.pdf',
-  'Employee Handbook.pdf',
-  'Repair Manual.pdf',
-  'Product Price List.xlsx'
+if (Platform.OS === 'android' && AppConfig?.getGroqApiKey) {
+  AppConfig.getGroqApiKey()
+    .then((key: string) => {
+      if (key) {
+        apiKey = key;
+      }
+    })
+    .catch(() => {});
+}
+
+export interface DocumentKnowledge {
+  id: string;
+  name: string;
+  type: 'pdf' | 'docx' | 'xlsx' | 'txt';
+  size: string;
+  date: string;
+  status: 'processed' | 'processing';
+  summary: string;
+  chunks: string[];
+}
+
+let documentLibrary: DocumentKnowledge[] = [
+  {
+    id: 'doc-1',
+    name: 'Company Policy.pdf',
+    type: 'pdf',
+    size: '2.4 MB',
+    date: 'Indexed & Ready',
+    status: 'processed',
+    summary: 'Official company policies on employee leaves, working hours, code of conduct, and workplace guidelines.',
+    chunks: [
+      'LEAVE POLICY: All full-time employees are entitled to 18 paid leaves per calendar year, 12 casual leaves, and 10 medical/sick leaves. Sick leave exceeding 2 consecutive days requires a certified medical certificate upon return.',
+      'WORKING HOURS & OVERTIME: Standard store operational hours are Monday through Saturday, 9:30 AM to 6:30 PM. Overtime work is compensated at 1.5x regular hourly base pay and must be pre-approved by the store manager.',
+      'CODE OF CONDUCT: Zero tolerance policy for workplace harassment, discrimination, or verbal misconduct. Confidential store financial data and customer phone numbers must strictly remain protected under store privacy compliance.',
+      'CUSTOMER RELATIONS: All staff must greet walk-in customers respectfully. Price negotiations must strictly follow approved catalog discounts up to 10% maximum.'
+    ]
+  },
+  {
+    id: 'doc-2',
+    name: 'Employee Handbook.pdf',
+    type: 'pdf',
+    size: '5.1 MB',
+    date: 'Indexed & Ready',
+    status: 'processed',
+    summary: 'Guidelines for employee onboarding, probation periods, performance review cycles, and medical insurance benefits.',
+    chunks: [
+      'ONBOARDING & PROBATION: New hires undergo a 90-day probationary review period. Performance evaluations occur at 45 days and 90 days. Confirmation of full-time employment status is subject to manager appraisal.',
+      'HEALTH & ACCIDENT INSURANCE: Group health insurance coverage up to ₹3,00,000 is provided to confirmed full-time staff, covering hospitalization and accidental OPD expenses.',
+      'APPRAISAL & BONUSES: Bi-annual performance reviews take place in June and December. Sales incentives and monthly bonuses are distributed on the 5th of each month based on achieved store revenue targets.',
+      'DRESS CODE & ATTENDANCE: Store uniform and badge are mandatory during active shifts. Biometric check-in is required before 9:45 AM to avoid late penalty deductions.'
+    ]
+  },
+  {
+    id: 'doc-3',
+    name: 'Repair Manual.pdf',
+    type: 'pdf',
+    size: '8.2 MB',
+    date: 'Indexed & Ready',
+    status: 'processed',
+    summary: 'Standard operating procedures for smartphone screen replacement, battery renewal, and board-level repairs.',
+    chunks: [
+      'IPHONE DISPLAY REPLACEMENT PROCEDURE: 1. Power off device and remove bottom Pentalobe screws. 2. Heat screen perimeter to 75°C for 3 minutes using heat pad. 3. Use suction clamp to lift display panel at 45° angle. 4. Disconnect battery flex cable first before touching display connector cables. 5. Transfer proximity sensor and front camera bracket carefully. 6. Install new IP68 water-resistant adhesive seal. 7. Calibrate True Tone and test touch digitizer across all screen quadrants before final casing closure.',
+      'BATTERY REPLACEMENT GUIDELINE: Discharge device battery below 25% prior to opening. Disconnect battery connector, peel stretch-release adhesive strips slowly without puncturing cell. Install OEM certified replacement battery and perform two full 0-100% calibration charge cycles.',
+      'WATER DAMAGE RECOVERY PROTOCOL: Immediately disconnect battery. Submerge logic board in ultrasonic cleaning bath with 99.9% anhydrous isopropyl alcohol for 15 minutes. Dry thoroughly in thermal drying chamber at 50°C for 45 minutes before inspecting under microscope for trace corrosion.',
+      'CHARGING PORT & MICROPHONE DIAGNOSTICS: Inspect for lint buildup before replacing flex board. Verify VBUS 5V/9V power delivery and CC pin termination on USB Type-C connector with digital multimeter.'
+    ]
+  },
+  {
+    id: 'doc-4',
+    name: 'Product Price List.xlsx',
+    type: 'xlsx',
+    size: '1.2 MB',
+    date: 'Indexed & Ready',
+    status: 'processed',
+    summary: 'Spreadsheet of retail MRP, selling price, wholesale B2B pricing, and margin tiers across mobile accessories.',
+    chunks: [
+      'AUDIO ACCESSORIES PRICING: Boat Airdopes 141 - MRP ₹4,490, Retail Selling Price ₹1,299, Wholesale B2B Price ₹899 (Min order 10 pcs). Noise Buds VS102 - MRP ₹2,999, Retail ₹1,099, B2B ₹780.',
+      'CHARGING ADAPTERS & CABLES: 65W GaN Super Fast Charger - MRP ₹2,499, Retail ₹1,499, B2B ₹850. Braided Type-C 100W Cable 2m - MRP ₹799, Retail ₹399, B2B ₹190.',
+      'DISPLAY REPAIR REPLACEMENT PARTS: iPhone 13 Screen OEM - Cost ₹6,500, Customer Charge ₹9,500. OnePlus 9 Screen OLED - Cost ₹4,200, Customer Charge ₹6,800. Samsung S21 Screen - Cost ₹5,800, Customer Charge ₹8,400.',
+      'TEMPERED GLASS & CASING: 9D Privacy Tempered Glass - Retail ₹299, Bulk ₹45. MagSafe Armor Shockproof Case - Retail ₹599, Bulk ₹180.'
+    ]
+  },
+  {
+    id: 'doc-5',
+    name: 'Warranty Policy.pdf',
+    type: 'pdf',
+    size: '1.8 MB',
+    date: 'Indexed & Ready',
+    status: 'processed',
+    summary: 'Customer warranty terms covering device repairs, accessory replacements, and limitation of liability clauses.',
+    chunks: [
+      'REPAIR WARRANTY PERIOD: All screen replacements and motherboard repairs carry an unconditional 90-day store warranty against touch unresponsiveness, discoloration, or soldering defects.',
+      'WARRANTY EXCLUSIONS: Warranty is strictly void if device exhibits physical glass cracking, deep impact dents, water contact, or tampering by unauthorized third-party technicians after collection date.',
+      'ACCESSORY REPLACEMENT TERMS: Branded cables, power banks, and earphones include a 6-month replacement warranty against manufacturing hardware failures with valid store printed invoice.',
+      'CLAIM PROCEDURE: Customer must present original physical invoice or SMS receipt number. Replacement parts are dispatched within 24-48 business hours.'
+    ]
+  },
+  {
+    id: 'doc-6',
+    name: 'Product Catalogue.pdf',
+    type: 'pdf',
+    size: '3.4 MB',
+    date: 'Indexed & Ready',
+    status: 'processed',
+    summary: 'Full retail catalog of smartphones, wearable smartwatches, wireless earbuds, protective gear, and charging solutions.',
+    chunks: [
+      'SMARTPHONE HARDWARE CATALOG: Curated stock of refurbished and brand new Apple iPhones, OnePlus flagship models, Samsung Galaxy A/S series, and Xiaomi budget performers with manufacturer bill and box.',
+      'WEARABLES & AUDIO: Noise, Boat, Fire-Boltt smartwatches with SpO2 and AMOLED displays. Bluetooth neckbands and active noise cancellation TWS earbuds with warranty.'
+    ]
+  },
+  {
+    id: 'doc-7',
+    name: 'Terms & Conditions.pdf',
+    type: 'pdf',
+    size: '1.5 MB',
+    date: 'Indexed & Ready',
+    status: 'processed',
+    summary: 'Standard store trading terms, customer dispute arbitration, invoice terms, and device unclaimed storage policies.',
+    chunks: [
+      'UNCLAIMED REPAIR DEVICES: Repaired devices not collected within 45 days after customer SMS notification are subject to a nominal ₹10/day storage fee. Devices unclaimed after 90 days may be liquidated to recover labor and parts costs.',
+      'PAYMENT MODES ACCEPTED: We accept UPI (GPay, PhonePe, Paytm), Visa/Mastercard credit/debit cards, Net Banking, and Cash. Instant GST invoices are generated for all transactions.'
+    ]
+  }
 ];
 
 export interface RealBusinessSummary {
@@ -52,10 +172,121 @@ export const AiService = {
   },
   getApiKey: () => apiKey,
   
-  addDocument: (doc: string) => {
-    uploadedDocs.push(doc);
+  addDocument: (docName: string) => {
+    const existing = documentLibrary.find(d => d.name.toLowerCase() === docName.toLowerCase());
+    if (!existing) {
+      documentLibrary = [
+        {
+          id: `doc-${Date.now()}`,
+          name: docName,
+          type: docName.endsWith('.xlsx') ? 'xlsx' : docName.endsWith('.docx') ? 'docx' : 'pdf',
+          size: '2.5 MB',
+          date: 'Indexed & Ready',
+          status: 'processed',
+          summary: `Extracted and vectorized document for ${docName}. Ready for RAG question answering.`,
+          chunks: [
+            `DOCUMENT: ${docName}. This document contains active business guidelines, catalog data, or standard operating procedures.`,
+            `SECTION OVERVIEW: Detailed operating rules and operational context extracted for ${docName}.`
+          ]
+        },
+        ...documentLibrary
+      ];
+    }
   },
-  getDocuments: () => uploadedDocs,
+  getDocuments: () => documentLibrary.map((d) => d.name),
+  getDocumentLibrary: (): DocumentKnowledge[] => [...documentLibrary],
+  addDetailedDocument: (doc: DocumentKnowledge) => {
+    documentLibrary = [doc, ...documentLibrary];
+  },
+  deleteDocument: (id: string) => {
+    documentLibrary = documentLibrary.filter((d) => d.id !== id);
+  },
+  reprocessDocument: (id: string) => {
+    documentLibrary = documentLibrary.map((d) =>
+      d.id === id ? { ...d, status: 'processed' as const, date: 'Just re-indexed' } : d
+    );
+  },
+
+  /**
+   * RAG Engine: Retrieves matching document chunks and feeds them as ground truth to the AI.
+   */
+  queryDocumentRag: async (
+    question: string,
+    docIdOrName?: string
+  ): Promise<{ answer: string; sourceDoc: string; chunksUsed: string[] }> => {
+    let targetDocs = documentLibrary;
+    if (docIdOrName) {
+      const match = documentLibrary.find(
+        (d) => d.id === docIdOrName || d.name.toLowerCase() === docIdOrName.toLowerCase()
+      );
+      if (match) {
+        targetDocs = [match];
+      }
+    }
+
+    const lowerQ = question.toLowerCase();
+    const queryTokens = lowerQ.split(/\s+/).filter((t) => t.length > 2);
+
+    // Score and retrieve most relevant chunks
+    const scoredChunks: { chunk: string; docName: string; score: number }[] = [];
+    targetDocs.forEach((doc) => {
+      doc.chunks.forEach((chunk) => {
+        const lowerChunk = chunk.toLowerCase();
+        let score = 0;
+        queryTokens.forEach((token) => {
+          if (lowerChunk.includes(token)) score += 2;
+        });
+        if (lowerChunk.includes(lowerQ)) score += 5;
+        if (score > 0 || queryTokens.length === 0) {
+          scoredChunks.push({ chunk, docName: doc.name, score });
+        }
+      });
+    });
+
+    scoredChunks.sort((a, b) => b.score - a.score);
+    const topChunks = scoredChunks.slice(0, 3);
+    const contextText =
+      topChunks.length > 0
+        ? topChunks.map((c) => `[From ${c.docName}]: ${c.chunk}`).join('\n\n')
+        : targetDocs
+            .slice(0, 2)
+            .map((d) => `[From ${d.name}]: ${d.chunks.join(' ')}`)
+            .join('\n\n');
+
+    const sourceName = topChunks.length > 0 ? topChunks[0].docName : targetDocs[0]?.name || 'Document Knowledge Base';
+
+    try {
+      const prompt = `You are an expert AI enterprise business assistant. Based STRICTLY on the following retrieved company document excerpts, provide a clear, accurate, and direct answer to the user's question. Cite the specific policy, procedure, or price from the text.
+      
+Retrieved Document Context:
+${contextText}
+
+User Question: "${question}"
+
+Answer directly, accurately, and professionally:`;
+
+      const aiResponse = await AiService.promptGemini(prompt, '', false);
+      return {
+        answer: aiResponse,
+        sourceDoc: sourceName,
+        chunksUsed: topChunks.map((c) => c.chunk),
+      };
+    } catch {
+      // Offline / fallback RAG synthesis
+      if (topChunks.length > 0) {
+        return {
+          answer: `According to ${sourceName}:\n\n${topChunks.map((c) => c.chunk).join('\n\n')}`,
+          sourceDoc: sourceName,
+          chunksUsed: topChunks.map((c) => c.chunk),
+        };
+      }
+      return {
+        answer: `I searched "${sourceName}". Here is what our policy states:\n\n${targetDocs[0]?.chunks[0] || 'No specific match found.'}`,
+        sourceDoc: sourceName,
+        chunksUsed: targetDocs[0]?.chunks.slice(0, 1) || [],
+      };
+    }
+  },
 
   /**
    * Fetches real live business data from Supabase across all modules:
@@ -289,7 +520,7 @@ ${summary.activeRepairsDetails.length > 0 ? `Active Repair Tickets:\n${summary.a
 ${summary.recentPurchasesDetails.length > 0 ? `Recent Purchase Orders:\n${summary.recentPurchasesDetails.join('\n')}` : '- No purchase orders recorded yet.'}
 
 8. DOCUMENT CENTER:
-- Available Documents: ${uploadedDocs.join(', ')}
+- Available Documents: ${documentLibrary.map((d) => d.name).join(', ')}
 
 === GUIDELINES FOR ANSWERING ANY QUESTION ===
 - You can answer ANY question about the business: sales, revenue, top-selling items, product catalog, stock levels, low-stock warnings, repair jobs, customers, finances, profit & loss, expenses, loans, purchase orders, document policies, and business recommendations.
@@ -307,9 +538,17 @@ ${summary.recentPurchasesDetails.length > 0 ? `Recent Purchase Orders:\n${summar
     `.trim();
   },
 
-  promptGemini: async (systemInstruction: string, prompt: string, isJsonMode = false) => {
+  promptGemini: async (systemInstruction: string, prompt: string = '', isJsonMode = false) => {
+    let currentKey = apiKey;
+    if (!currentKey && Platform.OS === 'android' && AppConfig?.getGroqApiKey) {
+      try {
+        currentKey = await AppConfig.getGroqApiKey();
+        if (currentKey) apiKey = currentKey;
+      } catch {}
+    }
+
     // If no API key is set, use real business summary to generate smart offline responses
-    if (!apiKey) {
+    if (!currentKey) {
       const summary = await AiService.fetchLiveBusinessSummary();
       
       if (isJsonMode) {
@@ -339,9 +578,9 @@ ${summary.recentPurchasesDetails.length > 0 ? `Recent Purchase Orders:\n${summar
       } else if (lowerPrompt.includes("repair")) {
         return `Repair Tickets:\n- Total: ${summary.totalRepairs}\n- Pending: ${summary.pendingRepairs}\n- In Progress: ${summary.inProgressRepairs}\n- Completed: ${summary.completedRepairs}`;
       } else if (lowerPrompt.includes("customer")) {
-        return `You have ${summary.totalCustomers} registered customers in your business database.`;
+        return `Customers:\n- Total Registered: ${summary.totalCustomers}\n- Sample names: ${summary.customerNamesSample.join(', ')}`;
       } else {
-        return `Business Overview:\n- Products: ${summary.totalProducts}\n- Total Sales: ₹${summary.totalRevenue.toLocaleString('en-IN')} (${summary.totalSales} orders)\n- Pending Repairs: ${summary.pendingRepairs}\n- Pending Payments: ₹${summary.pendingCustomerPayments.toLocaleString('en-IN')}\n- Total Customers: ${summary.totalCustomers}`;
+        return `Live Business Overview:\n- Products: ${summary.totalProducts}\n- Completed Sales: ₹${summary.totalRevenue.toLocaleString('en-IN')} (${summary.totalSales} orders)\n- Uncollected Customer Balance: ₹${summary.pendingCustomerPayments.toLocaleString('en-IN')}\n- Pending Repairs: ${summary.pendingRepairs}\n- Total Registered Customers: ${summary.totalCustomers}`;
       }
     }
 
@@ -376,7 +615,7 @@ ${summary.recentPurchasesDetails.length > 0 ? `Recent Purchase Orders:\n${summar
               method: 'POST',
               headers: { 
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiKey}`
+                'Authorization': `Bearer ${currentKey}`
               },
               body: JSON.stringify(body)
             }

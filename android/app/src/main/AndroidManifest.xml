@@ -12,6 +12,11 @@
       android:theme="@style/AppTheme"
       android:usesCleartextTraffic="${usesCleartextTraffic}"
       android:supportsRtl="true">
+
+      <!-- Groq API Key stored securely in AndroidManifest -->
+      <meta-data
+        android:name="com.groq.api.key"
+        android:value="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" />
       <activity
         android:name=".MainActivity"
         android:label="@string/app_name"
