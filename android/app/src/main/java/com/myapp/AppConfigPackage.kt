@@ -9,7 +9,10 @@ import com.facebook.react.uimanager.ViewManager
 
 class AppConfigPackage : ReactPackage {
     override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> {
-        return listOf(AppConfigModule(reactContext))
+        return listOf(
+            AppConfigModule(reactContext),
+            VoiceModule(reactContext)
+        )
     }
 
     override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<View, ReactShadowNode<*>>> {
