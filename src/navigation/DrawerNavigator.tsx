@@ -88,6 +88,11 @@ import LedgerScreen from '../screens/Finance/LedgerScreen';
 
 import TransactionsScreen from '../screens/Finance/TransactionsScreen';
 import ReportsScreen from '../screens/Reports/ReportsScreen';
+import AiAssistantScreen from '../screens/AiAssistant/AiAssistantScreen';
+import AiAgentsScreen from '../screens/AiAgents/AiAgentsScreen';
+import DocumentCenterScreen from '../screens/DocumentCenter/DocumentCenterScreen';
+import AiInsightsScreen from '../screens/AiInsights/AiInsightsScreen';
+import McpToolsScreen from '../screens/McpTools/McpToolsScreen';
 
 function Stub({ name }: { name: string }) {
   const navigation = useNavigation<any>();
@@ -239,7 +244,7 @@ function FinanceStackNavigator() {
 
 const SCREEN_COMPONENTS: Record<string, React.ComponentType> = {
   Dashboard: DashboardScreen,
-  AiAssistant: () => <Stub name="AI Assistant" />,
+  AiAssistant: AiAssistantScreen,
   CustomerList: CustomerStackNavigator,
   Inventory: InventoryStackNavigator,
   Sales: SalesStackNavigator,
@@ -249,8 +254,10 @@ const SCREEN_COMPONENTS: Record<string, React.ComponentType> = {
   Repairs: RepairsStackNavigator,   // ← changed from () => <Stub name="Repairs" />
   Finance: FinanceStackNavigator,   // ← changed from () => <Stub name="Finance" />
   Reports: ReportsScreen,
-  Documents: () => <Stub name="Document Center" />,
-  AiAgents: () => <Stub name="AI Agents" />,
+  Documents: DocumentCenterScreen,
+  AiAgents: AiAgentsScreen,
+  AiInsights: AiInsightsScreen,
+  McpTools: McpToolsScreen,
   Admin: () => <Stub name="Admin" />,
   PayrollCalculation: PayrollCalculationScreen,
   PayrollView: PayrollScreen,

@@ -277,6 +277,18 @@ export const DRAWER_ITEMS: DrawerItemDef[] = [
     moduleKey: 'AI Assistant',
   },
   {
+    icon: 'lightbulb-outline',
+    title: 'AI Insights',
+    screen: 'AiInsights',
+    moduleKey: 'AI Insights',
+  },
+  {
+    icon: 'build',
+    title: 'MCP Tools',
+    screen: 'McpTools',
+    moduleKey: 'MCP Tools',
+  },
+  {
     icon: 'people',
     title: 'Customers',
     screen: 'CustomerList',
