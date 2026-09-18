@@ -17,7 +17,7 @@ export type RootStackParamList = {
   Dashboard: { allowedModules?: Record<string, boolean>; employeeName?: string; employeeId?: string } | undefined;
   Notifications: undefined;
   Settings: undefined;
-};
+};  
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
